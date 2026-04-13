@@ -1,0 +1,70 @@
+{
+  "name": "BewerbZen Tally Form → Telegram Notification",
+  "nodes": [
+
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bewerbzen-tally",
+        "responseMode": "onReceived",
+        "responseData": "firstEntryJson",
+        "options": {}
+      },
+      "id": "tally-webhook",
+      "name": "Tally Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 300],
+      "webhookId": "bewerbzen-tally-webhook"
+    },
+
+    {
+      "parameters": {
+        "jsCode": "// Extract Tally form fields\nconst body = $input.first().json.body || $input.first().json;\nconst fields = body.data?.fields || [];\n\nlet name = '';\nlet contact = '';\nlet answer = '';\n\nfields.forEach(f => {\n  const label = (f.label || '').toLowerCase();\n  const val = Array.isArray(f.value) ? f.value.join(', ') : (f.value || '');\n  if (label.includes('имя') || label.includes('name')) name = val;\n  else if (label.includes('telegram') || label.includes('email') || label.includes('контакт')) contact = val;\n  else if (label.includes('откли') || label.includes('ответ') || label.includes('сложн')) answer = val;\n});\n\n// Fallback: grab first 3 fields\nif (!name && fields[0]) name = String(fields[0].value || '');\nif (!contact && fields[1]) contact = String(fields[1].value || '');\nif (!answer && fields[2]) answer = String(fields[2].value || '');\n\nconst timestamp = new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Berlin' });\n\nreturn [{ json: { name, contact, answer, timestamp } }];"
+      },
+      "id": "parse-tally",
+      "name": "Parse Tally Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+
+    {
+      "parameters": {
+        "chatId": "REPLACE_WITH_YOUR_TELEGRAM_CHAT_ID",
+        "text": "=🔔 *Новая заявка на BewerbZen!*\n\n👤 *Имя:* {{ $json.name || '—' }}\n📱 *Контакт:* {{ $json.contact || '—' }}\n💬 *Ответ:* {{ $json.answer || '—' }}\n\n🕐 {{ $json.timestamp }}",
+        "additionalFields": { "parse_mode": "Markdown" }
+      },
+      "id": "notify-mikhail",
+      "name": "Notify Mikhail in Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [660, 300],
+      "credentials": {
+        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+      }
+    },
+
+    {
+      "parameters": {
+        "jsCode": "// Log to n8n Data Table (optional, configure table ID)\n// For now just pass through\nconst d = $input.first().json;\nreturn [{ json: { logged: true, name: d.name, contact: d.contact } }];"
+      },
+      "id": "log-lead",
+      "name": "Log Lead (extend later)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 300]
+    }
+
+  ],
+
+  "connections": {
+    "Tally Webhook":    { "main": [[{ "node": "Parse Tally Data",           "type": "main", "index": 0 }]] },
+    "Parse Tally Data": { "main": [[{ "node": "Notify Mikhail in Telegram",  "type": "main", "index": 0 }]] },
+    "Notify Mikhail in Telegram": { "main": [[{ "node": "Log Lead (extend later)", "type": "main", "index": 0 }]] }
+  },
+
+  "settings": { "executionOrder": "v1" },
+  "tags": ["bewerbzen", "tally", "leads"],
+  "meta": { "instanceId": "bewerbzen-tally-v1" }
+}

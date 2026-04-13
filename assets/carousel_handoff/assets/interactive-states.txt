@@ -1,0 +1,16 @@
+Interactive states
+
+Links
+- default: #FFFFFF
+- hover: #DDE7FF
+
+Glass card
+- default: rgba(255,255,255,0.18)
+- hover: border stronger to rgba(255,255,255,0.38)
+
+Progress bar
+- inactive: rgba(255,255,255,0.35)
+- active: linear-gradient(90deg, #5B7CFF, #00C896)
+
+CTA
+- final slide CTA must be the strongest accent on the slide

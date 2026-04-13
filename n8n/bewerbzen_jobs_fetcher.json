@@ -1,0 +1,133 @@
+{
+  "name": "BewerbZen Jobs Fetcher — Bundesagentur API",
+  "nodes": [
+
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "hours", "hoursInterval": 12 }
+          ]
+        }
+      },
+      "id": "schedule",
+      "name": "Every 12 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 300]
+    },
+
+    {
+      "parameters": {},
+      "id": "manual",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 460]
+    },
+
+    {
+      "parameters": {
+        "jsCode": "// Keyword sets to search — rotate or run all\n// Bundesagentur API: https://api.arbeitsagentur.de/prod/jobboerse/jobsuche-service/pc/v4/jobs\nconst searches = [\n  { keywords: 'Software Developer', location: '', radius: 200, lang: 'Englisch' },\n  { keywords: 'Frontend Developer', location: '', radius: 200, lang: 'Englisch' },\n  { keywords: 'Backend Developer',  location: '', radius: 200, lang: 'Englisch' },\n  { keywords: 'Data Analyst',       location: '', radius: 200, lang: 'Englisch' },\n  { keywords: 'IT Support',         location: '', radius: 200, lang: 'Englisch' },\n  { keywords: 'Buchhalter',         location: '', radius: 200, lang: '' },\n  { keywords: 'Pflegefachkraft',    location: '', radius: 200, lang: '' },\n  { keywords: 'Fahrer',             location: '', radius: 200, lang: '' }\n];\nreturn searches.map(s => ({ json: s }));"
+      },
+      "id": "build-queries",
+      "name": "Build Search Queries",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 380]
+    },
+
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.arbeitsagentur.de/prod/jobboerse/jobsuche-service/pc/v4/jobs?was={{ encodeURIComponent($json.keywords) }}&umkreis={{ $json.radius }}&page=1&size=25",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-API-Key", "value": "jobboerse-jobsuche-ui" },
+            { "name": "User-Agent", "value": "BewerbZen/1.0" }
+          ]
+        },
+        "options": { "timeout": 10000 }
+      },
+      "id": "fetch-jobs",
+      "name": "Fetch from Bundesagentur",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 380]
+    },
+
+    {
+      "parameters": {
+        "jsCode": "// Extract and clean job listings\nconst raw = $input.first().json;\nconst jobs = raw.stellenangebote || [];\n\nconst clean = jobs.slice(0, 10).map(j => ({\n  id:          j.refnr || '',\n  title:       j.titel || '',\n  employer:    j.arbeitgeber || '',\n  location:    j.arbeitsort?.ort || '',\n  region:      j.arbeitsort?.region || '',\n  posted:      j.eintrittsdatum || '',\n  url:         `https://www.arbeitsagentur.de/jobsuche/jobdetail/${j.refnr}`,\n  remote:      j.fuerFluechtlingeGeeignet || false,\n  fulltime:    j.arbeitszeitmodelle?.includes('vz') || false,\n  source:      'Bundesagentur'\n}));\n\nreturn clean.map(j => ({ json: j }));"
+      },
+      "id": "clean-jobs",
+      "name": "Clean Job Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [920, 380]
+    },
+
+    {
+      "parameters": {
+        "jsCode": "// Format job for Telegram channel post\nconst j = $input.first().json;\n\nconst emoji = j.title.toLowerCase().includes('developer') || j.title.toLowerCase().includes('engineer') ? '💻' :\n              j.title.toLowerCase().includes('pflege') ? '🏥' :\n              j.title.toLowerCase().includes('fahrer') ? '🚗' : '💼';\n\nconst location = j.location ? `📍 ${j.location}${j.region ? ', ' + j.region : ''}` : '📍 Deutschland';\nconst time = j.fulltime ? '⏰ Vollzeit' : '⏰ Teilzeit/flexibel';\n\nconst text = `${emoji} *${j.title}*\n🏢 ${j.employer}\n${location}\n${time}\n\n🔗 [Открыть вакансию](${j.url})\n📄 [Сделать Bewerbung](https://t.me/BewerbZenBot)`;\n\nreturn [{ json: { text, jobId: j.id, title: j.title } }];"
+      },
+      "id": "format-post",
+      "name": "Format Telegram Post",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1140, 380]
+    },
+
+    {
+      "parameters": {
+        "chatId": "@BewerbZen",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "post-to-channel",
+      "name": "Post to @BewerbZen Channel",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1360, 380],
+      "credentials": {
+        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+      }
+    },
+
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "seconds"
+      },
+      "id": "wait",
+      "name": "Wait 2s (rate limit)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1580, 380]
+    }
+
+  ],
+
+  "connections": {
+    "Every 12 Hours":         { "main": [[{ "node": "Build Search Queries",    "type": "main", "index": 0 }]] },
+    "Manual Trigger":         { "main": [[{ "node": "Build Search Queries",    "type": "main", "index": 0 }]] },
+    "Build Search Queries":   { "main": [[{ "node": "Fetch from Bundesagentur","type": "main", "index": 0 }]] },
+    "Fetch from Bundesagentur":{ "main": [[{ "node": "Clean Job Data",         "type": "main", "index": 0 }]] },
+    "Clean Job Data":         { "main": [[{ "node": "Format Telegram Post",    "type": "main", "index": 0 }]] },
+    "Format Telegram Post":   { "main": [[{ "node": "Post to @BewerbZen Channel","type": "main", "index": 0 }]] },
+    "Post to @BewerbZen Channel":{ "main": [[{ "node": "Wait 2s (rate limit)", "type": "main", "index": 0 }]] }
+  },
+
+  "settings": {
+    "executionOrder": "v1"
+  },
+
+  "tags": ["bewerbzen", "jobs", "bundesagentur"],
+  "meta": {
+    "instanceId": "bewerbzen-jobs-v1"
+  }
+}

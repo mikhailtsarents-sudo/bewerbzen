@@ -1,0 +1,16 @@
+{
+  "fontFamilies": {
+    "heading": "Sora",
+    "body": "Inter"
+  },
+  "sizes": {
+    "h1": "36px",
+    "h2": "24px",
+    "body": "16px"
+  },
+  "weights": {
+    "regular": 400,
+    "medium": 500,
+    "bold": 700
+  }
+}

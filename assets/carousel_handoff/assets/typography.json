@@ -1,0 +1,34 @@
+{
+  "fontFamilies": {
+    "heading": [
+      "Sora",
+      "Inter Tight",
+      "sans-serif"
+    ],
+    "body": [
+      "Inter",
+      "sans-serif"
+    ]
+  },
+  "weights": {
+    "headline": 700,
+    "body": 500,
+    "cta": 700
+  },
+  "sizesMobile": {
+    "headline": "26-32px",
+    "body": "16-18px",
+    "cta": "18-20px"
+  },
+  "sizesDesktop": {
+    "headline": "42-56px",
+    "body": "18-22px",
+    "cta": "18-20px"
+  },
+  "rules": [
+    "No default system-looking rounded font appearance",
+    "No serif fonts",
+    "Use geometric, premium sans-serif feel",
+    "Tight tracking on headlines"
+  ]
+}

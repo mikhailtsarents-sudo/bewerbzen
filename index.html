@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BewerbZen — Поиск работы в Германии без стресса</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ── DESIGN TOKENS ───────────────────── */
+    :root {
+      --bg:        #0F1115;
+      --bg-card:   #171A21;
+      --bg-card2:  #1C2030;
+      --text:      #FFFFFF;
+      --text-2:    #A1A6B0;
+      --text-3:    #5A6070;
+      --accent:    #6C8CFF;
+      --accent-h:  #8FA8FF;
+      --border:    rgba(255,255,255,0.08);
+      --border-a:  rgba(108,140,255,0.25);
+      --radius:    14px;
+      --radius-lg: 22px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1,h2,h3,.logo,.btn-p,.btn-w,.nav-cta,
+    .sl-headline,.stat-n,.step h3,.cta-t h2,
+    .hc-title,.val-title,.sw-big {
+      font-family: 'Sora', sans-serif;
+    }
+
+    /* ── NAV ──────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 72px;
+      background: rgba(15,17,21,0.82);
+      backdrop-filter: blur(28px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 14px; font-weight: 400; color: var(--text-2); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent); color: var(--text);
+      border: none; padding: 10px 22px; border-radius: 10px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(108,140,255,0.3);
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+    .nav-cta:hover { background: var(--accent-h); transform: scale(1.02); box-shadow: 0 6px 20px rgba(108,140,255,0.4); }
+
+    /* ── HERO ────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 64px;
+      padding: 140px 72px 96px;
+      position: relative; overflow: hidden;
+      background: var(--bg);
+    }
+
+    /* blobs */
+    .blobs { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(110px); }
+    .b1 { width:600px; height:600px; opacity:.28; background:radial-gradient(#3D5AFF,#7C3AED); top:-180px; left:-180px; animation:bm1 12s ease-in-out infinite; }
+    .b2 { width:450px; height:450px; opacity:.22; background:radial-gradient(#6C8CFF,#10B981); bottom:-120px; right:20px; animation:bm2 15s ease-in-out infinite; }
+    .b3 { width:300px; height:300px; opacity:.15; background:radial-gradient(#7C3AED,#6C8CFF); top:40%; left:42%; animation:bm3 18s ease-in-out infinite; }
+    @keyframes bm1 { 0%,100%{transform:translate(0,0)scale(1)} 45%{transform:translate(50px,-60px)scale(1.1)} 70%{transform:translate(-30px,40px)scale(.92)} }
+    @keyframes bm2 { 0%,100%{transform:translate(0,0)scale(1)} 35%{transform:translate(-55px,50px)scale(1.08)} 65%{transform:translate(40px,-30px)scale(.95)} }
+    @keyframes bm3 { 0%,100%{transform:translate(0,0)scale(1)rotate(0)} 50%{transform:translate(-45px,-40px)scale(1.18)rotate(22deg)} }
+
+    .grid-bg {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 100%);
+    }
+
+    .hero-text { position: relative; z-index: 2; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(108,140,255,.1); border: 1px solid rgba(108,140,255,.22);
+      color: var(--accent-h); font-size: 12px; font-weight: 500; letter-spacing: .4px;
+      padding: 6px 14px; border-radius: 999px; margin-bottom: 32px;
+      opacity: 0; animation: fadeUp .5s .1s forwards;
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    h1 {
+      font-size: clamp(42px, 5vw, 68px); font-weight: 700;
+      line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 24px;
+      opacity: 0; animation: fadeUp .5s .18s forwards;
+    }
+    .tg1 { background: linear-gradient(135deg,#fff 45%,#A1A6B0); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .tg2 { color: var(--accent); -webkit-text-fill-color: var(--accent); }
+    .tg3 { background: linear-gradient(135deg,#34D399,#10B981); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+    .subtitle {
+      font-size: 17px; font-weight: 400; color: var(--text-2); line-height: 1.65;
+      max-width: 440px; margin-bottom: 44px;
+      opacity: 0; animation: fadeUp .5s .26s forwards;
+    }
+    .hero-btns {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 48px;
+      opacity: 0; animation: fadeUp .5s .34s forwards;
+    }
+    .btn-p {
+      background: var(--accent); color: var(--text);
+      border: none; padding: 14px 28px; border-radius: 12px;
+      font-size: 15px; font-weight: 600; cursor: pointer; letter-spacing: -0.01em;
+      box-shadow: 0 4px 14px rgba(108,140,255,.32);
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+    .btn-p:hover { background: var(--accent-h); transform: scale(1.02); box-shadow: 0 6px 22px rgba(108,140,255,.44); }
+    .btn-g {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text-2); padding: 14px 22px; border-radius: 12px;
+      font-size: 15px; font-weight: 400; cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-g:hover { border-color: rgba(255,255,255,.2); color: var(--text); }
+
+    .trust-row {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp .5s .42s forwards;
+    }
+    .tp {
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,.04); border: 1px solid var(--border);
+      border-radius: 999px; padding: 6px 14px;
+      font-size: 12.5px; color: var(--text-3); font-weight: 400;
+    }
+
+    /* hero cards */
+    .hero-vis { position: relative; height: 520px; z-index: 2; opacity: 0; animation: fadeIn .7s .4s forwards; }
+    .hcard {
+      position: absolute;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.5);
+    }
+    .hcard-main { top:50%; left:50%; transform:translate(-50%,-50%); width:276px; animation:floatC 4s ease-in-out infinite; }
+    @keyframes floatC { 0%,100%{transform:translate(-50%,-50%)translateY(0)} 50%{transform:translate(-50%,-50%)translateY(-12px)} }
+    @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .hc-head { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .hc-icon { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#3D5AFF,#6C8CFF); display:flex; align-items:center; justify-content:center; font-size:18px; }
+    .hc-title { font-size:13px; font-weight:600; color:var(--text); letter-spacing:-.01em; }
+    .hc-sub   { font-size:11px; color:var(--text-3); margin-top:2px; }
+    .pbar { height:4px; background:rgba(255,255,255,.06); border-radius:999px; margin-bottom:14px; overflow:hidden; }
+    .pfill { height:100%; background:linear-gradient(90deg,#3D5AFF,#10B981); width:0; animation:pf 2s 1.3s ease forwards; }
+    @keyframes pf { to{width:76%} }
+    .tags { display:flex; gap:6px; flex-wrap:wrap; }
+    .tag { font-size:11px; font-weight:500; padding:4px 10px; border-radius:999px; }
+    .ta_ { background:rgba(108,140,255,.12); color:var(--accent-h); border:1px solid rgba(108,140,255,.2); }
+    .tg_ { background:rgba(16,185,129,.1); color:#34D399; border:1px solid rgba(16,185,129,.18); }
+    .ts_ { background:rgba(255,255,255,.05); color:var(--text-3); border:1px solid var(--border); }
+    .hcard-sm { display:flex; align-items:center; gap:10px; white-space:nowrap; }
+    .hc-val { font-size:19px; font-weight:700; }
+    .hc-lbl { font-size:11px; color:var(--text-3); }
+    .c-vac  { top:26px; left:-55px; animation:floatY 3.5s .5s ease-in-out infinite; }
+    .c-mat  { bottom:88px; left:-68px; animation:floatY 4.5s 1s ease-in-out infinite; }
+    .c-done { top:46px; right:-34px; animation:floatY 3.8s .8s ease-in-out infinite; }
+    .c-time { bottom:46px; right:-24px; animation:floatY 4.2s .3s ease-in-out infinite; }
+    .ca { color:var(--accent); } .cg { color:#34D399; }
+
+    /* ── VALUE CAROUSEL ──────────────── */
+    .carousel-section { background: var(--bg); padding: 96px 0; overflow: hidden; }
+    .carousel-header { text-align: center; padding: 0 72px 64px; }
+    .section-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(30px,3.2vw,46px); font-weight: 700;
+      letter-spacing: -0.02em; line-height: 1.15; color: var(--text);
+    }
+    .section-sub { font-size: 16px; color: var(--text-2); margin-top: 14px; line-height: 1.65; max-width: 440px; margin-left: auto; margin-right: auto; font-weight: 400; }
+
+    /* fade carousel */
+    .carousel-wrap { position: relative; padding: 0 72px; }
+    .slides-container { position: relative; min-height: 480px; }
+    .val-slide {
+      position: absolute; inset: 0;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 48px 56px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .4s ease, transform .4s ease;
+      transform: translateY(12px);
+    }
+    .val-slide.active {
+      opacity: 1; pointer-events: all;
+      transform: translateY(0);
+      position: relative;
+    }
+
+    .val-left {}
+    .vs-chapter { font-size: 11px; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 16px; color: var(--accent); }
+    .val-title { font-size: clamp(24px,2.5vw,34px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 16px; color: var(--text); }
+    .val-text { font-size: 16px; color: var(--text-2); line-height: 1.7; font-weight: 400; margin-bottom: 28px; }
+    .val-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(108,140,255,.12); border: 1px solid rgba(108,140,255,.25);
+      color: var(--accent-h); padding: 10px 20px; border-radius: 999px;
+      font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none;
+      transition: background .2s, color .2s;
+    }
+    .val-cta:hover { background: rgba(108,140,255,.22); color: #fff; }
+
+    /* product mockup area */
+    .val-right {}
+    .product-mock {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .mock-bar {
+      height: 36px; background: rgba(255,255,255,.03);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 14px; gap: 7px;
+    }
+    .mock-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .md-r { background: #FF5F57; } .md-y { background: #FFBD2E; } .md-g { background: #28C840; }
+    .mock-body { padding: 20px; }
+
+    /* vacancy card in mock */
+    .vac-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 14px; border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      margin-bottom: 10px; transition: border-color .2s;
+    }
+    .vac-item:hover { border-color: var(--border-a); }
+    .vac-logo { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .vac-info { flex: 1; }
+    .vac-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .vac-company { font-size: 11px; color: var(--text-3); }
+    .vac-badge { font-size: 10px; padding: 3px 8px; border-radius: 999px; font-weight: 500; white-space: nowrap; }
+
+    /* letter mock */
+    .letter-mock { padding: 20px; }
+    .lm-header { display:flex; justify-content:space-between; margin-bottom:16px; }
+    .lm-name { font-family:'Sora',sans-serif; font-size:13px; font-weight:600; color:var(--text); }
+    .lm-date { font-size:11px; color:var(--text-3); }
+    .lm-to { font-size:11px; color:var(--text-2); margin-bottom:14px; line-height:1.6; }
+    .lm-line { height:3px; border-radius:2px; background:rgba(255,255,255,.06); margin-bottom:7px; }
+    .lm-sig { display:flex; align-items:center; gap:8px; margin-top:16px; }
+    .lm-sig-check { width:20px; height:20px; border-radius:50%; background:rgba(52,211,153,.15); border:1px solid rgba(52,211,153,.3); display:flex; align-items:center; justify-content:center; font-size:10px; }
+
+    /* resume mock */
+    .resume-mock { padding: 20px; }
+    .rm-header { display:flex; gap:14px; margin-bottom:16px; align-items:center; }
+    .rm-avatar { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#3D5AFF,#6C8CFF); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; }
+    .rm-name { font-family:'Sora',sans-serif; font-size:14px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .rm-role { font-size:11px; color:var(--accent); }
+    .rm-section-title { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-3); margin:14px 0 8px; }
+    .rm-skill { display:inline-block; font-size:11px; padding:3px 9px; border-radius:5px; background:rgba(108,140,255,.1); border:1px solid rgba(108,140,255,.18); color:var(--accent-h); margin:0 5px 5px 0; }
+    .rm-ats { display:flex; align-items:center; gap:8px; margin-top:14px; padding:10px 12px; border-radius:8px; background:rgba(52,211,153,.08); border:1px solid rgba(52,211,153,.18); }
+    .rm-ats-score { font-family:'Sora',sans-serif; font-size:20px; font-weight:700; color:#34D399; }
+    .rm-ats-label { font-size:11px; color:#34D399; opacity:.8; }
+
+    /* profile mock */
+    .profile-mock { padding: 20px; }
+    .pm-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .pm-icon { width:32px; height:32px; border-radius:8px; background:rgba(108,140,255,.12); border:1px solid rgba(108,140,255,.2); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+    .pm-label { font-size:11px; color:var(--text-3); margin-bottom:3px; }
+    .pm-value { font-size:13px; color:var(--text); font-weight:500; }
+    .pm-pill { display:inline-block; padding:4px 10px; border-radius:999px; font-size:11px; font-weight:500; background:rgba(108,140,255,.1); border:1px solid rgba(108,140,255,.18); color:var(--accent-h); margin:2px; }
+
+    /* controls */
+    .carousel-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 28px 0 0;
+    }
+    .slide-counter {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px; font-weight: 600; color: var(--text-3);
+    }
+    .slide-counter span { color: var(--text); }
+    .car-dots { display: flex; gap: 8px; }
+    .dot { width: 8px; height: 8px; border-radius: 999px; background: rgba(255,255,255,.15); cursor: pointer; transition: all .25s; border: none; }
+    .dot.active { width: 24px; background: var(--accent); }
+    .car-btns { display: flex; gap: 8px; }
+    .car-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-2); font-size: 15px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .car-btn:hover { border-color: rgba(255,255,255,.18); color: var(--text); background: var(--bg-card2); }
+
+    /* progress */
+    .slide-prog-wrap { height: 2px; background: var(--border); border-radius: 1px; margin-top: 20px; overflow: hidden; }
+    .slide-prog-fill { height: 100%; background: var(--accent); width: 0; transition: width 5s linear; opacity: .6; }
+
+    /* ── STATS ──────────────────────── */
+    .stats-section { padding: 96px 72px; background: var(--bg-card); border-top: 1px solid var(--border); }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1px; max-width: 960px; margin: 64px auto 0;
+      background: var(--border); border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .stat-card { padding: 44px 36px; background: var(--bg-card); transition: background .2s; }
+    .stat-card:hover { background: var(--bg-card2); }
+    .stat-n { font-size: clamp(48px,5.5vw,72px); font-weight: 700; letter-spacing: -0.03em; line-height: 1; margin-bottom: 12px; }
+    .sn-a { color: var(--accent); }
+    .sn-r { color: #F87171; }
+    .sn-y { color: #FBBF24; }
+    .stat-d { font-size: 14px; color: var(--text-2); line-height: 1.6; font-weight: 400; margin-top: 8px; }
+
+    /* ── HOW IT WORKS ───────────────── */
+    .how-section { padding: 96px 72px; background: var(--bg); }
+    .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; max-width: 940px; margin: 60px auto 0; }
+    .step {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 36px 28px;
+      transition: transform .2s ease-out, border-color .2s;
+    }
+    .step:hover { transform: translateY(-5px); border-color: var(--border-a); }
+    .sn { width: 44px; height: 44px; border-radius: 10px; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+    .sn1 { background:rgba(108,140,255,.15); color:var(--accent); border:1px solid rgba(108,140,255,.22); }
+    .sn2 { background:rgba(108,140,255,.1); color:var(--accent-h); border:1px solid rgba(108,140,255,.18); }
+    .sn3 { background:rgba(16,185,129,.12); color:#34D399; border:1px solid rgba(16,185,129,.2); }
+    .step h3 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 10px; color: var(--text); }
+    .step p  { font-size: 14px; color: var(--text-2); line-height: 1.7; font-weight: 400; }
+
+    /* ── CTA ────────────────────────── */
+    .cta-wrap { padding: 0 72px 96px; background: var(--bg); }
+    .cta-box {
+      background: linear-gradient(135deg, #1A2060 0%, #2B3EAD 50%, #3D55CC 100%);
+      border-radius: var(--radius-lg); padding: 72px 64px;
+      display: flex; align-items: center; justify-content: space-between; gap: 48px;
+      position: relative; overflow: hidden;
+      box-shadow: 0 24px 70px rgba(61,85,204,.3);
+      border: 1px solid rgba(108,140,255,.2);
+    }
+    .cta-box::before { content:''; position:absolute; width:480px; height:480px; border-radius:50%; background:radial-gradient(rgba(255,255,255,.06),transparent 70%); top:-160px; right:-100px; pointer-events:none; }
+    .cta-t { position: relative; z-index: 1; }
+    .cta-t h2 { font-size: clamp(26px,2.8vw,36px); font-weight: 700; letter-spacing: -0.02em; color: #fff; margin-bottom: 10px; }
+    .cta-t p  { font-size: 16px; color: rgba(255,255,255,.55); font-weight: 400; }
+    .btn-w {
+      background: #fff; color: #1A2060;
+      border: none; padding: 16px 34px; border-radius: 12px;
+      font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap;
+      letter-spacing: -0.01em;
+      box-shadow: 0 4px 20px rgba(0,0,0,.2);
+      transition: transform .15s, box-shadow .2s;
+      position: relative; z-index: 1;
+    }
+    .btn-w:hover { transform: scale(1.02); box-shadow: 0 8px 28px rgba(0,0,0,.28); }
+
+    /* ── FOOTER ─────────────────────── */
+    footer {
+      padding: 28px 72px;
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 13px; color: var(--text-3);
+    }
+    footer a { color: var(--text-3); text-decoration: none; }
+    footer a:hover { color: var(--text-2); }
+    .footer-summary {
+      font-size: 13px; color: var(--text-3); font-style: italic; max-width: 320px; text-align: center; line-height: 1.5;
+    }
+
+    /* ── UTILS ───────────────────────── */
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
+    .reveal { opacity:0; transform:translateY(24px); transition:opacity .7s ease,transform .7s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .rd1 { transition-delay:.1s; } .rd2 { transition-delay:.2s; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Bewerb<span>Zen</span></div>
+  <ul class="nav-links">
+    <li><a href="#">Возможности</a></li>
+    <li><a href="#">Как работает</a></li>
+    <li><a href="#">Цены</a></li>
+  </ul>
+  <button class="nav-cta">Начать бесплатно</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+  <div class="grid-bg"></div>
+  <div class="hero-text">
+    <div class="badge"><span class="badge-dot"></span>Доступно в Германии</div>
+    <h1>
+      <span class="tg1">Найди работу.</span><br/>
+      <span class="tg2">Без бумажного</span><br/>
+      <span class="tg3">ада.</span>
+    </h1>
+    <p class="subtitle">Еженедельная подборка вакансий под твой профиль + готовый Anschreiben и Lebenslauf одной кнопкой. ATS-оптимизировано. По немецкому стандарту.</p>
+    <div class="hero-btns">
+      <button class="btn-p">Попробовать бесплатно →</button>
+      <button class="btn-g">▶ &nbsp;Как это работает</button>
+    </div>
+    <div class="trust-row">
+      <div class="tp">✓ Бесплатный старт</div>
+      <div class="tp">🇩🇪 Немецкий стандарт</div>
+      <div class="tp">⚡ 10 мин на Bewerbung</div>
+    </div>
+  </div>
+  <div class="hero-vis">
+    <div class="hcard hcard-sm c-vac"><span style="font-size:20px">📋</span><div><div class="hc-val ca">247</div><div class="hc-lbl">новых вакансий</div></div></div>
+    <div class="hcard hcard-main">
+      <div class="hc-head"><div class="hc-icon">📄</div><div><div class="hc-title">Bewerbung готов</div><div class="hc-sub">Software Engineer · München</div></div></div>
+      <div class="pbar"><div class="pfill"></div></div>
+      <div class="tags"><span class="tag ta_">ATS-оптимизирован</span><span class="tag tg_">PDF готов</span><span class="tag ts_">DE стандарт</span></div>
+    </div>
+    <div class="hcard hcard-sm c-mat"><span style="font-size:20px">🎯</span><div><div class="hc-val cg">92%</div><div class="hc-lbl">совпадение профиля</div></div></div>
+    <div class="hcard hcard-sm c-done"><span style="font-size:20px">✅</span><div style="font-size:13px;font-weight:500;color:#fff">Lebenslauf адаптирован</div></div>
+    <div class="hcard hcard-sm c-time"><span style="font-size:20px">⏱️</span><div style="font-size:13px;font-weight:500;color:#fff">Заняло <span style="color:#34D399;font-weight:600">8 мин</span></div></div>
+  </div>
+</section>
+
+<!-- VALUE CAROUSEL -->
+<section class="carousel-section">
+  <div class="carousel-header reveal">
+    <div class="section-label">Возможности</div>
+    <h2 class="section-title">Всё что нужно — в одном месте</h2>
+    <p class="section-sub">От поиска вакансии до готового Bewerbung. Без лишних шагов.</p>
+  </div>
+
+  <div class="carousel-wrap reveal">
+    <div class="slides-container" id="slidesContainer">
+
+      <!-- Slide 1: Weekly digest -->
+      <div class="val-slide active" data-idx="0">
+        <div class="val-left">
+          <div class="vs-chapter">01 / 04</div>
+          <h3 class="val-title">Подборка каждую пятницу</h3>
+          <p class="val-text">Один профиль — и каждую пятницу тебе приходит список релевантных вакансий. Без дублей, без спама, без фейков. Только то, что подходит именно тебе.</p>
+          <a class="val-cta">Посмотреть пример →</a>
+        </div>
+        <div class="val-right">
+          <div class="product-mock">
+            <div class="mock-bar"><div class="mock-dot md-r"></div><div class="mock-dot md-y"></div><div class="mock-dot md-g"></div><div style="flex:1;height:4px;background:rgba(255,255,255,.05);border-radius:2px;margin-left:8px"></div></div>
+            <div class="mock-body">
+              <div style="font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px">Пятница, 18 апр · 15 новых вакансий</div>
+              <div class="vac-item">
+                <div class="vac-logo" style="background:rgba(108,140,255,.12)">🏢</div>
+                <div class="vac-info"><div class="vac-title">Frontend Developer</div><div class="vac-company">SAP · Walldorf · €65–85k</div></div>
+                <span class="vac-badge" style="background:rgba(52,211,153,.1);color:#34D399;border:1px solid rgba(52,211,153,.2)">95%</span>
+              </div>
+              <div class="vac-item">
+                <div class="vac-logo" style="background:rgba(251,191,36,.1)">⚡</div>
+                <div class="vac-info"><div class="vac-title">React Engineer</div><div class="vac-company">BMW Group · München · €70–90k</div></div>
+                <span class="vac-badge" style="background:rgba(108,140,255,.1);color:var(--accent-h);border:1px solid var(--border-a)">88%</span>
+              </div>
+              <div class="vac-item">
+                <div class="vac-logo" style="background:rgba(16,185,129,.1)">🌐</div>
+                <div class="vac-info"><div class="vac-title">Software Engineer</div><div class="vac-company">Zalando · Berlin · €75–95k</div></div>
+                <span class="vac-badge" style="background:rgba(108,140,255,.1);color:var(--accent-h);border:1px solid var(--border-a)">82%</span>
+              </div>
+              <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--text-3)">+ ещё 12 вакансий</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Anschreiben -->
+      <div class="val-slide" data-idx="1">
+        <div class="val-left">
+          <div class="vs-chapter">02 / 04</div>
+          <h3 class="val-title">Anschreiben за 8 минут</h3>
+          <p class="val-text">Выбрал вакансию — нажал кнопку. Через 8 минут получаешь готовое письмо по немецкому стандарту, адаптированное под конкретную компанию и должность.</p>
+          <a class="val-cta">Посмотреть пример →</a>
+        </div>
+        <div class="val-right">
+          <div class="product-mock">
+            <div class="mock-bar"><div class="mock-dot md-r"></div><div class="mock-dot md-y"></div><div class="mock-dot md-g"></div></div>
+            <div class="letter-mock">
+              <div class="lm-header">
+                <div><div class="lm-name">Max Mustermann</div><div style="font-size:11px;color:var(--text-3)">Musterstraße 1 · 10115 Berlin</div></div>
+                <div class="lm-date">14. April 2026</div>
+              </div>
+              <div class="lm-to">SAP SE<br/>Dietmar-Hopp-Allee 16<br/>69190 Walldorf</div>
+              <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">Bewerbung als Frontend Developer (Ref. #FE-2026-042)</div>
+              <div class="lm-line" style="width:100%"></div>
+              <div class="lm-line" style="width:88%"></div>
+              <div class="lm-line" style="width:94%"></div>
+              <div class="lm-line" style="width:72%"></div>
+              <div class="lm-line" style="width:85%;margin-top:10px"></div>
+              <div class="lm-line" style="width:91%"></div>
+              <div class="lm-line" style="width:60%"></div>
+              <div class="lm-sig">
+                <div class="lm-sig-check">✓</div>
+                <span style="font-size:11px;color:#34D399">ATS-оптимизировано · DE стандарт · PDF готов</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Lebenslauf -->
+      <div class="val-slide" data-idx="2">
+        <div class="val-left">
+          <div class="vs-chapter">03 / 04</div>
+          <h3 class="val-title">Lebenslauf проходит ATS</h3>
+          <p class="val-text">Загружаешь своё резюме один раз. Для каждой вакансии мы адаптируем его под требования и оптимизируем под ATS-системы работодателей. 70% резюме не доходят до человека — твоё дойдёт.</p>
+          <a class="val-cta">Посмотреть пример →</a>
+        </div>
+        <div class="val-right">
+          <div class="product-mock">
+            <div class="mock-bar"><div class="mock-dot md-r"></div><div class="mock-dot md-y"></div><div class="mock-dot md-g"></div></div>
+            <div class="resume-mock">
+              <div class="rm-header">
+                <div class="rm-avatar">👤</div>
+                <div><div class="rm-name">Max Mustermann</div><div class="rm-role">Frontend Developer</div></div>
+              </div>
+              <div class="rm-section-title">Ключевые навыки</div>
+              <span class="rm-skill">React</span><span class="rm-skill">TypeScript</span><span class="rm-skill">Node.js</span><span class="rm-skill">AWS</span><span class="rm-skill">Agile</span>
+              <div class="rm-section-title">Опыт</div>
+              <div class="lm-line" style="width:100%"></div>
+              <div class="lm-line" style="width:80%"></div>
+              <div class="rm-ats">
+                <div class="rm-ats-score">97%</div>
+                <div><div class="rm-ats-label" style="font-weight:600">ATS Score</div><div class="rm-ats-label">Résumé проходит автоматический отбор</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: One Profile -->
+      <div class="val-slide" data-idx="3">
+        <div class="val-left">
+          <div class="vs-chapter">04 / 04</div>
+          <h3 class="val-title">Один профиль — везде</h3>
+          <p class="val-text">Заполнил один раз: профессия, город, пожелания, резюме. Больше никаких повторных форм. BewerbZen знает всё о тебе и использует это для каждого Bewerbung автоматически.</p>
+          <a class="val-cta">Создать профиль →</a>
+        </div>
+        <div class="val-right">
+          <div class="product-mock">
+            <div class="mock-bar"><div class="mock-dot md-r"></div><div class="mock-dot md-y"></div><div class="mock-dot md-g"></div></div>
+            <div class="profile-mock">
+              <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Мой профиль</div>
+              <div class="pm-row"><div class="pm-icon">💼</div><div><div class="pm-label">Профессия</div><div class="pm-value">Frontend Developer</div></div></div>
+              <div class="pm-row"><div class="pm-icon">📍</div><div><div class="pm-label">Регион поиска</div><div class="pm-value">München, 50 km</div></div></div>
+              <div class="pm-row"><div class="pm-icon">💶</div><div><div class="pm-label">Желаемая зарплата</div><div class="pm-value">от €65 000</div></div></div>
+              <div style="margin-top:4px"><div class="pm-label" style="margin-bottom:8px">Тип занятости</div><span class="pm-pill">Vollzeit</span><span class="pm-pill">Hybrid</span></div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:16px;padding:10px 12px;border-radius:8px;background:rgba(108,140,255,.08);border:1px solid rgba(108,140,255,.18)"><span style="font-size:14px">✓</span><span style="font-size:12px;color:var(--accent-h)">Резюме загружено · Профиль заполнен на 100%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /slides-container -->
+
+    <div class="carousel-nav">
+      <div class="slide-counter">Слайд <span id="curNum">1</span> из 4</div>
+      <div class="car-dots" id="carDots"></div>
+      <div class="car-btns">
+        <button class="car-btn" id="carPrev">←</button>
+        <button class="car-btn" id="carNext">→</button>
+      </div>
+    </div>
+    <div class="slide-prog-wrap"><div class="slide-prog-fill" id="progFill"></div></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div style="text-align:center" class="reveal">
+    <div class="section-label">Реальность рынка</div>
+    <h2 class="section-title">Почему система сломана</h2>
+  </div>
+  <div class="stats-grid reveal">
+    <div class="stat-card"><div class="stat-n sn-a">4–6 ч</div><div class="stat-d">уходит на подготовку одного Bewerbung. Каждый раз, для каждой вакансии.</div></div>
+    <div class="stat-card"><div class="stat-n sn-r">54%</div><div class="stat-d">соискателей никогда не получают ответа. Просто тишина после недели работы.</div></div>
+    <div class="stat-card"><div class="stat-n sn-y">70%</div><div class="stat-d">резюме отсеивают ATS-роботы ещё до того, как их увидит живой человек.</div></div>
+    <div class="stat-card"><div class="stat-n sn-a">5+</div><div class="stat-d">сайтов нужно обойти. Одни и те же вакансии, разный интерфейс, разная регистрация.</div></div>
+    <div class="stat-card"><div class="stat-n sn-r">75%</div><div class="stat-d">не подают заявку если нет зарплаты. Час работы — и в мусор.</div></div>
+    <div class="stat-card"><div class="stat-n sn-y">Многие</div><div class="stat-d">просто бросают поиск. Система слишком сложная, непрозрачная и безжалостная.</div></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div style="text-align:center" class="reveal">
+    <div class="section-label">Как это работает</div>
+    <h2 class="section-title">Три шага вместо трёх недель</h2>
+    <p class="section-sub" style="margin-top:14px;color:var(--text-2)">Один раз настроил — каждую неделю получаешь готовые материалы.</p>
+  </div>
+  <div class="steps">
+    <div class="step reveal"><div class="sn sn1">1</div><h3>Создай профиль</h3><p>Профессия, город, пожелания. Один раз — навсегда. Загрузи резюме и больше ничего не заполняй повторно.</p></div>
+    <div class="step reveal rd1"><div class="sn sn2">2</div><h3>Получай подборку</h3><p>Каждую пятницу — список вакансий из официальных немецких источников. Без спама, фейков и дублей.</p></div>
+    <div class="step reveal rd2"><div class="sn sn3">3</div><h3>Жми одну кнопку</h3><p>Выбрал вакансию — получил ATS-оптимизированный Anschreiben и Lebenslauf в PDF за 8 минут.</p></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-wrap reveal">
+  <div class="cta-box">
+    <div class="cta-t">
+      <h2>Начни сегодня. Это бесплатно.</h2>
+      <p>Первые 3 Bewerbung — без оплаты. Без карты. Без обязательств.</p>
+    </div>
+    <button class="btn-w">Попробовать бесплатно →</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo" style="font-size:18px">Bewerb<span>Zen</span></div>
+  <div class="footer-summary">"Резюме, которое проходит ATS и выглядит как продукт."</div>
+  <div>bewerbzen.de &nbsp;·&nbsp; <a href="#">Impressum</a> &nbsp;·&nbsp; <a href="#">Datenschutz</a></div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const obs = new IntersectionObserver(
+    entries => entries.forEach((e,i) => { if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'),i*80); }),
+    {threshold:.1}
+  );
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Carousel (fade)
+  const slides  = document.querySelectorAll('.val-slide');
+  const dotsEl  = document.getElementById('carDots');
+  const progEl  = document.getElementById('progFill');
+  const curNumEl= document.getElementById('curNum');
+  const TOTAL   = slides.length;
+  let cur = 0, autoT;
+
+  // build dots
+  for(let i=0;i<TOTAL;i++){
+    const b = document.createElement('button');
+    b.className = 'dot' + (i===0?' active':'');
+    b.onclick = () => goTo(i);
+    dotsEl.appendChild(b);
+  }
+
+  function goTo(n){
+    slides[cur].classList.remove('active');
+    cur = ((n%TOTAL)+TOTAL)%TOTAL;
+    slides[cur].classList.add('active');
+    document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active',i===cur));
+    curNumEl.textContent = cur+1;
+    restartProg();
+  }
+
+  function restartProg(){
+    clearTimeout(autoT);
+    progEl.style.transition='none'; progEl.style.width='0%';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      progEl.style.transition='width 5s linear'; progEl.style.width='100%';
+    }));
+    autoT = setTimeout(()=>goTo(cur+1), 5000);
+  }
+
+  document.getElementById('carPrev').onclick = () => goTo(cur-1);
+  document.getElementById('carNext').onclick = () => goTo(cur+1);
+  goTo(0);
+</script>
+</body>
+</html>

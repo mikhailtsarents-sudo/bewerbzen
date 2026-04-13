@@ -1,0 +1,15 @@
+Button states — primary CTA (final slide)
+
+Button label: Bewerben
+
+Normal
+- background: linear-gradient(90deg, #5B7CFF, #7B94FF)
+- color: #FFFFFF
+- shadow: 0 10px 30px rgba(91,124,255,0.25)
+
+Hover
+- transform: translateY(-1px)
+- shadow: 0 14px 36px rgba(91,124,255,0.30)
+
+Active
+- transform: scale(0.98)

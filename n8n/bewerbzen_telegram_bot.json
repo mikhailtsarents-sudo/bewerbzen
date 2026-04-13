@@ -1,0 +1,236 @@
+{
+  "name": "BewerbZen Telegram Bot MVP",
+  "nodes": [
+
+    {
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": {}
+      },
+      "id": "tg-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [220, 300],
+      "credentials": {
+        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+      },
+      "webhookId": "bewerbzen-bot-webhook"
+    },
+
+    {
+      "parameters": {
+        "jsCode": "const msg = $input.first().json.message;\nconst text = (msg?.text || '').trim();\nconst chatId = msg?.chat?.id;\nconst userId = String(msg?.from?.id || '');\nconst firstName = msg?.from?.first_name || 'друг';\n\nlet command = 'text';\nif (text.startsWith('/start'))    command = 'start';\nelse if (text.startsWith('/help')) command = 'help';\nelse if (text.startsWith('/bewerben') || text.startsWith('/bewerbung')) command = 'bewerben';\nelse if (text.startsWith('/status'))  command = 'status';\nelse if (text.startsWith('/'))         command = 'unknown_cmd';\n\nreturn [{ json: { chatId, userId, firstName, text, command, rawMessage: msg } }];"
+      },
+      "id": "parse-msg",
+      "name": "Parse Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "conditions": { "conditions": [{ "leftValue": "={{ $json.command }}", "rightValue": "start", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" },
+              "renameOutput": true, "outputKey": "start"
+            },
+            {
+              "conditions": { "conditions": [{ "leftValue": "={{ $json.command }}", "rightValue": "help", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" },
+              "renameOutput": true, "outputKey": "help"
+            },
+            {
+              "conditions": { "conditions": [{ "leftValue": "={{ $json.command }}", "rightValue": "bewerben", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" },
+              "renameOutput": true, "outputKey": "bewerben"
+            },
+            {
+              "conditions": { "conditions": [{ "leftValue": "={{ $json.command }}", "rightValue": "status", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" },
+              "renameOutput": true, "outputKey": "status"
+            },
+            {
+              "conditions": { "conditions": [{ "leftValue": "={{ $json.command }}", "rightValue": "text", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" },
+              "renameOutput": true, "outputKey": "text"
+            }
+          ]
+        },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "id": "router",
+      "name": "Command Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [660, 300]
+    },
+
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "Привет, {{ $json.firstName }}! 👋\n\nЯ — BewerbZen. Помогаю русскоязычным в Германии делать *Bewerbung правильно и быстро*.\n\n*Что умею:*\n📋 Составить Anschreiben под конкретную вакансию\n📄 Адаптировать Lebenslauf под немецкий стандарт\n🔍 Найти подходящие вакансии _(скоро)_\n\n*Как начать:*\nНапиши /bewerben — и пришли текст вакансии.\nГенерирую Anschreiben за ~15 секунд.\n\n✨ *Первые 3 Bewerbung — бесплатно*\n\nГотов? → /bewerben",
+        "additionalFields": { "parse_mode": "Markdown" }
+      },
+      "id": "send-start",
+      "name": "Send Welcome",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [900, 60],
+      "credentials": {
+        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+      }
+    },
+
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "📋 *BewerbZen — справка*\n\n*Команды:*\n/bewerben — составить Anschreiben\n/status — сколько Bewerbung осталось бесплатно\n/help — эта справка\n\n*Как это работает:*\n1. Напиши /bewerben\n2. Отправь текст вакансии (скопируй с сайта)\n3. Получи готовый Anschreiben на немецком\n\n*Что нужно для хорошего результата:*\n• Полное описание вакансии\n• Пару слов о твоём опыте (необязательно, но улучшает качество)\n• Уровень немецкого (B1 / B2 / C1 — если есть)\n\n*Цены:*\n🆓 Первые 3 Bewerbung — бесплатно\n💳 Далее: €4.99 за пакет 3 штуки\n♾️ Подписка: €12.99/месяц — безлимит\n\n*Вопросы?* Пиши @mihailcarenc",
+        "additionalFields": { "parse_mode": "Markdown" }
+      },
+      "id": "send-help",
+      "name": "Send Help",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [900, 200],
+      "credentials": {
+        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+      }
+    },
+
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "Давай составим Bewerbung! ✍️\n\n*Пришли текст вакансии* — просто скопируй описание с сайта работодателя или со StepStone / Indeed / Xing.\n\nЧем полнее текст — тем точнее Anschreiben.\n\n💡 *Опционально* — добавь в конце пару слов о себе:\n_«Я frontend-разработчик с 3 годами опыта, B2 немецкий»_",
+        "additionalFields": { "parse_mode": "Markdown" }
+      },
+      "id": "send-bewerben-prompt",
+      "name": "Ask for Vacancy",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [900, 340],
+      "credentials": {
+        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+      }
+    },
+
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "📊 *Твой статус*\n\n✅ Использовано: 0 из 3 бесплатных\n🎁 Осталось бесплатно: 3\n\n_Трекинг использования будет активен с версии 1.1_\n\nГотов составить Bewerbung? → /bewerben",
+        "additionalFields": { "parse_mode": "Markdown" }
+      },
+      "id": "send-status",
+      "name": "Send Status",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [900, 480],
+      "credentials": {
+        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+      }
+    },
+
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "⏳ Генерирую Anschreiben под эту вакансию...\n\nОбычно занимает 10–20 секунд.",
+        "additionalFields": {}
+      },
+      "id": "send-typing",
+      "name": "Send Loading",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [900, 620],
+      "credentials": {
+        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+      }
+    },
+
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key",          "value": "REPLACE_WITH_CLAUDE_API_KEY" },
+            { "name": "anthropic-version",   "value": "2023-06-01" },
+            { "name": "content-type",        "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"model\": \"claude-opus-4-5\",\n  \"max_tokens\": 1200,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Du bist ein erfahrener Karriereberater in Deutschland mit 15 Jahren Erfahrung. Erstelle ein professionelles, überzeugendes Anschreiben auf Deutsch nach aktuellem deutschen Standard.\\n\\nAnforderungen:\\n- Klassischer Aufbau: Ort und Datum, Betreff, Anrede, 3 Absätze, Schluss\\n- Formeller aber nicht steifer Stil — überzeugend und authentisch\\n- Direkt auf die Stelle zugeschnitten — keine Floskeln\\n- ATS-optimiert: wichtige Keywords aus der Stellenanzeige natürlich einbauen\\n- Länge: 250–320 Wörter\\n- Platzhalter für persönliche Daten in [eckigen Klammern]\\n\\nFormat des Anschreibens:\\n[Vorname Nachname]\\n[Straße Nr.]\\n[PLZ Stadt]\\n[E-Mail] | [Telefon]\\n\\n[Stadt], [Datum]\\n\\n[Firmenname]\\nz. Hd. [Ansprechpartner oder \\\"die Personalabteilung\\\"]\\n[Adresse des Unternehmens]\\n\\nBetreff: Bewerbung als [Stelle] — Ihre Stellenausschreibung vom [Datum]\\n\\nSehr geehrte Damen und Herren,\\n\\n[Absatz 1: Einstieg mit Bezug zur Stelle und kurzem Stärken-Hook]\\n\\n[Absatz 2: Relevante Erfahrungen und Kompetenzen — konkret, mit Zahlen wenn möglich]\\n\\n[Absatz 3: Motivation für genau dieses Unternehmen + Abschluss mit klarem Call to Action]\\n\\nMit freundlichen Grüßen,\\n\\n[Vorname Nachname]\\n\\n---\\nNachricht des Bewerbers / Stellenbeschreibung:\\n{{ $json.text }}\\n\\nGib NUR den vollständigen Anschreiben-Text zurück. Keine Erklärungen, keine Kommentare, kein JSON — nur den Brief.\"\n    }\n  ]\n}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "claude-api",
+      "name": "Claude API — Anschreiben",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1140, 620]
+    },
+
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst anschreiben = response.content?.[0]?.text || 'Не удалось сгенерировать. Попробуй ещё раз через /bewerben';\nconst chatId = $('Parse Message').first().json.chatId;\nconst firstName = $('Parse Message').first().json.firstName;\n\n// Trim and clean up\nconst cleaned = anschreiben.trim();\n\nreturn [{ json: { chatId, firstName, anschreiben: cleaned } }];"
+      },
+      "id": "format-result",
+      "name": "Format Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1360, 620]
+    },
+
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "=✅ *Готово, {{ $json.firstName }}!*\n\n```\n{{ $json.anschreiben }}\n```\n\n---\n📌 *Что дальше:*\n1. Замени всё в \\[квадратных скобках\\] на свои данные\n2. Проверь имя контактного лица на сайте компании\n3. Сохрани как PDF (Google Docs → Файл → Скачать → PDF)\n4. Приложи к заявке вместе с Lebenslauf\n\n💡 Нужно улучшить результат? Пришли вакансию снова с больше деталей о себе.\n\n📊 *Использовано: 1 из 3 бесплатных* ✨\n/status — посмотреть баланс",
+        "additionalFields": { "parse_mode": "Markdown" }
+      },
+      "id": "send-result",
+      "name": "Send Anschreiben",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1580, 620],
+      "credentials": {
+        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+      }
+    },
+
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "Не понял команду 🤔\n\nПопробуй:\n/bewerben — составить Bewerbung\n/help — справка\n/start — начать заново\n\nИли просто пришли текст вакансии — разберусь.",
+        "additionalFields": {}
+      },
+      "id": "send-fallback",
+      "name": "Send Fallback",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [900, 760],
+      "credentials": {
+        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+      }
+    }
+
+  ],
+
+  "connections": {
+    "Telegram Trigger":    { "main": [[{ "node": "Parse Message",   "type": "main", "index": 0 }]] },
+    "Parse Message":       { "main": [[{ "node": "Command Router",  "type": "main", "index": 0 }]] },
+    "Command Router": {
+      "start":       [{ "node": "Send Welcome",      "type": "main", "index": 0 }],
+      "help":        [{ "node": "Send Help",          "type": "main", "index": 0 }],
+      "bewerben":    [{ "node": "Ask for Vacancy",    "type": "main", "index": 0 }],
+      "status":      [{ "node": "Send Status",        "type": "main", "index": 0 }],
+      "text":        [{ "node": "Send Loading",       "type": "main", "index": 0 }],
+      "extra":       [{ "node": "Send Fallback",      "type": "main", "index": 0 }]
+    },
+    "Send Loading":         { "main": [[{ "node": "Claude API — Anschreiben", "type": "main", "index": 0 }]] },
+    "Claude API — Anschreiben": { "main": [[{ "node": "Format Result",        "type": "main", "index": 0 }]] },
+    "Format Result":        { "main": [[{ "node": "Send Anschreiben",         "type": "main", "index": 0 }]] }
+  },
+
+  "settings": { "executionOrder": "v1" },
+  "tags": ["bewerbzen", "telegram", "mvp"],
+  "meta": { "instanceId": "bewerbzen-bot-v2" }
+}

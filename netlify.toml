@@ -1,0 +1,35 @@
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[redirects]]
+  from = "/bot"
+  to   = "https://t.me/BewerbZenBot"
+  status = 302
+
+[[redirects]]
+  from = "/start"
+  to   = "https://t.me/BewerbZenBot"
+  status = 302
+
+[[redirects]]
+  from = "/channel"
+  to   = "https://t.me/BewerbZen"
+  status = 302

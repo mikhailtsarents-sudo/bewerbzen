@@ -1,0 +1,11 @@
+
+PRIMARY BUTTON
+
+Normal:
+background: linear-gradient(90deg, #5B7CFF, #7B94FF);
+
+Hover:
+transform: scale(1.02);
+
+Active:
+transform: scale(0.98);

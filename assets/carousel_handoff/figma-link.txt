@@ -1,0 +1,2 @@
+No live Figma link exists in this environment.
+Use this folder as the handoff package for the story carousel.

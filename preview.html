@@ -544,6 +544,260 @@
       .story-carousel { height: 380px; }
       .story-headline { font-size: 18px; }
     }
+
+    /* ═══════════════════════════════════════
+       REGISTRATION MODAL
+    ═══════════════════════════════════════ */
+    .fm-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(10,14,30,.55);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    .fm-overlay.open { opacity: 1; pointer-events: all; }
+
+    .fm-container {
+      background: #fff;
+      border-radius: 24px;
+      width: 100%; max-width: 480px;
+      box-shadow: 0 32px 80px rgba(0,0,0,.18);
+      overflow: hidden;
+      position: relative;
+      transform: translateY(20px);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .fm-overlay.open .fm-container { transform: translateY(0); }
+
+    /* Progress bar top */
+    .fm-top-bar {
+      height: 4px; background: #F0F2F8;
+      position: relative;
+    }
+    .fm-top-bar-fill {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 0 4px 4px 0;
+      transition: width .4s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Close button */
+    .fm-close {
+      position: absolute; top: 16px; right: 16px; z-index: 10;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #F0F2F8; border: none; cursor: pointer;
+      font-size: 18px; color: var(--text-2); line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
+    }
+    .fm-close:hover { background: #E4E7F0; }
+
+    /* Step wrapper */
+    .fm-body { padding: 32px 36px 36px; }
+
+    .fm-step { display: none; }
+    .fm-step.active { display: block; animation: fmIn .3s ease forwards; }
+    @keyframes fmIn { from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:translateX(0)} }
+    .fm-step.back { animation: fmBack .3s ease forwards; }
+    @keyframes fmBack { from{opacity:0;transform:translateX(-16px)} to{opacity:1;transform:translateX(0)} }
+
+    /* Step header */
+    .fm-step-num {
+      font-family: 'Sora', sans-serif;
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .fm-step h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px; font-weight: 700; letter-spacing: -.02em;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .fm-step-sub {
+      font-size: 14px; color: var(--text-2); margin-bottom: 28px; line-height: 1.5;
+    }
+
+    /* Floating label input */
+    .fm-field {
+      position: relative; margin-bottom: 16px;
+    }
+    .fm-field input {
+      width: 100%; padding: 18px 16px 8px;
+      border: 1.5px solid rgba(0,0,0,.12);
+      border-radius: 14px; font-size: 15px;
+      font-family: 'Inter', sans-serif; color: var(--text);
+      background: #FAFBFF; outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      box-sizing: border-box;
+    }
+    .fm-field input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(91,124,255,.12);
+      background: #fff;
+    }
+    .fm-field label {
+      position: absolute; left: 16px; top: 14px;
+      font-size: 15px; color: var(--text-3);
+      pointer-events: none;
+      transition: top .18s, font-size .18s, color .18s;
+    }
+    .fm-field input:focus ~ label,
+    .fm-field input:not(:placeholder-shown) ~ label {
+      top: 6px; font-size: 10px; font-weight: 600;
+      letter-spacing: .5px; text-transform: uppercase;
+      color: var(--primary);
+    }
+    .fm-field input::placeholder { color: transparent; }
+
+    /* Autocomplete dropdown */
+    .fm-suggestions {
+      position: absolute; left: 0; right: 0; top: calc(100% + 4px);
+      background: #fff; border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      border: 1px solid rgba(0,0,0,.07);
+      z-index: 100; overflow: hidden;
+      display: none;
+    }
+    .fm-suggestions.open { display: block; }
+    .fm-suggestion {
+      padding: 13px 16px; cursor: pointer;
+      font-size: 14px; color: var(--text);
+      display: flex; align-items: flex-start; gap: 10px;
+      border-bottom: 1px solid rgba(0,0,0,.05);
+      transition: background .15s;
+    }
+    .fm-suggestion:last-child { border-bottom: none; }
+    .fm-suggestion:hover { background: #F4F7FB; }
+    .fm-suggestion-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+    .fm-suggestion-main { font-weight: 500; }
+    .fm-suggestion-sub { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+    /* Confirmed location chip */
+    .fm-confirmed {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(0,200,150,.08);
+      border: 1px solid rgba(0,200,150,.22);
+      border-radius: 12px; padding: 12px 16px;
+      margin-top: 8px; margin-bottom: 4px;
+    }
+    .fm-confirmed-icon { font-size: 18px; }
+    .fm-confirmed-text { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+    .fm-confirmed-change {
+      font-size: 12px; color: var(--primary); cursor: pointer;
+      font-weight: 500; text-decoration: underline;
+    }
+
+    /* Radius selector */
+    .fm-group-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-2);
+      margin: 20px 0 10px;
+    }
+    .fm-radius-group, .fm-chip-group {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .fm-radius-btn, .fm-chip {
+      padding: 8px 16px; border-radius: 999px;
+      border: 1.5px solid rgba(0,0,0,.10);
+      background: #FAFBFF; font-size: 13px; font-weight: 500;
+      color: var(--text-2); cursor: pointer;
+      transition: all .18s; font-family: 'Inter', sans-serif;
+    }
+    .fm-radius-btn:hover, .fm-chip:hover {
+      border-color: var(--primary); color: var(--primary);
+    }
+    .fm-radius-btn.active, .fm-chip.active {
+      background: var(--primary); border-color: var(--primary);
+      color: #fff;
+    }
+
+    /* Navigation buttons */
+    .fm-next, .fm-submit {
+      width: 100%; margin-top: 28px;
+      padding: 16px; border-radius: 14px; border: none;
+      background: linear-gradient(90deg, var(--primary), var(--primary-h));
+      color: #fff; font-family: 'Sora', sans-serif;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 6px 20px rgba(91,124,255,.28);
+      transition: transform .15s, box-shadow .2s;
+    }
+    .fm-next:hover, .fm-submit:hover {
+      transform: translateY(-1px); box-shadow: 0 8px 28px rgba(91,124,255,.38);
+    }
+    .fm-next:active, .fm-submit:active { transform: scale(.98); }
+    .fm-next:disabled, .fm-submit:disabled {
+      opacity: .5; cursor: not-allowed; transform: none;
+    }
+    .fm-back-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: none; border: none;
+      font-size: 13px; color: var(--text-2);
+      cursor: pointer; margin-bottom: 20px; padding: 0;
+    }
+    .fm-back-btn:hover { color: var(--text); }
+
+    /* Summary */
+    .fm-summary {
+      background: #F4F7FB; border-radius: 16px; padding: 20px;
+    }
+    .fm-summary-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    .fm-summary-row:last-child { border-bottom: none; }
+    .fm-summary-icon { font-size: 16px; margin-top: 2px; }
+    .fm-summary-label { font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text-3); margin-bottom: 2px; }
+    .fm-summary-val { font-size: 14px; font-weight: 500; color: var(--text); }
+    .fm-legal {
+      font-size: 12px; color: var(--text-3); text-align: center;
+      margin-top: 14px; line-height: 1.5;
+    }
+    .fm-legal a { color: var(--primary); text-decoration: none; }
+
+    /* Success step */
+    .fm-success {
+      text-align: center; padding: 12px 0 8px;
+    }
+    .fm-success-anim {
+      font-size: 56px; margin-bottom: 16px;
+      animation: successPop .5s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+    @keyframes successPop { from{transform:scale(0)} to{transform:scale(1)} }
+    .fm-success h3 {
+      font-family: 'Sora', sans-serif; font-size: 22px;
+      font-weight: 700; margin-bottom: 10px;
+    }
+    .fm-success p { font-size: 15px; color: var(--text-2); line-height: 1.6; margin-bottom: 24px; }
+    .fm-tg-btn {
+      display: block; text-decoration: none;
+      background: linear-gradient(90deg, #2CA5E0, #1A8BCA);
+      color: #fff; padding: 14px 28px; border-radius: 14px;
+      font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600;
+      text-align: center; margin-bottom: 12px;
+      box-shadow: 0 6px 20px rgba(44,165,224,.3);
+      transition: transform .15s;
+    }
+    .fm-tg-btn:hover { transform: translateY(-1px); }
+
+    /* Spinner */
+    .fm-spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin .7s linear infinite; margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    /* Modal mobile */
+    @media (max-width: 540px) {
+      .fm-body { padding: 24px 20px 28px; }
+      .fm-container { border-radius: 20px 20px 0 0; }
+      .fm-overlay { align-items: flex-end; padding: 0; }
+    }
   </style>
 </head>
 <body>
@@ -772,12 +1026,353 @@
 
 </div><!-- /page -->
 
+<!-- ═══ REGISTRATION MODAL ═══ -->
+<div class="fm-overlay" id="fmOverlay" role="dialog" aria-modal="true" aria-label="Регистрация">
+  <div class="fm-container" id="fmContainer">
+    <div class="fm-top-bar"><div class="fm-top-bar-fill" id="fmBar" style="width:0%"></div></div>
+    <button class="fm-close" id="fmClose" aria-label="Закрыть">✕</button>
+    <div class="fm-body">
+
+      <!-- STEP 1: Контакт -->
+      <div class="fm-step active" data-step="1">
+        <div class="fm-step-num">Шаг 1 из 4</div>
+        <h3>Как тебя зовут?</h3>
+        <p class="fm-step-sub">Нужно только имя и один способ связи — больше ничего.</p>
+        <div class="fm-field">
+          <input type="text" id="f-name" placeholder=" " autocomplete="given-name" inputmode="text"/>
+          <label for="f-name">Имя</label>
+        </div>
+        <div class="fm-field">
+          <input type="text" id="f-contact" placeholder=" " inputmode="text" autocomplete="off"/>
+          <label for="f-contact">Telegram (@username) или Email</label>
+        </div>
+        <button class="fm-next" id="s1next">Продолжить →</button>
+      </div>
+
+      <!-- STEP 2: Локация с автодополнением -->
+      <div class="fm-step" data-step="2">
+        <button class="fm-back-btn" data-back="1">← Назад</button>
+        <div class="fm-step-num">Шаг 2 из 4</div>
+        <h3>Где искать работу?</h3>
+        <p class="fm-step-sub">Введи город, PLZ или адрес — мы покажем варианты.</p>
+        <div class="fm-field" style="position:relative">
+          <input type="text" id="f-location" placeholder=" " autocomplete="off" inputmode="text"/>
+          <label for="f-location">Город, PLZ или улица</label>
+          <div class="fm-suggestions" id="fmSuggestions"></div>
+        </div>
+        <div id="fmConfirmed" style="display:none"></div>
+        <div class="fm-group-label">Радиус поиска</div>
+        <div class="fm-radius-group" id="radiusGroup">
+          <button class="fm-radius-btn" data-r="10">10 km</button>
+          <button class="fm-radius-btn active" data-r="25">25 km</button>
+          <button class="fm-radius-btn" data-r="50">50 km</button>
+          <button class="fm-radius-btn" data-r="100">100 km</button>
+          <button class="fm-radius-btn" data-r="0">Вся Германия</button>
+        </div>
+        <button class="fm-next" id="s2next">Продолжить →</button>
+      </div>
+
+      <!-- STEP 3: Профессия и предпочтения -->
+      <div class="fm-step" data-step="3">
+        <button class="fm-back-btn" data-back="2">← Назад</button>
+        <div class="fm-step-num">Шаг 3 из 4</div>
+        <h3>Какую работу ищешь?</h3>
+        <p class="fm-step-sub">Укажи профессию и параметры — мы подберём подходящее.</p>
+        <div class="fm-field">
+          <input type="text" id="f-job" placeholder=" " autocomplete="off"/>
+          <label for="f-job">Профессия или должность</label>
+        </div>
+        <div class="fm-group-label">Уровень немецкого</div>
+        <div class="fm-chip-group" id="langGroup">
+          <button class="fm-chip" data-v="none">Нет</button>
+          <button class="fm-chip" data-v="A1-A2">A1–A2</button>
+          <button class="fm-chip active" data-v="B1-B2">B1–B2</button>
+          <button class="fm-chip" data-v="C1-C2">C1–C2</button>
+          <button class="fm-chip" data-v="native">Родной</button>
+        </div>
+        <div class="fm-group-label">Тип занятости</div>
+        <div class="fm-chip-group" id="typeGroup">
+          <button class="fm-chip active" data-v="Vollzeit">Vollzeit</button>
+          <button class="fm-chip" data-v="Teilzeit">Teilzeit</button>
+          <button class="fm-chip" data-v="Minijob">Minijob</button>
+          <button class="fm-chip" data-v="any">Любой</button>
+        </div>
+        <button class="fm-next" id="s3next">Продолжить →</button>
+      </div>
+
+      <!-- STEP 4: Подтверждение -->
+      <div class="fm-step" data-step="4">
+        <button class="fm-back-btn" data-back="3">← Назад</button>
+        <div class="fm-step-num">Шаг 4 из 4</div>
+        <h3>Всё верно?</h3>
+        <p class="fm-step-sub">Проверь данные перед отправкой.</p>
+        <div class="fm-summary" id="fmSummary"></div>
+        <button class="fm-submit" id="fmSubmit">Получить доступ 🚀</button>
+        <p class="fm-legal">Нажимая кнопку, ты принимаешь <a href="#" onclick="return false">политику конфиденциальности</a>. Данные не передаются третьим лицам.</p>
+      </div>
+
+      <!-- STEP 5: Успех -->
+      <div class="fm-step" data-step="5">
+        <div class="fm-success">
+          <div class="fm-success-anim">🎉</div>
+          <h3>Заявка принята!</h3>
+          <p>Михаил свяжется с тобой в течение 24 часов.<br>А пока — подпишись на канал с вакансиями:</p>
+          <a href="https://t.me/BewerbZen" class="fm-tg-btn" target="_blank">📢 Открыть @BewerbZen</a>
+          <a href="https://t.me/BewerbZenBot" class="fm-tg-btn" style="background:linear-gradient(90deg,var(--primary),var(--primary-h));box-shadow:0 6px 20px rgba(91,124,255,.3)" target="_blank">🤖 Попробовать бота</a>
+        </div>
+      </div>
+
+    </div><!-- /fm-body -->
+  </div>
+</div>
+
 <script>
-  // ── CTA LINKS ── Replace TALLY_FORM_ID with your real Tally form ID
-  const TALLY_URL = 'https://tally.so/r/TALLY_FORM_ID';
-  document.querySelectorAll('.btn-primary, .nav-cta, .btn-white, .story-cta').forEach(btn => {
-    btn.addEventListener('click', () => window.open(TALLY_URL, '_blank'));
-  });
+  // ── MODAL LOGIC ──
+  (function() {
+    const overlay   = document.getElementById('fmOverlay');
+    const bar       = document.getElementById('fmBar');
+    const steps     = document.querySelectorAll('.fm-step');
+    const N8N_WEBHOOK = 'https://tsarents.app.n8n.cloud/webhook/bewerbzen-tally';
+    let currentStep = 1;
+    const TOTAL = 4;
+
+    // State
+    const state = {
+      name: '', contact: '',
+      location: '', locationDisplay: '', lat: '', lon: '',
+      radius: '25',
+      job: '', lang: 'B1-B2', type: 'Vollzeit'
+    };
+
+    function openModal() {
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('f-name').focus();
+    }
+    function closeModal() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // All CTA buttons open the modal
+    document.querySelectorAll('.btn-primary, .nav-cta, .btn-white, .story-cta').forEach(btn => {
+      btn.addEventListener('click', openModal);
+    });
+    document.getElementById('fmClose').addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    function setStep(n, direction) {
+      steps.forEach(s => {
+        s.classList.remove('active', 'back');
+        if (parseInt(s.dataset.step) === n) {
+          s.classList.add('active');
+          if (direction === 'back') s.classList.add('back');
+        }
+      });
+      currentStep = n;
+      const pct = n <= TOTAL ? ((n - 1) / TOTAL * 100) : 100;
+      bar.style.width = pct + '%';
+    }
+
+    // Back buttons
+    document.querySelectorAll('.fm-back-btn').forEach(btn => {
+      btn.addEventListener('click', () => setStep(parseInt(btn.dataset.back), 'back'));
+    });
+
+    // ── STEP 1 ──
+    document.getElementById('s1next').addEventListener('click', () => {
+      const name    = document.getElementById('f-name').value.trim();
+      const contact = document.getElementById('f-contact').value.trim();
+      if (!name) { shake('f-name'); return; }
+      if (!contact) { shake('f-contact'); return; }
+      state.name = name; state.contact = contact;
+      setStep(2);
+    });
+
+    // ── STEP 2: Address autocomplete ──
+    const locInput = document.getElementById('f-location');
+    const suggestions = document.getElementById('fmSuggestions');
+    const confirmed = document.getElementById('fmConfirmed');
+    let debounceTimer, selectedLocation = false;
+
+    locInput.addEventListener('input', () => {
+      selectedLocation = false;
+      confirmed.style.display = 'none';
+      locInput.style.display = 'block';
+      const q = locInput.value.trim();
+      clearTimeout(debounceTimer);
+      if (q.length < 2) { suggestions.classList.remove('open'); return; }
+      debounceTimer = setTimeout(() => fetchAddresses(q), 380);
+    });
+
+    async function fetchAddresses(q) {
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?` + new URLSearchParams({
+          format: 'json', countrycodes: 'de', q,
+          addressdetails: 1, limit: 6, 'accept-language': 'de'
+        });
+        const res = await fetch(url, { headers: { 'User-Agent': 'BewerbZen/1.0' } });
+        const data = await res.json();
+        renderSuggestions(data);
+      } catch { suggestions.classList.remove('open'); }
+    }
+
+    function renderSuggestions(results) {
+      if (!results.length) { suggestions.classList.remove('open'); return; }
+      suggestions.innerHTML = results.map((r, i) => {
+        const a = r.address || {};
+        const city = a.city || a.town || a.village || a.county || '';
+        const plz  = a.postcode || '';
+        const street = a.road ? `${a.road}${a.house_number ? ' ' + a.house_number : ''}` : '';
+        const main  = street || city || r.display_name.split(',')[0];
+        const sub   = [plz, city, a.state].filter(Boolean).join(', ');
+        const icon  = a.road ? '🏠' : '📍';
+        return `<div class="fm-suggestion" data-idx="${i}" data-lat="${r.lat}" data-lon="${r.lon}"
+                     data-display="${encodeURIComponent(main + (plz ? ', ' + plz : '') + (city ? ', ' + city : ''))}"
+                     data-city="${encodeURIComponent(city)}" data-plz="${encodeURIComponent(plz)}">
+          <span class="fm-suggestion-icon">${icon}</span>
+          <div><div class="fm-suggestion-main">${main}</div><div class="fm-suggestion-sub">${sub}</div></div>
+        </div>`;
+      }).join('');
+      suggestions.classList.add('open');
+
+      suggestions.querySelectorAll('.fm-suggestion').forEach(el => {
+        el.addEventListener('click', () => {
+          const display = decodeURIComponent(el.dataset.display);
+          state.location = display;
+          state.locationDisplay = display;
+          state.lat = el.dataset.lat;
+          state.lon = el.dataset.lon;
+          selectedLocation = true;
+          suggestions.classList.remove('open');
+          locInput.style.display = 'none';
+          confirmed.style.display = 'flex';
+          confirmed.innerHTML = `<div class="fm-confirmed">
+            <span class="fm-confirmed-icon">✅</span>
+            <span class="fm-confirmed-text">${display}</span>
+            <span class="fm-confirmed-change" id="changeLocation">Изменить</span>
+          </div>`;
+          document.getElementById('changeLocation').addEventListener('click', () => {
+            confirmed.style.display = 'none';
+            locInput.style.display = 'block';
+            locInput.value = '';
+            locInput.focus();
+            selectedLocation = false;
+          });
+        });
+      });
+    }
+
+    document.addEventListener('click', e => {
+      if (!suggestions.contains(e.target) && e.target !== locInput)
+        suggestions.classList.remove('open');
+    });
+
+    // Radius
+    document.getElementById('radiusGroup').addEventListener('click', e => {
+      const btn = e.target.closest('.fm-radius-btn');
+      if (!btn) return;
+      document.querySelectorAll('.fm-radius-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.radius = btn.dataset.r;
+    });
+
+    document.getElementById('s2next').addEventListener('click', () => {
+      if (!selectedLocation && !locInput.value.trim()) { shake('f-location'); return; }
+      if (!selectedLocation && locInput.value.trim()) {
+        state.location = locInput.value.trim();
+        state.locationDisplay = locInput.value.trim();
+      }
+      setStep(3);
+    });
+
+    // ── STEP 3: Chips ──
+    function setupChips(groupId, stateKey) {
+      document.getElementById(groupId).addEventListener('click', e => {
+        const chip = e.target.closest('.fm-chip');
+        if (!chip) return;
+        document.querySelectorAll(`#${groupId} .fm-chip`).forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        state[stateKey] = chip.dataset.v;
+      });
+    }
+    setupChips('langGroup', 'lang');
+    setupChips('typeGroup', 'type');
+
+    document.getElementById('s3next').addEventListener('click', () => {
+      const job = document.getElementById('f-job').value.trim();
+      if (!job) { shake('f-job'); return; }
+      state.job = job;
+      renderSummary();
+      setStep(4);
+    });
+
+    // ── STEP 4: Summary ──
+    function renderSummary() {
+      const radLabel = state.radius === '0' ? 'Вся Германия' : `${state.radius} km`;
+      document.getElementById('fmSummary').innerHTML = `
+        <div class="fm-summary-row">
+          <span class="fm-summary-icon">👤</span>
+          <div><div class="fm-summary-label">Имя</div><div class="fm-summary-val">${esc(state.name)}</div></div>
+        </div>
+        <div class="fm-summary-row">
+          <span class="fm-summary-icon">💬</span>
+          <div><div class="fm-summary-label">Контакт</div><div class="fm-summary-val">${esc(state.contact)}</div></div>
+        </div>
+        <div class="fm-summary-row">
+          <span class="fm-summary-icon">📍</span>
+          <div><div class="fm-summary-label">Локация</div><div class="fm-summary-val">${esc(state.locationDisplay)} · ${radLabel}</div></div>
+        </div>
+        <div class="fm-summary-row">
+          <span class="fm-summary-icon">💼</span>
+          <div><div class="fm-summary-label">Профессия</div><div class="fm-summary-val">${esc(state.job)}</div></div>
+        </div>
+        <div class="fm-summary-row">
+          <span class="fm-summary-icon">🇩🇪</span>
+          <div><div class="fm-summary-label">Немецкий · Занятость</div><div class="fm-summary-val">${state.lang} · ${state.type}</div></div>
+        </div>`;
+    }
+
+    // ── STEP 5: Submit ──
+    document.getElementById('fmSubmit').addEventListener('click', async () => {
+      const btn = document.getElementById('fmSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="fm-spinner"></span>Отправка...';
+      try {
+        await fetch(N8N_WEBHOOK, {
+          method: 'POST', mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source: 'landing_form',
+            timestamp: new Date().toISOString(),
+            ...state
+          })
+        });
+      } catch { /* no-cors — expect opaque response, that's OK */ }
+      bar.style.width = '100%';
+      setStep(5);
+    });
+
+    // Shake animation for validation
+    function shake(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = 'shakeInput .4s ease';
+      el.focus();
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+  })();
+
+  // Shake keyframes (injected once)
+  const shakeStyle = document.createElement('style');
+  shakeStyle.textContent = '@keyframes shakeInput{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}';
+  document.head.appendChild(shakeStyle);
 
   const obs = new IntersectionObserver(
     entries => entries.forEach((e,i) => { if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'),i*80); }),

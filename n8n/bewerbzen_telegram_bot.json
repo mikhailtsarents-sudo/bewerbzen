@@ -152,8 +152,7 @@
         "chatId": "={{ $json.chatId }}",
         "text": "Привет, {{ $json.firstName }}! 👋\n\nЯ — BewerbZen. Помогаю русскоязычным в Германии делать *Bewerbung правильно и быстро*.\n\n*Что умею:*\n📋 Составить Anschreiben под конкретную вакансию\n📄 Адаптировать Lebenslauf под немецкий стандарт\n🔍 Найти подходящие вакансии _(скоро)_\n\n*Как начать:*\nНапиши /bewerben — и пришли текст вакансии.\nГенерирую Anschreiben за ~15 секунд.\n\n✨ *Первые 3 Bewerbung — бесплатно*\n\nГотов? → /bewerben",
         "additionalFields": {
-          "parse_mode": "Markdown",
-          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"📄 Составить Bewerbung\", \"callback_data\": \"cmd_bewerben\"}, {\"text\": \"❓ Справка\", \"callback_data\": \"cmd_help\"}], [{\"text\": \"📊 Мой статус\", \"callback_data\": \"cmd_status\"}]]}"
+          "parse_mode": "Markdown"
         }
       },
       "id": "send-start",
@@ -177,8 +176,7 @@
         "chatId": "={{ $json.chatId }}",
         "text": "📋 *BewerbZen — справка*\n\n*Команды:*\n/bewerben — составить Anschreiben\n/status — сколько Bewerbung осталось бесплатно\n/help — эта справка\n\n*Как это работает:*\n1. Напиши /bewerben\n2. Отправь текст вакансии (скопируй с сайта)\n3. Получи готовый Anschreiben на немецком\n\n*Что нужно для хорошего результата:*\n• Полное описание вакансии\n• Пару слов о твоём опыте (необязательно, но улучшает качество)\n• Уровень немецкого (B1 / B2 / C1 — если есть)\n\n*Цены:*\n🆓 Первые 3 Bewerbung — бесплатно\n💳 Далее: €4.99 за пакет 3 штуки\n♾️ Подписка: €12.99/месяц — безлимит\n\n*Вопросы?* Пиши @mihailcarenc",
         "additionalFields": {
-          "parse_mode": "Markdown",
-          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"📄 Составить Bewerbung\", \"callback_data\": \"cmd_bewerben\"}]]}"
+          "parse_mode": "Markdown"
         }
       },
       "id": "send-help",
@@ -202,8 +200,7 @@
         "chatId": "={{ $json.chatId }}",
         "text": "Давай составим Bewerbung! ✍️\n\n*Пришли текст вакансии* — просто скопируй описание с сайта работодателя или со StepStone / Indeed / Xing.\n\nЧем полнее текст — тем точнее Anschreiben.\n\n💡 *Опционально* — добавь в конце пару слов о себе:\n_«Я frontend-разработчик с 3 годами опыта, B2 немецкий»_",
         "additionalFields": {
-          "parse_mode": "Markdown",
-          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"❌ Отмена\", \"callback_data\": \"cmd_cancel\"}]]}"
+          "parse_mode": "Markdown"
         }
       },
       "id": "send-bewerben-prompt",
@@ -227,8 +224,7 @@
         "chatId": "={{ $json.chatId }}",
         "text": "📊 *Твой статус*\n\n✅ Использовано: 0 из 3 бесплатных\n🎁 Осталось бесплатно: 3\n\n_Трекинг использования будет активен с версии 1.1_\n\nГотов составить Bewerbung? → /bewerben",
         "additionalFields": {
-          "parse_mode": "Markdown",
-          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"📄 Начать Bewerbung\", \"callback_data\": \"cmd_bewerben\"}]]}"
+          "parse_mode": "Markdown"
         }
       },
       "id": "send-status",
@@ -325,8 +321,7 @@
         "chatId": "={{ $json.chatId }}",
         "text": "=✅ *Готово, {{ $json.firstName }}!*\n\n```\n{{ $json.anschreiben }}\n```\n\n---\n📌 *Что дальше:*\n1. Замени всё в \\[квадратных скобках\\] на свои данные\n2. Проверь имя контактного лица на сайте компании\n3. Сохрани как PDF (Google Docs → Файл → Скачать → PDF)\n4. Приложи к заявке вместе с Lebenslauf\n\n💡 Нужно улучшить результат? Пришли вакансию снова с больше деталей о себе.\n\n📊 *Использовано: {{ $json.usageCountAfter }} из 3 бесплатных* ✨\n_Осталось бесплатных: {{ $json.remaining }}_\n/status — посмотреть баланс",
         "additionalFields": {
-          "parse_mode": "Markdown",
-          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"🔄 Ещё Bewerbung\", \"callback_data\": \"cmd_bewerben\"}, {\"text\": \"📊 Мой статус\", \"callback_data\": \"cmd_status\"}]]}"
+          "parse_mode": "Markdown"
         }
       },
       "id": "send-result",
@@ -377,38 +372,58 @@
         620
       ],
       "parameters": {
-        "jsCode": "\n// Read persistent usage data stored in workflow static data\nconst data = $getWorkflowStaticData('global');\nif (!data.users) data.users = {};\n\nconst chatId = String($input.first().json.chatId);\nif (!data.users[chatId]) {\n  data.users[chatId] = { count: 0, isPaid: false, firstName: $input.first().json.firstName || '' };\n}\n\nconst user = data.users[chatId];\nconst FREE_LIMIT = 3;\nconst limitOk = user.isPaid || user.count < FREE_LIMIT;\n\n// Pass everything through, adding limitOk flag\nreturn [{\n  json: {\n    ...$input.first().json,\n    usageCount: user.count,\n    isPaid: user.isPaid,\n    limitOk: limitOk\n  }\n}];\n"
+        "jsCode": "\nconst data = $getWorkflowStaticData('global');\nif (!data.users) data.users = {};\n\nconst chatId = String($input.first().json.chatId);\nif (!data.users[chatId]) {\n  data.users[chatId] = { count: 0, isPaid: false };\n}\n\nconst user = data.users[chatId];\nconst FREE_LIMIT = 3;\nconst limitOk = user.isPaid || user.count < FREE_LIMIT;\n\nreturn [{\n  json: {\n    ...$input.first().json,\n    usageCount: user.count,\n    isPaid: user.isPaid,\n    limitOk: String(limitOk)\n  }\n}];\n"
       }
     },
     {
       "id": "limit-router-001",
       "name": "Limit Router",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
       "position": [
         1120,
         620
       ],
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
+        "rules": {
+          "rules": [
             {
-              "id": "limitok-check",
-              "leftValue": "={{ $json.limitOk }}",
-              "rightValue": true,
-              "operator": {
-                "type": "boolean",
-                "operation": "equals"
-              }
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.limitOk }}",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "allowed"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.limitOk }}",
+                    "rightValue": "false",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "blocked"
             }
-          ],
-          "combinator": "and"
-        }
+          ]
+        },
+        "options": {}
       }
     },
     {
@@ -424,8 +439,7 @@
         "chatId": "={{ $json.chatId }}",
         "text": "Ты использовал все *3 бесплатных Bewerbung* 🎉\n\nЧтобы продолжить, выбери пакет:\n\n💳 *Пакет 3 Bewerbung — €4.99*\n♾️ *Подписка — €12.99/мес*\n\nПосле оплаты лимит снимается автоматически.\n\n_Вопросы? → @mihailcarenc_",
         "additionalFields": {
-          "parse_mode": "Markdown",
-          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"💳 Пакет 3 шт — €4.99\", \"url\": \"https://bewerbzen.de/#pricing\"}, {\"text\": \"♾️ Подписка — €12.99\", \"url\": \"https://bewerbzen.de/#pricing\"}]]}"
+          "parse_mode": "Markdown"
         }
       },
       "credentials": {

@@ -21,12 +21,12 @@
 
 [[redirects]]
   from = "/bot"
-  to   = "https://t.me/BewerbZenBot"
+  to   = "https://t.me/BewerbZen_bot"
   status = 302
 
 [[redirects]]
   from = "/start"
-  to   = "https://t.me/BewerbZenBot"
+  to   = "https://t.me/BewerbZen_bot"
   status = 302
 
 [[redirects]]

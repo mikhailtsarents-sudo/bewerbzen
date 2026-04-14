@@ -1,23 +1,35 @@
 {
+  "updatedAt": "2026-04-14T06:31:34.918Z",
+  "createdAt": "2026-04-13T21:55:49.027Z",
+  "id": "wSewHe5jlOvtPw1q",
   "name": "BewerbZen Telegram Bot MVP",
+  "description": null,
+  "active": false,
+  "isArchived": false,
   "nodes": [
-
     {
       "parameters": {
-        "updates": ["message"],
+        "updates": [
+          "message"
+        ],
         "additionalFields": {}
       },
       "id": "tg-trigger",
       "name": "Telegram Trigger",
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.1,
-      "position": [220, 300],
+      "position": [
+        220,
+        300
+      ],
       "credentials": {
-        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+        "telegramApi": {
+          "id": "uE6DuDMJoG0kKw65",
+          "name": "Telegram account"
+        }
       },
       "webhookId": "bewerbzen-bot-webhook"
     },
-
     {
       "parameters": {
         "jsCode": "const msg = $input.first().json.message;\nconst text = (msg?.text || '').trim();\nconst chatId = msg?.chat?.id;\nconst userId = String(msg?.from?.id || '');\nconst firstName = msg?.from?.first_name || 'друг';\n\nlet command = 'text';\nif (text.startsWith('/start'))    command = 'start';\nelse if (text.startsWith('/help')) command = 'help';\nelse if (text.startsWith('/bewerben') || text.startsWith('/bewerbung')) command = 'bewerben';\nelse if (text.startsWith('/status'))  command = 'status';\nelse if (text.startsWith('/'))         command = 'unknown_cmd';\n\nreturn [{ json: { chatId, userId, firstName, text, command, rawMessage: msg } }];"
@@ -26,108 +38,215 @@
       "name": "Parse Message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [440, 300]
+      "position": [
+        440,
+        300
+      ]
     },
-
     {
       "parameters": {
         "rules": {
           "rules": [
             {
-              "conditions": { "conditions": [{ "leftValue": "={{ $json.command }}", "rightValue": "start", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" },
-              "renameOutput": true, "outputKey": "start"
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "start"
             },
             {
-              "conditions": { "conditions": [{ "leftValue": "={{ $json.command }}", "rightValue": "help", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" },
-              "renameOutput": true, "outputKey": "help"
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help"
             },
             {
-              "conditions": { "conditions": [{ "leftValue": "={{ $json.command }}", "rightValue": "bewerben", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" },
-              "renameOutput": true, "outputKey": "bewerben"
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "bewerben",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "bewerben"
             },
             {
-              "conditions": { "conditions": [{ "leftValue": "={{ $json.command }}", "rightValue": "status", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" },
-              "renameOutput": true, "outputKey": "status"
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "status"
             },
             {
-              "conditions": { "conditions": [{ "leftValue": "={{ $json.command }}", "rightValue": "text", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" },
-              "renameOutput": true, "outputKey": "text"
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
             }
           ]
         },
-        "options": { "fallbackOutput": "extra" }
+        "options": {
+          "fallbackOutput": "extra"
+        }
       },
       "id": "router",
       "name": "Command Router",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
-      "position": [660, 300]
+      "position": [
+        660,
+        300
+      ]
     },
-
     {
       "parameters": {
         "chatId": "={{ $json.chatId }}",
         "text": "Привет, {{ $json.firstName }}! 👋\n\nЯ — BewerbZen. Помогаю русскоязычным в Германии делать *Bewerbung правильно и быстро*.\n\n*Что умею:*\n📋 Составить Anschreiben под конкретную вакансию\n📄 Адаптировать Lebenslauf под немецкий стандарт\n🔍 Найти подходящие вакансии _(скоро)_\n\n*Как начать:*\nНапиши /bewerben — и пришли текст вакансии.\nГенерирую Anschreiben за ~15 секунд.\n\n✨ *Первые 3 Bewerbung — бесплатно*\n\nГотов? → /bewerben",
-        "additionalFields": { "parse_mode": "Markdown" }
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"📄 Составить Bewerbung\", \"callback_data\": \"cmd_bewerben\"}, {\"text\": \"❓ Справка\", \"callback_data\": \"cmd_help\"}], [{\"text\": \"📊 Мой статус\", \"callback_data\": \"cmd_status\"}]]}"
+        }
       },
       "id": "send-start",
       "name": "Send Welcome",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [900, 60],
+      "position": [
+        900,
+        60
+      ],
       "credentials": {
-        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
-      }
+        "telegramApi": {
+          "id": "uE6DuDMJoG0kKw65",
+          "name": "Telegram account"
+        }
+      },
+      "webhookId": "b1f36037-716d-4c19-882a-8f07dc546a13"
     },
-
     {
       "parameters": {
         "chatId": "={{ $json.chatId }}",
         "text": "📋 *BewerbZen — справка*\n\n*Команды:*\n/bewerben — составить Anschreiben\n/status — сколько Bewerbung осталось бесплатно\n/help — эта справка\n\n*Как это работает:*\n1. Напиши /bewerben\n2. Отправь текст вакансии (скопируй с сайта)\n3. Получи готовый Anschreiben на немецком\n\n*Что нужно для хорошего результата:*\n• Полное описание вакансии\n• Пару слов о твоём опыте (необязательно, но улучшает качество)\n• Уровень немецкого (B1 / B2 / C1 — если есть)\n\n*Цены:*\n🆓 Первые 3 Bewerbung — бесплатно\n💳 Далее: €4.99 за пакет 3 штуки\n♾️ Подписка: €12.99/месяц — безлимит\n\n*Вопросы?* Пиши @mihailcarenc",
-        "additionalFields": { "parse_mode": "Markdown" }
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"📄 Составить Bewerbung\", \"callback_data\": \"cmd_bewerben\"}]]}"
+        }
       },
       "id": "send-help",
       "name": "Send Help",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [900, 200],
+      "position": [
+        900,
+        200
+      ],
       "credentials": {
-        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
-      }
+        "telegramApi": {
+          "id": "uE6DuDMJoG0kKw65",
+          "name": "Telegram account"
+        }
+      },
+      "webhookId": "2f39b327-e32d-4138-a492-a5b563c10d28"
     },
-
     {
       "parameters": {
         "chatId": "={{ $json.chatId }}",
         "text": "Давай составим Bewerbung! ✍️\n\n*Пришли текст вакансии* — просто скопируй описание с сайта работодателя или со StepStone / Indeed / Xing.\n\nЧем полнее текст — тем точнее Anschreiben.\n\n💡 *Опционально* — добавь в конце пару слов о себе:\n_«Я frontend-разработчик с 3 годами опыта, B2 немецкий»_",
-        "additionalFields": { "parse_mode": "Markdown" }
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"❌ Отмена\", \"callback_data\": \"cmd_cancel\"}]]}"
+        }
       },
       "id": "send-bewerben-prompt",
       "name": "Ask for Vacancy",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [900, 340],
+      "position": [
+        900,
+        340
+      ],
       "credentials": {
-        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
-      }
+        "telegramApi": {
+          "id": "uE6DuDMJoG0kKw65",
+          "name": "Telegram account"
+        }
+      },
+      "webhookId": "678a2d67-675d-4210-bdf1-3fa7e3ab07e8"
     },
-
     {
       "parameters": {
         "chatId": "={{ $json.chatId }}",
         "text": "📊 *Твой статус*\n\n✅ Использовано: 0 из 3 бесплатных\n🎁 Осталось бесплатно: 3\n\n_Трекинг использования будет активен с версии 1.1_\n\nГотов составить Bewerbung? → /bewerben",
-        "additionalFields": { "parse_mode": "Markdown" }
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"📄 Начать Bewerbung\", \"callback_data\": \"cmd_bewerben\"}]]}"
+        }
       },
       "id": "send-status",
       "name": "Send Status",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [900, 480],
+      "position": [
+        900,
+        480
+      ],
       "credentials": {
-        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
-      }
+        "telegramApi": {
+          "id": "uE6DuDMJoG0kKw65",
+          "name": "Telegram account"
+        }
+      },
+      "webhookId": "25f8ea9b-f214-4599-b1d2-e137ba6d98f4"
     },
-
     {
       "parameters": {
         "chatId": "={{ $json.chatId }}",
@@ -138,12 +257,18 @@
       "name": "Send Loading",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [900, 620],
+      "position": [
+        1560,
+        620
+      ],
       "credentials": {
-        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
-      }
+        "telegramApi": {
+          "id": "uE6DuDMJoG0kKw65",
+          "name": "Telegram account"
+        }
+      },
+      "webhookId": "f1134b83-15f0-4d06-adf5-e82b027b8055"
     },
-
     {
       "parameters": {
         "method": "POST",
@@ -151,24 +276,37 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "x-api-key",          "value": "REPLACE_WITH_CLAUDE_API_KEY" },
-            { "name": "anthropic-version",   "value": "2023-06-01" },
-            { "name": "content-type",        "value": "application/json" }
+            {
+              "name": "x-api-key",
+              "value": "REPLACE_WITH_CLAUDE_API_KEY"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
         "body": "={\n  \"model\": \"claude-opus-4-5\",\n  \"max_tokens\": 1200,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Du bist ein erfahrener Karriereberater in Deutschland mit 15 Jahren Erfahrung. Erstelle ein professionelles, überzeugendes Anschreiben auf Deutsch nach aktuellem deutschen Standard.\\n\\nAnforderungen:\\n- Klassischer Aufbau: Ort und Datum, Betreff, Anrede, 3 Absätze, Schluss\\n- Formeller aber nicht steifer Stil — überzeugend und authentisch\\n- Direkt auf die Stelle zugeschnitten — keine Floskeln\\n- ATS-optimiert: wichtige Keywords aus der Stellenanzeige natürlich einbauen\\n- Länge: 250–320 Wörter\\n- Platzhalter für persönliche Daten in [eckigen Klammern]\\n\\nFormat des Anschreibens:\\n[Vorname Nachname]\\n[Straße Nr.]\\n[PLZ Stadt]\\n[E-Mail] | [Telefon]\\n\\n[Stadt], [Datum]\\n\\n[Firmenname]\\nz. Hd. [Ansprechpartner oder \\\"die Personalabteilung\\\"]\\n[Adresse des Unternehmens]\\n\\nBetreff: Bewerbung als [Stelle] — Ihre Stellenausschreibung vom [Datum]\\n\\nSehr geehrte Damen und Herren,\\n\\n[Absatz 1: Einstieg mit Bezug zur Stelle und kurzem Stärken-Hook]\\n\\n[Absatz 2: Relevante Erfahrungen und Kompetenzen — konkret, mit Zahlen wenn möglich]\\n\\n[Absatz 3: Motivation für genau dieses Unternehmen + Abschluss mit klarem Call to Action]\\n\\nMit freundlichen Grüßen,\\n\\n[Vorname Nachname]\\n\\n---\\nNachricht des Bewerbers / Stellenbeschreibung:\\n{{ $json.text }}\\n\\nGib NUR den vollständigen Anschreiben-Text zurück. Keine Erklärungen, keine Kommentare, kein JSON — nur den Brief.\"\n    }\n  ]\n}",
-        "options": { "timeout": 30000 }
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "claude-api",
       "name": "Claude API — Anschreiben",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1140, 620]
+      "position": [
+        1780,
+        620
+      ]
     },
-
     {
       "parameters": {
         "jsCode": "const response = $input.first().json;\nconst anschreiben = response.content?.[0]?.text || 'Не удалось сгенерировать. Попробуй ещё раз через /bewerben';\nconst chatId = $('Parse Message').first().json.chatId;\nconst firstName = $('Parse Message').first().json.firstName;\n\n// Trim and clean up\nconst cleaned = anschreiben.trim();\n\nreturn [{ json: { chatId, firstName, anschreiben: cleaned } }];"
@@ -177,25 +315,36 @@
       "name": "Format Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1360, 620]
+      "position": [
+        2000,
+        620
+      ]
     },
-
     {
       "parameters": {
         "chatId": "={{ $json.chatId }}",
-        "text": "=✅ *Готово, {{ $json.firstName }}!*\n\n```\n{{ $json.anschreiben }}\n```\n\n---\n📌 *Что дальше:*\n1. Замени всё в \\[квадратных скобках\\] на свои данные\n2. Проверь имя контактного лица на сайте компании\n3. Сохрани как PDF (Google Docs → Файл → Скачать → PDF)\n4. Приложи к заявке вместе с Lebenslauf\n\n💡 Нужно улучшить результат? Пришли вакансию снова с больше деталей о себе.\n\n📊 *Использовано: 1 из 3 бесплатных* ✨\n/status — посмотреть баланс",
-        "additionalFields": { "parse_mode": "Markdown" }
+        "text": "=✅ *Готово, {{ $json.firstName }}!*\n\n```\n{{ $json.anschreiben }}\n```\n\n---\n📌 *Что дальше:*\n1. Замени всё в \\[квадратных скобках\\] на свои данные\n2. Проверь имя контактного лица на сайте компании\n3. Сохрани как PDF (Google Docs → Файл → Скачать → PDF)\n4. Приложи к заявке вместе с Lebenslauf\n\n💡 Нужно улучшить результат? Пришли вакансию снова с больше деталей о себе.\n\n📊 *Использовано: {{ $json.usageCountAfter }} из 3 бесплатных* ✨\n_Осталось бесплатных: {{ $json.remaining }}_\n/status — посмотреть баланс",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"🔄 Ещё Bewerbung\", \"callback_data\": \"cmd_bewerben\"}, {\"text\": \"📊 Мой статус\", \"callback_data\": \"cmd_status\"}]]}"
+        }
       },
       "id": "send-result",
       "name": "Send Anschreiben",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [1580, 620],
+      "position": [
+        2220,
+        620
+      ],
       "credentials": {
-        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
-      }
+        "telegramApi": {
+          "id": "uE6DuDMJoG0kKw65",
+          "name": "Telegram account"
+        }
+      },
+      "webhookId": "88f2f061-e5b0-4431-9400-29047c2a7f36"
     },
-
     {
       "parameters": {
         "chatId": "={{ $json.chatId }}",
@@ -206,31 +355,272 @@
       "name": "Send Fallback",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [900, 760],
+      "position": [
+        900,
+        760
+      ],
       "credentials": {
-        "telegramApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "BewerbZen Bot" }
+        "telegramApi": {
+          "id": "uE6DuDMJoG0kKw65",
+          "name": "Telegram account"
+        }
+      },
+      "webhookId": "7ccfbc34-ac46-40d1-bb1f-9c8407eadec3"
+    },
+    {
+      "id": "check-limit-001",
+      "name": "Check & Track Usage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        620
+      ],
+      "parameters": {
+        "jsCode": "\n// Read persistent usage data stored in workflow static data\nconst data = $getWorkflowStaticData('global');\nif (!data.users) data.users = {};\n\nconst chatId = String($input.first().json.chatId);\nif (!data.users[chatId]) {\n  data.users[chatId] = { count: 0, isPaid: false, firstName: $input.first().json.firstName || '' };\n}\n\nconst user = data.users[chatId];\nconst FREE_LIMIT = 3;\nconst limitOk = user.isPaid || user.count < FREE_LIMIT;\n\n// Pass everything through, adding limitOk flag\nreturn [{\n  json: {\n    ...$input.first().json,\n    usageCount: user.count,\n    isPaid: user.isPaid,\n    limitOk: limitOk\n  }\n}];\n"
+      }
+    },
+    {
+      "id": "limit-router-001",
+      "name": "Limit Router",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        620
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "limitok-check",
+              "leftValue": "={{ $json.limitOk }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "send-limit-001",
+      "name": "Send Limit Exceeded",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        760
+      ],
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "Ты использовал все *3 бесплатных Bewerbung* 🎉\n\nЧтобы продолжить, выбери пакет:\n\n💳 *Пакет 3 Bewerbung — €4.99*\n♾️ *Подписка — €12.99/мес*\n\nПосле оплаты лимит снимается автоматически.\n\n_Вопросы? → @mihailcarenc_",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "{\"inline_keyboard\": [[{\"text\": \"💳 Пакет 3 шт — €4.99\", \"url\": \"https://bewerbzen.de/#pricing\"}, {\"text\": \"♾️ Подписка — €12.99\", \"url\": \"https://bewerbzen.de/#pricing\"}]]}"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "uE6DuDMJoG0kKw65",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "increment-count-001",
+      "name": "Increment Usage Count",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        620
+      ],
+      "parameters": {
+        "jsCode": "\n// Increment usage count after successful check\nconst data = $getWorkflowStaticData('global');\nconst chatId = String($input.first().json.chatId);\n\nif (data.users && data.users[chatId] !== undefined) {\n  data.users[chatId].count += 1;\n}\n\nconst remaining = 3 - (data.users[chatId]?.count || 1);\n\nreturn [{\n  json: {\n    ...$input.first().json,\n    usageCountAfter: data.users[chatId]?.count || 1,\n    remaining: Math.max(0, remaining)\n  }\n}];\n"
       }
     }
-
   ],
-
   "connections": {
-    "Telegram Trigger":    { "main": [[{ "node": "Parse Message",   "type": "main", "index": 0 }]] },
-    "Parse Message":       { "main": [[{ "node": "Command Router",  "type": "main", "index": 0 }]] },
-    "Command Router": {
-      "start":       [{ "node": "Send Welcome",      "type": "main", "index": 0 }],
-      "help":        [{ "node": "Send Help",          "type": "main", "index": 0 }],
-      "bewerben":    [{ "node": "Ask for Vacancy",    "type": "main", "index": 0 }],
-      "status":      [{ "node": "Send Status",        "type": "main", "index": 0 }],
-      "text":        [{ "node": "Send Loading",       "type": "main", "index": 0 }],
-      "extra":       [{ "node": "Send Fallback",      "type": "main", "index": 0 }]
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parse Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
-    "Send Loading":         { "main": [[{ "node": "Claude API — Anschreiben", "type": "main", "index": 0 }]] },
-    "Claude API — Anschreiben": { "main": [[{ "node": "Format Result",        "type": "main", "index": 0 }]] },
-    "Format Result":        { "main": [[{ "node": "Send Anschreiben",         "type": "main", "index": 0 }]] }
+    "Parse Message": {
+      "main": [
+        [
+          {
+            "node": "Command Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Command Router": {
+      "start": [
+        {
+          "node": "Send Welcome",
+          "type": "main",
+          "index": 0
+        }
+      ],
+      "help": [
+        {
+          "node": "Send Help",
+          "type": "main",
+          "index": 0
+        }
+      ],
+      "bewerben": [
+        {
+          "node": "Ask for Vacancy",
+          "type": "main",
+          "index": 0
+        }
+      ],
+      "status": [
+        {
+          "node": "Send Status",
+          "type": "main",
+          "index": 0
+        }
+      ],
+      "text": [
+        {
+          "node": "Check & Track Usage",
+          "type": "main",
+          "index": 0
+        }
+      ],
+      "extra": [
+        {
+          "node": "Send Fallback",
+          "type": "main",
+          "index": 0
+        }
+      ]
+    },
+    "Send Loading": {
+      "main": [
+        [
+          {
+            "node": "Claude API — Anschreiben",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude API — Anschreiben": {
+      "main": [
+        [
+          {
+            "node": "Format Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Result": {
+      "main": [
+        [
+          {
+            "node": "Send Anschreiben",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check & Track Usage": {
+      "main": [
+        [
+          {
+            "node": "Limit Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Router": {
+      "main": [
+        [
+          {
+            "node": "Increment Usage Count",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Limit Exceeded",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Usage Count": {
+      "main": [
+        [
+          {
+            "node": "Send Loading",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-
-  "settings": { "executionOrder": "v1" },
-  "tags": ["bewerbzen", "telegram", "mvp"],
-  "meta": { "instanceId": "bewerbzen-bot-v2" }
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "7612a8a6-3c5c-455e-bbb6-44d00c772765",
+  "activeVersionId": null,
+  "versionCounter": 2,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-04-13T21:55:49.029Z",
+      "createdAt": "2026-04-13T21:55:49.029Z",
+      "role": "workflow:owner",
+      "workflowId": "wSewHe5jlOvtPw1q",
+      "projectId": "AirQSpWT4t8HapjJ",
+      "project": {
+        "updatedAt": "2026-04-05T17:07:07.037Z",
+        "createdAt": "2026-04-05T17:07:01.135Z",
+        "id": "AirQSpWT4t8HapjJ",
+        "name": "Tsarents   <mikhail.tsarents@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "ae91e118-65b2-4f1f-a04c-d3ba2ec8e55d"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
 }

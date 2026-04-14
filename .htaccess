@@ -1,0 +1,39 @@
+Options -Indexes
+
+# ── Redirects ──────────────────────────────────────────────────────────────
+RewriteEngine On
+
+# /bot  → Telegram bot
+RewriteRule ^bot$ https://t.me/BewerbZen_bot [R=302,L]
+
+# /start → Telegram bot
+RewriteRule ^start$ https://t.me/BewerbZen_bot [R=302,L]
+
+# /channel → Telegram channel
+RewriteRule ^channel$ https://t.me/BewerbZen [R=302,L]
+
+# ── Security headers ───────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Frame-Options "DENY"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Long cache for assets
+  <FilesMatch "\.(png|jpg|jpeg|svg|ico|woff2|woff|ttf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # No cache for HTML
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# ── Compression ────────────────────────────────────────────────────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript image/svg+xml
+</IfModule>
+
+# ── MIME types ─────────────────────────────────────────────────────────────
+AddType image/svg+xml .svg
+AddType image/webp .webp

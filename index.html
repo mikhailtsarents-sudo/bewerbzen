@@ -3,682 +3,1652 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BewerbZen — Поиск работы в Германии без стресса</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <title>BewerbZen — Bewerbung за 8 минут. По немецкому стандарту.</title>
+  <meta name="description" content="Агрегатор вакансий и AI-генератор Bewerbung для русскоязычных в Германии. Anschreiben + Lebenslauf за 8 минут. ATS-оптимизировано. Первые 3 бесплатно."/>
+  <meta name="keywords" content="Bewerbung, Anschreiben, Lebenslauf, работа в Германии, вакансии Германия, Bewerbung erstellen"/>
+  <link rel="canonical" href="https://bewerbzen.de/"/>
 
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website"/>
+  <meta property="og:url"         content="https://bewerbzen.de/"/>
+  <meta property="og:title"       content="BewerbZen — Bewerbung за 8 минут"/>
+  <meta property="og:description" content="AI-генератор Anschreiben и Lebenslauf для русскоязычных в Германии. ATS-оптимизировано. Первые 3 бесплатно."/>
+  <meta property="og:image"       content="https://bewerbzen.de/assets/images/og-cover.png"/>
+  <meta property="og:image:width"  content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:locale"      content="ru_RU"/>
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image"/>
+  <meta name="twitter:title"       content="BewerbZen — Bewerbung за 8 минут"/>
+  <meta name="twitter:description" content="Находи вакансии и отправляй Bewerbung по немецкому стандарту — быстро и правильно."/>
+  <meta name="twitter:image"       content="https://bewerbzen.de/assets/images/og-cover.png"/>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg"/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
-    /* ── DESIGN TOKENS ───────────────────── */
+    /* ── TOKENS (from tokens.json + typography.json) ── */
     :root {
-      --bg:        #0F1115;
-      --bg-card:   #171A21;
-      --bg-card2:  #1C2030;
-      --text:      #FFFFFF;
-      --text-2:    #A1A6B0;
-      --text-3:    #5A6070;
-      --accent:    #6C8CFF;
-      --accent-h:  #8FA8FF;
-      --border:    rgba(255,255,255,0.08);
-      --border-a:  rgba(108,140,255,0.25);
-      --radius:    14px;
-      --radius-lg: 22px;
+      --primary:    #5B7CFF;
+      --primary-h:  #7B94FF;
+      --secondary:  #00C896;
+      --text:       #111827;
+      --text-2:     #6B7280;
+      --text-3:     #9CA3AF;
+      --bg-start:   #F4F7FB;
+      --bg-end:     #FDFEFF;
+      --card-bg:    #FFFFFF;
+      --border:     rgba(0,0,0,0.08);
+      --shadow:     0 10px 30px rgba(0,0,0,0.08);
+      --shadow-lg:  0 20px 50px rgba(0,0,0,0.12);
+      --r-btn:      14px;
+      --r-card:     20px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--bg);
       color: var(--text);
+      background: var(--bg-end);
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    h1,h2,h3,.logo,.btn-p,.btn-w,.nav-cta,
-    .sl-headline,.stat-n,.step h3,.cta-t h2,
-    .hc-title,.val-title,.sw-big {
+    h1,h2,h3,.logo,.btn-primary,.nav-cta,
+    .stat-num,.step-title,.cta-title {
       font-family: 'Sora', sans-serif;
     }
 
-    /* ── NAV ──────────────────────────── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 72px;
-      background: rgba(15,17,21,0.82);
-      backdrop-filter: blur(28px);
-      border-bottom: 1px solid var(--border);
+    /* ── BACKGROUND BOKEH ── */
+    .bg-bokeh {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background: linear-gradient(160deg, #F4F7FB 0%, #EEF2FF 40%, #F0FDF9 70%, #FDFEFF 100%);
+      overflow: hidden;
     }
-    .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
-    .logo span { color: var(--accent); }
-    .nav-links { display: flex; gap: 36px; list-style: none; }
-    .nav-links a { font-size: 14px; font-weight: 400; color: var(--text-2); text-decoration: none; transition: color .2s; }
-    .nav-links a:hover { color: var(--text); }
-    .nav-cta {
-      background: var(--accent); color: var(--text);
-      border: none; padding: 10px 22px; border-radius: 10px;
-      font-size: 14px; font-weight: 600; cursor: pointer;
-      box-shadow: 0 4px 14px rgba(108,140,255,0.3);
-      transition: background .2s, transform .15s, box-shadow .2s;
+    .bk {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: .55;
     }
-    .nav-cta:hover { background: var(--accent-h); transform: scale(1.02); box-shadow: 0 6px 20px rgba(108,140,255,0.4); }
+    .bk1 { width:520px; height:520px; background:#C7D6FF; top:-120px; left:-120px; animation:bkm1 12s ease-in-out infinite; }
+    .bk2 { width:380px; height:380px; background:#B8F0E2; bottom:-60px; right:-60px; animation:bkm2 14s ease-in-out infinite; }
+    .bk3 { width:260px; height:260px; background:#DDD6FE; top:40%; left:60%; animation:bkm3 10s ease-in-out infinite; }
+    .bk4 { width:200px; height:200px; background:#BAE6FD; top:20%; right:25%; animation:bkm1 16s ease-in-out infinite reverse; }
+    @keyframes bkm1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,-50px)} }
+    @keyframes bkm2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,40px)} }
+    @keyframes bkm3 { 0%,100%{transform:translate(0,0)scale(1)} 50%{transform:translate(-30px,-30px)scale(1.1)} }
 
-    /* ── HERO ────────────────────────── */
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .logo { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+    .logo span { color: var(--primary); }
+    .nav-cta {
+      background: linear-gradient(90deg, var(--primary), var(--primary-h));
+      color: #fff; border: none; padding: 10px 20px; border-radius: var(--r-btn);
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(91,124,255,.3);
+      transition: transform .15s, box-shadow .2s;
+    }
+    .nav-cta:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(91,124,255,.4); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--text-2); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── CONTENT WRAPPER ── */
+    .page { position: relative; z-index: 1; }
+
+    /* ── HERO ── */
     .hero {
       min-height: 100vh;
       display: grid; grid-template-columns: 1fr 1fr;
-      align-items: center; gap: 64px;
-      padding: 140px 72px 96px;
-      position: relative; overflow: hidden;
-      background: var(--bg);
+      align-items: center; gap: 56px;
+      padding: 120px 48px 80px;
+      max-width: 1200px; margin: 0 auto;
     }
 
-    /* blobs */
-    .blobs { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
-    .blob { position: absolute; border-radius: 50%; filter: blur(110px); }
-    .b1 { width:600px; height:600px; opacity:.28; background:radial-gradient(#3D5AFF,#7C3AED); top:-180px; left:-180px; animation:bm1 12s ease-in-out infinite; }
-    .b2 { width:450px; height:450px; opacity:.22; background:radial-gradient(#6C8CFF,#10B981); bottom:-120px; right:20px; animation:bm2 15s ease-in-out infinite; }
-    .b3 { width:300px; height:300px; opacity:.15; background:radial-gradient(#7C3AED,#6C8CFF); top:40%; left:42%; animation:bm3 18s ease-in-out infinite; }
-    @keyframes bm1 { 0%,100%{transform:translate(0,0)scale(1)} 45%{transform:translate(50px,-60px)scale(1.1)} 70%{transform:translate(-30px,40px)scale(.92)} }
-    @keyframes bm2 { 0%,100%{transform:translate(0,0)scale(1)} 35%{transform:translate(-55px,50px)scale(1.08)} 65%{transform:translate(40px,-30px)scale(.95)} }
-    @keyframes bm3 { 0%,100%{transform:translate(0,0)scale(1)rotate(0)} 50%{transform:translate(-45px,-40px)scale(1.18)rotate(22deg)} }
-
-    .grid-bg {
-      position: absolute; inset: 0; z-index: 1; pointer-events: none;
-      background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
-      background-size: 40px 40px;
-      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 100%);
-    }
-
-    .hero-text { position: relative; z-index: 2; }
+    .hero-text {}
     .badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(108,140,255,.1); border: 1px solid rgba(108,140,255,.22);
-      color: var(--accent-h); font-size: 12px; font-weight: 500; letter-spacing: .4px;
-      padding: 6px 14px; border-radius: 999px; margin-bottom: 32px;
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(91,124,255,.1); border: 1px solid rgba(91,124,255,.2);
+      color: var(--primary); font-size: 12px; font-weight: 500; letter-spacing: .3px;
+      padding: 5px 13px; border-radius: 999px; margin-bottom: 24px;
       opacity: 0; animation: fadeUp .5s .1s forwards;
     }
-    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); animation: pulse 2s infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
     h1 {
-      font-size: clamp(42px, 5vw, 68px); font-weight: 700;
-      line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 24px;
+      font-size: 44px; font-weight: 700; line-height: 1.1;
+      letter-spacing: -0.02em; margin-bottom: 20px;
       opacity: 0; animation: fadeUp .5s .18s forwards;
     }
-    .tg1 { background: linear-gradient(135deg,#fff 45%,#A1A6B0); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .tg2 { color: var(--accent); -webkit-text-fill-color: var(--accent); }
-    .tg3 { background: linear-gradient(135deg,#34D399,#10B981); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .h1-dark { color: var(--text); }
+    .h1-blue { color: var(--primary); }
 
     .subtitle {
-      font-size: 17px; font-weight: 400; color: var(--text-2); line-height: 1.65;
-      max-width: 440px; margin-bottom: 44px;
+      font-size: 16px; font-weight: 400; color: var(--text-2); line-height: 1.65;
+      max-width: 400px; margin-bottom: 36px;
       opacity: 0; animation: fadeUp .5s .26s forwards;
     }
+
     .hero-btns {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 48px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 40px;
       opacity: 0; animation: fadeUp .5s .34s forwards;
     }
-    .btn-p {
-      background: var(--accent); color: var(--text);
-      border: none; padding: 14px 28px; border-radius: 12px;
-      font-size: 15px; font-weight: 600; cursor: pointer; letter-spacing: -0.01em;
-      box-shadow: 0 4px 14px rgba(108,140,255,.32);
-      transition: background .2s, transform .15s, box-shadow .2s;
+    .btn-primary {
+      background: linear-gradient(90deg, var(--primary), var(--primary-h));
+      color: #fff; border: none; padding: 14px 26px; border-radius: var(--r-btn);
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(91,124,255,.3);
+      transition: transform .15s, box-shadow .2s;
     }
-    .btn-p:hover { background: var(--accent-h); transform: scale(1.02); box-shadow: 0 6px 22px rgba(108,140,255,.44); }
-    .btn-g {
-      background: transparent; border: 1px solid var(--border);
-      color: var(--text-2); padding: 14px 22px; border-radius: 12px;
-      font-size: 15px; font-weight: 400; cursor: pointer;
-      transition: border-color .2s, color .2s;
+    .btn-primary:hover { transform: scale(1.02); box-shadow: 0 6px 22px rgba(91,124,255,.42); }
+    .btn-primary:active { transform: scale(.98); }
+    .btn-ghost {
+      background: transparent; border: none;
+      color: var(--text-2); font-size: 15px; font-weight: 500; cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      transition: color .2s;
     }
-    .btn-g:hover { border-color: rgba(255,255,255,.2); color: var(--text); }
+    .btn-ghost:hover { color: var(--text); }
+    .play-circle {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: #fff; box-shadow: var(--shadow);
+      display: flex; align-items: center; justify-content: center; font-size: 12px;
+    }
 
     .trust-row {
-      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
       opacity: 0; animation: fadeUp .5s .42s forwards;
     }
-    .tp {
-      display: flex; align-items: center; gap: 7px;
-      background: rgba(255,255,255,.04); border: 1px solid var(--border);
-      border-radius: 999px; padding: 6px 14px;
-      font-size: 12.5px; color: var(--text-3); font-weight: 400;
-    }
+    .trust-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-2); }
+    .trust-icon { width: 20px; height: 20px; border-radius: 50%; background: rgba(0,200,150,.12); display: flex; align-items: center; justify-content: center; font-size: 11px; }
 
-    /* hero cards */
-    .hero-vis { position: relative; height: 520px; z-index: 2; opacity: 0; animation: fadeIn .7s .4s forwards; }
-    .hcard {
-      position: absolute;
-      background: var(--bg-card);
+    /* HERO VISUAL */
+    .hero-visual { position: relative; height: 460px; opacity: 0; animation: fadeIn .7s .45s forwards; }
+
+    /* main floating card */
+    .card-main {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      background: var(--card-bg); border-radius: var(--r-card);
+      box-shadow: var(--shadow-lg); padding: 22px 24px; width: 270px;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px 22px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.5);
+      animation: floatC 4s ease-in-out infinite;
     }
-    .hcard-main { top:50%; left:50%; transform:translate(-50%,-50%); width:276px; animation:floatC 4s ease-in-out infinite; }
     @keyframes floatC { 0%,100%{transform:translate(-50%,-50%)translateY(0)} 50%{transform:translate(-50%,-50%)translateY(-12px)} }
     @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-    .hc-head { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
-    .hc-icon { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#3D5AFF,#6C8CFF); display:flex; align-items:center; justify-content:center; font-size:18px; }
-    .hc-title { font-size:13px; font-weight:600; color:var(--text); letter-spacing:-.01em; }
-    .hc-sub   { font-size:11px; color:var(--text-3); margin-top:2px; }
-    .pbar { height:4px; background:rgba(255,255,255,.06); border-radius:999px; margin-bottom:14px; overflow:hidden; }
-    .pfill { height:100%; background:linear-gradient(90deg,#3D5AFF,#10B981); width:0; animation:pf 2s 1.3s ease forwards; }
-    @keyframes pf { to{width:76%} }
-    .tags { display:flex; gap:6px; flex-wrap:wrap; }
-    .tag { font-size:11px; font-weight:500; padding:4px 10px; border-radius:999px; }
-    .ta_ { background:rgba(108,140,255,.12); color:var(--accent-h); border:1px solid rgba(108,140,255,.2); }
-    .tg_ { background:rgba(16,185,129,.1); color:#34D399; border:1px solid rgba(16,185,129,.18); }
-    .ts_ { background:rgba(255,255,255,.05); color:var(--text-3); border:1px solid var(--border); }
-    .hcard-sm { display:flex; align-items:center; gap:10px; white-space:nowrap; }
-    .hc-val { font-size:19px; font-weight:700; }
-    .hc-lbl { font-size:11px; color:var(--text-3); }
-    .c-vac  { top:26px; left:-55px; animation:floatY 3.5s .5s ease-in-out infinite; }
-    .c-mat  { bottom:88px; left:-68px; animation:floatY 4.5s 1s ease-in-out infinite; }
-    .c-done { top:46px; right:-34px; animation:floatY 3.8s .8s ease-in-out infinite; }
-    .c-time { bottom:46px; right:-24px; animation:floatY 4.2s .3s ease-in-out infinite; }
-    .ca { color:var(--accent); } .cg { color:#34D399; }
 
-    /* ── VALUE CAROUSEL ──────────────── */
-    .carousel-section { background: var(--bg); padding: 96px 0; overflow: hidden; }
-    .carousel-header { text-align: center; padding: 0 72px 64px; }
-    .section-label {
-      font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 16px;
-    }
-    .section-title {
-      font-family: 'Sora', sans-serif;
-      font-size: clamp(30px,3.2vw,46px); font-weight: 700;
-      letter-spacing: -0.02em; line-height: 1.15; color: var(--text);
-    }
-    .section-sub { font-size: 16px; color: var(--text-2); margin-top: 14px; line-height: 1.65; max-width: 440px; margin-left: auto; margin-right: auto; font-weight: 400; }
+    .cm-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .cm-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg,#5B7CFF,#7B94FF); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 700; font-family:'Sora',sans-serif; flex-shrink:0; }
+    .cm-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .cm-role { font-size: 11px; color: var(--text-3); }
 
-    /* fade carousel */
-    .carousel-wrap { position: relative; padding: 0 72px; }
-    .slides-container { position: relative; min-height: 480px; }
-    .val-slide {
-      position: absolute; inset: 0;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 48px 56px;
-      opacity: 0; pointer-events: none;
-      transition: opacity .4s ease, transform .4s ease;
-      transform: translateY(12px);
+    .cm-badge {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(0,200,150,.08); border: 1px solid rgba(0,200,150,.2);
+      border-radius: 10px; padding: 10px 12px; margin-bottom: 12px;
     }
-    .val-slide.active {
-      opacity: 1; pointer-events: all;
-      transform: translateY(0);
-      position: relative;
-    }
+    .cm-badge-icon { font-size: 18px; }
+    .cm-badge-label { font-size: 12px; font-weight: 600; color: var(--secondary); }
+    .cm-badge-sub { font-size: 11px; color: var(--text-3); }
 
-    .val-left {}
-    .vs-chapter { font-size: 11px; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 16px; color: var(--accent); }
-    .val-title { font-size: clamp(24px,2.5vw,34px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 16px; color: var(--text); }
-    .val-text { font-size: 16px; color: var(--text-2); line-height: 1.7; font-weight: 400; margin-bottom: 28px; }
-    .val-cta {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(108,140,255,.12); border: 1px solid rgba(108,140,255,.25);
-      color: var(--accent-h); padding: 10px 20px; border-radius: 999px;
-      font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none;
-      transition: background .2s, color .2s;
-    }
-    .val-cta:hover { background: rgba(108,140,255,.22); color: #fff; }
+    .cm-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .cm-tag { font-size: 10px; font-weight: 500; padding: 4px 9px; border-radius: 999px; }
+    .ct-b { background: rgba(91,124,255,.1); color: var(--primary); border: 1px solid rgba(91,124,255,.18); }
+    .ct-g { background: rgba(0,200,150,.1); color: #00A87B; border: 1px solid rgba(0,200,150,.18); }
+    .ct-s { background: rgba(0,0,0,.05); color: var(--text-3); border: 1px solid rgba(0,0,0,.08); }
 
-    /* product mockup area */
-    .val-right {}
-    .product-mock {
-      background: var(--bg-card2);
+    /* small floating chips */
+    .chip {
+      position: absolute;
+      background: var(--card-bg); border-radius: 14px;
+      box-shadow: var(--shadow); padding: 12px 16px;
+      display: flex; align-items: center; gap: 10px;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
     }
-    .mock-bar {
-      height: 36px; background: rgba(255,255,255,.03);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; padding: 0 14px; gap: 7px;
-    }
-    .mock-dot { width: 9px; height: 9px; border-radius: 50%; }
-    .md-r { background: #FF5F57; } .md-y { background: #FFBD2E; } .md-g { background: #28C840; }
-    .mock-body { padding: 20px; }
+    .chip-val { font-family:'Sora',sans-serif; font-size: 18px; font-weight: 700; }
+    .chip-lbl { font-size: 11px; color: var(--text-2); }
 
-    /* vacancy card in mock */
-    .vac-item {
-      display: flex; align-items: center; gap: 14px;
-      padding: 12px 14px; border-radius: 10px;
+    .ch-vac  { top: 30px; left: -40px; animation: floatY 3.5s .5s ease-in-out infinite; }
+    .ch-pct  { bottom: 90px; left: -55px; animation: floatY 4.5s 1s ease-in-out infinite; }
+    .ch-done { top: 45px; right: -30px; animation: floatY 3.8s .8s ease-in-out infinite; }
+    .ch-time { bottom: 50px; right: -20px; animation: floatY 4.2s .3s ease-in-out infinite; }
+
+    /* ── STAT SECTION ── */
+    .stat-section {
+      padding: 80px 48px;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    .stat-block {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 48px; align-items: center;
+      background: var(--card-bg); border-radius: var(--r-card);
+      padding: 48px; box-shadow: var(--shadow);
       border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-      margin-bottom: 10px; transition: border-color .2s;
     }
-    .vac-item:hover { border-color: var(--border-a); }
-    .vac-logo { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-    .vac-info { flex: 1; }
-    .vac-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-    .vac-company { font-size: 11px; color: var(--text-3); }
-    .vac-badge { font-size: 10px; padding: 3px 8px; border-radius: 999px; font-weight: 500; white-space: nowrap; }
+    .stat-left {}
+    .stat-label { font-size: 11px; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; color: var(--primary); margin-bottom: 14px; }
+    .stat-num { font-size: 72px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; color: var(--primary); margin-bottom: 10px; }
+    .stat-desc { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 14px; font-family:'Sora',sans-serif; letter-spacing:-0.01em; }
+    .stat-sub  { font-size: 16px; color: var(--text-2); line-height: 1.65; margin-bottom: 24px; }
+    .stat-checks { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .stat-checks li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-2); }
+    .check-icon { width: 20px; height: 20px; border-radius: 50%; background: rgba(0,200,150,.1); border: 1px solid rgba(0,200,150,.2); display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
 
-    /* letter mock */
-    .letter-mock { padding: 20px; }
-    .lm-header { display:flex; justify-content:space-between; margin-bottom:16px; }
-    .lm-name { font-family:'Sora',sans-serif; font-size:13px; font-weight:600; color:var(--text); }
-    .lm-date { font-size:11px; color:var(--text-3); }
-    .lm-to { font-size:11px; color:var(--text-2); margin-bottom:14px; line-height:1.6; }
-    .lm-line { height:3px; border-radius:2px; background:rgba(255,255,255,.06); margin-bottom:7px; }
-    .lm-sig { display:flex; align-items:center; gap:8px; margin-top:16px; }
-    .lm-sig-check { width:20px; height:20px; border-radius:50%; background:rgba(52,211,153,.15); border:1px solid rgba(52,211,153,.3); display:flex; align-items:center; justify-content:center; font-size:10px; }
-
-    /* resume mock */
-    .resume-mock { padding: 20px; }
-    .rm-header { display:flex; gap:14px; margin-bottom:16px; align-items:center; }
-    .rm-avatar { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#3D5AFF,#6C8CFF); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; }
-    .rm-name { font-family:'Sora',sans-serif; font-size:14px; font-weight:700; color:var(--text); margin-bottom:4px; }
-    .rm-role { font-size:11px; color:var(--accent); }
-    .rm-section-title { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-3); margin:14px 0 8px; }
-    .rm-skill { display:inline-block; font-size:11px; padding:3px 9px; border-radius:5px; background:rgba(108,140,255,.1); border:1px solid rgba(108,140,255,.18); color:var(--accent-h); margin:0 5px 5px 0; }
-    .rm-ats { display:flex; align-items:center; gap:8px; margin-top:14px; padding:10px 12px; border-radius:8px; background:rgba(52,211,153,.08); border:1px solid rgba(52,211,153,.18); }
-    .rm-ats-score { font-family:'Sora',sans-serif; font-size:20px; font-weight:700; color:#34D399; }
-    .rm-ats-label { font-size:11px; color:#34D399; opacity:.8; }
-
-    /* profile mock */
-    .profile-mock { padding: 20px; }
-    .pm-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-    .pm-icon { width:32px; height:32px; border-radius:8px; background:rgba(108,140,255,.12); border:1px solid rgba(108,140,255,.2); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
-    .pm-label { font-size:11px; color:var(--text-3); margin-bottom:3px; }
-    .pm-value { font-size:13px; color:var(--text); font-weight:500; }
-    .pm-pill { display:inline-block; padding:4px 10px; border-radius:999px; font-size:11px; font-weight:500; background:rgba(108,140,255,.1); border:1px solid rgba(108,140,255,.18); color:var(--accent-h); margin:2px; }
-
-    /* controls */
-    .carousel-nav {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 28px 0 0;
-    }
-    .slide-counter {
-      font-family: 'Sora', sans-serif;
-      font-size: 13px; font-weight: 600; color: var(--text-3);
-    }
-    .slide-counter span { color: var(--text); }
-    .car-dots { display: flex; gap: 8px; }
-    .dot { width: 8px; height: 8px; border-radius: 999px; background: rgba(255,255,255,.15); cursor: pointer; transition: all .25s; border: none; }
-    .dot.active { width: 24px; background: var(--accent); }
-    .car-btns { display: flex; gap: 8px; }
-    .car-btn {
-      width: 40px; height: 40px; border-radius: 10px;
-      background: var(--bg-card); border: 1px solid var(--border);
-      color: var(--text-2); font-size: 15px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all .2s;
-    }
-    .car-btn:hover { border-color: rgba(255,255,255,.18); color: var(--text); background: var(--bg-card2); }
-
-    /* progress */
-    .slide-prog-wrap { height: 2px; background: var(--border); border-radius: 1px; margin-top: 20px; overflow: hidden; }
-    .slide-prog-fill { height: 100%; background: var(--accent); width: 0; transition: width 5s linear; opacity: .6; }
-
-    /* ── STATS ──────────────────────── */
-    .stats-section { padding: 96px 72px; background: var(--bg-card); border-top: 1px solid var(--border); }
-    .stats-grid {
-      display: grid; grid-template-columns: repeat(3,1fr);
-      gap: 1px; max-width: 960px; margin: 64px auto 0;
-      background: var(--border); border-radius: var(--radius-lg); overflow: hidden;
-    }
-    .stat-card { padding: 44px 36px; background: var(--bg-card); transition: background .2s; }
-    .stat-card:hover { background: var(--bg-card2); }
-    .stat-n { font-size: clamp(48px,5.5vw,72px); font-weight: 700; letter-spacing: -0.03em; line-height: 1; margin-bottom: 12px; }
-    .sn-a { color: var(--accent); }
-    .sn-r { color: #F87171; }
-    .sn-y { color: #FBBF24; }
-    .stat-d { font-size: 14px; color: var(--text-2); line-height: 1.6; font-weight: 400; margin-top: 8px; }
-
-    /* ── HOW IT WORKS ───────────────── */
-    .how-section { padding: 96px 72px; background: var(--bg); }
-    .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; max-width: 940px; margin: 60px auto 0; }
-    .step {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 36px 28px;
-      transition: transform .2s ease-out, border-color .2s;
-    }
-    .step:hover { transform: translateY(-5px); border-color: var(--border-a); }
-    .sn { width: 44px; height: 44px; border-radius: 10px; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
-    .sn1 { background:rgba(108,140,255,.15); color:var(--accent); border:1px solid rgba(108,140,255,.22); }
-    .sn2 { background:rgba(108,140,255,.1); color:var(--accent-h); border:1px solid rgba(108,140,255,.18); }
-    .sn3 { background:rgba(16,185,129,.12); color:#34D399; border:1px solid rgba(16,185,129,.2); }
-    .step h3 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 10px; color: var(--text); }
-    .step p  { font-size: 14px; color: var(--text-2); line-height: 1.7; font-weight: 400; }
-
-    /* ── CTA ────────────────────────── */
-    .cta-wrap { padding: 0 72px 96px; background: var(--bg); }
-    .cta-box {
-      background: linear-gradient(135deg, #1A2060 0%, #2B3EAD 50%, #3D55CC 100%);
-      border-radius: var(--radius-lg); padding: 72px 64px;
-      display: flex; align-items: center; justify-content: space-between; gap: 48px;
+    .stat-right {}
+    .stat-card-vis {
+      background: linear-gradient(135deg, #1A2060 0%, #3D55CC 100%);
+      border-radius: var(--r-card); padding: 24px;
+      box-shadow: 0 16px 40px rgba(61,85,204,.3);
       position: relative; overflow: hidden;
-      box-shadow: 0 24px 70px rgba(61,85,204,.3);
-      border: 1px solid rgba(108,140,255,.2);
     }
-    .cta-box::before { content:''; position:absolute; width:480px; height:480px; border-radius:50%; background:radial-gradient(rgba(255,255,255,.06),transparent 70%); top:-160px; right:-100px; pointer-events:none; }
-    .cta-t { position: relative; z-index: 1; }
-    .cta-t h2 { font-size: clamp(26px,2.8vw,36px); font-weight: 700; letter-spacing: -0.02em; color: #fff; margin-bottom: 10px; }
-    .cta-t p  { font-size: 16px; color: rgba(255,255,255,.55); font-weight: 400; }
-    .btn-w {
-      background: #fff; color: #1A2060;
-      border: none; padding: 16px 34px; border-radius: 12px;
-      font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap;
-      letter-spacing: -0.01em;
-      box-shadow: 0 4px 20px rgba(0,0,0,.2);
+    .stat-card-vis::before { content:''; position:absolute; width:200px;height:200px;border-radius:50%;background:radial-gradient(rgba(255,255,255,.08),transparent);top:-60px;right:-60px;pointer-events:none; }
+    .scv-label { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 16px; font-family:'Sora',sans-serif; }
+    .scv-num-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+    .scv-big { font-family:'Sora',sans-serif; font-size: 52px; font-weight: 700; color: #fff; letter-spacing: -0.03em; }
+    .scv-tag { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.1); color: rgba(255,255,255,.7); align-self: center; }
+    .scv-sub  { font-size: 13px; color: rgba(255,255,255,.55); margin-bottom: 20px; }
+    .scv-divider { height: 1px; background: rgba(255,255,255,.1); margin-bottom: 16px; }
+    .scv-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .scv-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .scv-item-label { font-size: 12px; color: rgba(255,255,255,.55); }
+    .scv-item-val { font-size: 12px; font-weight: 600; color: #fff; margin-left: auto; }
+
+    /* ── STEPS ── */
+    .steps-section { padding: 80px 48px; max-width: 1200px; margin: 0 auto; }
+    .section-header { text-align: center; margin-bottom: 56px; }
+    .section-label { font-size: 11px; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; color: var(--primary); margin-bottom: 14px; }
+    .section-title { font-family:'Sora',sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 12px; }
+    .section-sub { font-size: 16px; color: var(--text-2); line-height: 1.6; max-width: 440px; margin: 0 auto; }
+
+    .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .step-card {
+      background: var(--card-bg); border-radius: var(--r-card);
+      padding: 32px 28px; box-shadow: var(--shadow); border: 1px solid var(--border);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .step-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+    .step-num {
+      width: 44px; height: 44px; border-radius: 12px;
+      font-family:'Sora',sans-serif; font-size: 18px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
+    }
+    .sn1 { background: rgba(91,124,255,.1); color: var(--primary); border: 1px solid rgba(91,124,255,.18); }
+    .sn2 { background: rgba(91,124,255,.07); color: #7B94FF; border: 1px solid rgba(91,124,255,.14); }
+    .sn3 { background: rgba(0,200,150,.1); color: #00A87B; border: 1px solid rgba(0,200,150,.18); }
+    .step-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 10px; letter-spacing: -0.01em; }
+    .step p { font-size: 14px; color: var(--text-2); line-height: 1.7; }
+
+    /* ── CTA ── */
+    .cta-section { padding: 0 48px 96px; max-width: 1200px; margin: 0 auto; }
+    .cta-box {
+      background: linear-gradient(135deg, #3B4ECC 0%, #5B7CFF 50%, #7B94FF 100%);
+      border-radius: var(--r-card); padding: 64px 56px;
+      display: flex; align-items: center; justify-content: space-between; gap: 40px;
+      box-shadow: 0 20px 60px rgba(91,124,255,.35);
+      position: relative; overflow: hidden;
+    }
+    .cta-box::before { content:''; position:absolute; width:400px;height:400px;border-radius:50%;background:radial-gradient(rgba(255,255,255,.1),transparent 70%);top:-120px;right:-80px;pointer-events:none; }
+    .cta-title { font-size: 30px; font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .cta-sub   { font-size: 16px; color: rgba(255,255,255,.65); }
+    .btn-white {
+      background: #fff; color: #3B4ECC; border: none;
+      padding: 15px 32px; border-radius: var(--r-btn);
+      font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer;
+      white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,.15);
       transition: transform .15s, box-shadow .2s;
       position: relative; z-index: 1;
     }
-    .btn-w:hover { transform: scale(1.02); box-shadow: 0 8px 28px rgba(0,0,0,.28); }
+    .btn-white:hover { transform: scale(1.02); box-shadow: 0 6px 28px rgba(0,0,0,.22); }
 
-    /* ── FOOTER ─────────────────────── */
-    footer {
-      padding: 28px 72px;
+    /* ── FOOTER ── */
+    .site-footer {
       border-top: 1px solid var(--border);
-      background: var(--bg);
-      display: flex; align-items: center; justify-content: space-between;
+      background: #FAFBFF;
+      padding: 60px 48px 0;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 2fr;
+      gap: 64px; padding-bottom: 48px;
+    }
+    .footer-tagline { font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 20px; max-width: 240px; }
+    .footer-social { display: flex; flex-direction: column; gap: 8px; }
+    .footer-social-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 14px;
+      font-size: 13px; font-weight: 500; color: var(--text);
+      text-decoration: none; transition: border-color .2s, color .2s;
+    }
+    .footer-social-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .footer-links-group { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; }
+    .footer-col-title { font-family:'Sora',sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text); margin-bottom: 14px; }
+    .footer-link { display: block; font-size: 14px; color: var(--text-2); text-decoration: none; margin-bottom: 10px; transition: color .2s; }
+    .footer-link:hover { color: var(--primary); }
+    .footer-bottom {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0; border-top: 1px solid var(--border);
       font-size: 13px; color: var(--text-3);
     }
-    footer a { color: var(--text-3); text-decoration: none; }
-    footer a:hover { color: var(--text-2); }
-    .footer-summary {
-      font-size: 13px; color: var(--text-3); font-style: italic; max-width: 320px; text-align: center; line-height: 1.5;
+    @media (max-width: 900px) {
+      .footer-inner { grid-template-columns: 1fr; gap: 40px; }
+      .site-footer { padding: 40px 28px 0; }
+    }
+    @media (max-width: 767px) {
+      .site-footer { padding: 32px 20px 0; }
+      .footer-links-group { grid-template-columns: 1fr 1fr; gap: 24px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; padding: 16px 0; }
     }
 
-    /* ── UTILS ───────────────────────── */
-    @keyframes fadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    /* ── PRICING ── */
+    .pricing-section { padding: 80px 48px; max-width: 1200px; margin: 0 auto; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; align-items: start; }
+    .pricing-card {
+      background: var(--card-bg); border-radius: var(--r-card);
+      padding: 32px 28px; box-shadow: var(--shadow); border: 1px solid var(--border);
+      position: relative; transition: transform .2s, box-shadow .2s;
+    }
+    .pricing-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .pricing-card--featured {
+      border: 2px solid var(--primary);
+      box-shadow: 0 20px 60px rgba(91,124,255,.18);
+      transform: scale(1.03);
+    }
+    .pricing-card--featured:hover { transform: scale(1.03) translateY(-4px); }
+    .pc-badge {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 999px; margin-bottom: 20px;
+    }
+    .pc-badge-free    { background: rgba(0,0,0,.06); color: var(--text-2); }
+    .pc-badge-popular { background: rgba(91,124,255,.12); color: var(--primary); }
+    .pc-badge-pro     { background: rgba(0,200,150,.1); color: #00A87B; }
+    .pc-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 8px; }
+    .pc-amount { font-family:'Sora',sans-serif; font-size: 40px; font-weight: 700; color: var(--text); letter-spacing: -.03em; }
+    .pc-per { font-size: 14px; color: var(--text-2); }
+    .pc-desc { font-size: 14px; color: var(--text-2); margin-bottom: 24px; line-height: 1.5; }
+    .pc-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .pc-features li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text); }
+    .pc-features .pc-dim { color: var(--text-3); }
+    .pc-check { color: var(--secondary); font-weight: 700; font-size: 13px; flex-shrink: 0; }
+    .pc-x { color: var(--text-3); font-size: 13px; flex-shrink: 0; }
+    .pc-btn { width: 100%; text-align: center; padding: 14px; margin-bottom: 10px; }
+    .pc-note { font-size: 12px; color: var(--text-3); text-align: center; }
+
+    /* ── FAQ ── */
+    .faq-section { padding: 80px 48px; max-width: 800px; margin: 0 auto; }
+    .faq-list { display: flex; flex-direction: column; gap: 2px; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q {
+      width: 100%; text-align: left; padding: 20px 0;
+      background: none; border: none; cursor: pointer;
+      font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 600;
+      color: var(--text); display: flex; justify-content: space-between; align-items: center;
+      gap: 16px; line-height: 1.4;
+    }
+    .faq-q:hover { color: var(--primary); }
+    .faq-arrow { font-size: 18px; color: var(--text-3); transition: transform .25s; flex-shrink: 0; }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); color: var(--primary); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      font-size: 15px; color: var(--text-2); line-height: 1.7;
+      transition: max-height .3s ease, padding .3s ease;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding-bottom: 20px; }
+
+    /* Pricing responsive */
+    @media (max-width: 900px) {
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+      .pricing-card--featured { transform: none; }
+      .pricing-card--featured:hover { transform: translateY(-4px); }
+    }
+    @media (max-width: 767px) {
+      .pricing-section { padding: 40px 20px; }
+      .faq-section { padding: 40px 20px; }
+      .faq-q { font-size: 15px; }
+    }
+
+    /* ── STORY CAROUSEL ── */
+    .story-section { width: 100%; padding: 0 0 0; }
+    .story-label-wrap {
+      max-width: 1200px; margin: 0 auto;
+      padding: 80px 48px 32px; text-align: center;
+    }
+    .story-carousel {
+      position: relative; width: 100%; height: 580px;
+      overflow: hidden; cursor: pointer; user-select: none;
+    }
+    .story-slide {
+      position: absolute; inset: 0;
+      opacity: 0; transition: opacity .75s ease;
+      background-size: 201% 201%; background-repeat: no-repeat;
+    }
+    .story-slide.active { opacity: 1; }
+    .story-slide[data-idx="0"] { background-position: 0%   0%;   }
+    .story-slide[data-idx="1"] { background-position: 100% 0%;   }
+    .story-slide[data-idx="2"] { background-position: 0%   100%; }
+    .story-slide[data-idx="3"] { background-position: 100% 100%; }
+    .story-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(10,15,30,.82) 0%,
+        rgba(10,15,30,.42) 45%,
+        rgba(10,15,30,.10) 75%,
+        transparent 100%
+      );
+    }
+    .story-card {
+      position: absolute; bottom: 60px; left: 48px;
+      max-width: 420px;
+      background: rgba(255,255,255,.16);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 20px; padding: 24px 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.14);
+    }
+    .story-step {
+      font-family: 'Sora', sans-serif; font-size: 11px;
+      font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase;
+      color: rgba(255,255,255,.50); margin-bottom: 9px;
+    }
+    .story-headline {
+      font-family: 'Sora', sans-serif; font-size: 26px;
+      font-weight: 700; line-height: 1.22; letter-spacing: -.02em;
+      color: #fff; margin-bottom: 6px;
+    }
+    .sh-accent { color: var(--secondary); }
+    .story-copy {
+      font-size: 14px; line-height: 1.65;
+      color: rgba(255,255,255,.62); margin-top: 8px;
+    }
+    .story-cta {
+      display: inline-block; margin-top: 18px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-h));
+      color: #fff; border: none; padding: 13px 30px;
+      border-radius: 14px; font-family: 'Sora', sans-serif;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      box-shadow: 0 10px 30px rgba(91,124,255,.32);
+      transition: transform .15s, box-shadow .2s;
+    }
+    .story-cta:hover { transform: translateY(-1px); box-shadow: 0 14px 36px rgba(91,124,255,.44); }
+    .story-cta:active { transform: scale(.98); }
+    /* nav arrows */
+    .story-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.28);
+      backdrop-filter: blur(10px); display: flex; align-items: center;
+      justify-content: center; cursor: pointer; z-index: 10;
+      font-size: 20px; color: #fff; line-height: 1;
+      transition: background .2s; padding: 0;
+    }
+    .story-nav:hover { background: rgba(255,255,255,.30); }
+    .story-nav.prev { left: 20px; }
+    .story-nav.next { right: 20px; }
+    /* progress */
+    .story-progress {
+      position: absolute; bottom: 22px; left: 48px; right: 48px;
+      display: flex; gap: 8px; z-index: 10;
+    }
+    .sp-bar {
+      flex: 1; height: 3px; border-radius: 999px;
+      background: rgba(255,255,255,.28); overflow: hidden;
+      position: relative;
+    }
+    .sp-bar::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transform: scaleX(0); transform-origin: left; border-radius: inherit;
+    }
+    .sp-bar.done::after { transform: scaleX(1); transition: none; }
+    .sp-bar.active::after { animation: spFill 5s linear forwards; }
+    @keyframes spFill { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+
+    /* ── UTILS ── */
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
     @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
-    .reveal { opacity:0; transform:translateY(24px); transition:opacity .7s ease,transform .7s ease; }
+    .reveal { opacity:0; transform:translateY(22px); transition:opacity .6s ease,transform .6s ease; }
     .reveal.visible { opacity:1; transform:translateY(0); }
     .rd1 { transition-delay:.1s; } .rd2 { transition-delay:.2s; }
+
+    /* ── RESPONSIVE ── */
+
+    /* Tablet: 768px – 1024px */
+    @media (max-width: 1024px) {
+      nav { padding: 14px 28px; }
+      .nav-links { display: none; }
+
+      .hero {
+        grid-template-columns: 1fr; gap: 40px;
+        padding: 100px 28px 60px; min-height: auto;
+      }
+      .hero-visual { height: 320px; }
+      .ch-pct  { left: -10px; }
+      .ch-vac  { left: -10px; }
+      .ch-done { right: -10px; }
+      .ch-time { right: -10px; }
+
+      .stat-section { padding: 56px 28px; }
+      .stat-block { grid-template-columns: 1fr; gap: 32px; padding: 32px 28px; }
+      .stat-num { font-size: 56px; }
+
+      .steps-section { padding: 56px 28px; }
+      .steps-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+
+      .cta-section { padding: 0 28px 72px; }
+      .cta-box { padding: 48px 36px; }
+
+      footer { padding: 20px 28px; }
+
+      .story-label-wrap { padding: 56px 28px 28px; }
+      .story-carousel { height: 460px; }
+      .story-card { bottom: 52px; left: 28px; right: auto; max-width: 380px; }
+      .story-progress { left: 28px; right: 28px; bottom: 18px; }
+      .story-nav.prev { left: 12px; }
+      .story-nav.next { right: 12px; }
+    }
+
+    /* Mobile: up to 767px */
+    @media (max-width: 767px) {
+      nav { padding: 12px 20px; }
+      .nav-links { display: none; }
+      .nav-cta { font-size: 13px; padding: 9px 16px; }
+
+      /* Hero */
+      .hero {
+        grid-template-columns: 1fr; gap: 32px;
+        padding: 90px 20px 48px;
+      }
+      h1 { font-size: 32px; }
+      .subtitle { font-size: 15px; max-width: 100%; }
+      .hero-btns { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .btn-primary { width: 100%; text-align: center; }
+      .trust-row { gap: 12px; }
+
+      /* Hero visual — smaller, chips clamped */
+      .hero-visual { height: 260px; }
+      .card-main { width: 220px; padding: 16px 18px; }
+      .cm-avatar { width: 32px; height: 32px; font-size: 12px; }
+      .cm-name { font-size: 12px; } .cm-role { font-size: 10px; }
+      .cm-badge-label { font-size: 11px; } .cm-badge-sub { font-size: 10px; }
+      .chip { padding: 9px 12px; }
+      .chip-val { font-size: 15px; }
+      .chip-lbl { font-size: 10px; }
+      .ch-vac  { top: 10px; left: 0px; }
+      .ch-pct  { bottom: 60px; left: 0px; }
+      .ch-done { top: 20px; right: 0px; }
+      .ch-time { bottom: 20px; right: 0px; }
+
+      /* Stat */
+      .stat-section { padding: 40px 20px; }
+      .stat-block { grid-template-columns: 1fr; gap: 24px; padding: 24px 20px; }
+      .stat-num { font-size: 48px; }
+      .stat-desc { font-size: 18px; }
+      .stat-sub { font-size: 14px; }
+      .scv-big { font-size: 40px; }
+
+      /* Story carousel */
+      .story-label-wrap { padding: 40px 20px 20px; }
+      .section-title { font-size: 26px; }
+      .section-sub { font-size: 14px; }
+      .story-carousel { height: 420px; }
+      .story-card {
+        bottom: 48px; left: 20px; right: 20px; max-width: 100%;
+        padding: 18px 20px;
+      }
+      .story-headline { font-size: 20px; }
+      .story-copy { font-size: 13px; }
+      .story-step { font-size: 10px; letter-spacing: 2px; }
+      .story-progress { left: 20px; right: 20px; bottom: 16px; }
+      .story-nav { width: 36px; height: 36px; font-size: 16px; }
+      .story-nav.prev { left: 8px; }
+      .story-nav.next { right: 8px; }
+      .story-cta { font-size: 14px; padding: 11px 22px; }
+
+      /* Steps */
+      .steps-section { padding: 40px 20px; }
+      .steps-grid { grid-template-columns: 1fr; gap: 14px; }
+      .step-card { padding: 24px 20px; }
+
+      /* CTA */
+      .cta-section { padding: 0 20px 56px; }
+      .cta-box {
+        flex-direction: column; align-items: flex-start;
+        padding: 36px 24px; gap: 24px;
+      }
+      .cta-title { font-size: 22px; }
+      .cta-sub { font-size: 14px; }
+      .btn-white { width: 100%; text-align: center; }
+
+      /* Footer */
+      footer {
+        flex-direction: column; gap: 10px; text-align: center;
+        padding: 20px;
+      }
+    }
+
+    /* Very small: up to 375px */
+    @media (max-width: 375px) {
+      h1 { font-size: 28px; }
+      .story-carousel { height: 380px; }
+      .story-headline { font-size: 18px; }
+    }
+
+    /* ═══════════════════════════════════════
+       REGISTRATION MODAL
+    ═══════════════════════════════════════ */
+    .fm-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(10,14,30,.55);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    .fm-overlay.open { opacity: 1; pointer-events: all; }
+
+    .fm-container {
+      background: #fff;
+      border-radius: 24px;
+      width: 100%; max-width: 480px;
+      box-shadow: 0 32px 80px rgba(0,0,0,.18);
+      overflow: hidden;
+      position: relative;
+      transform: translateY(20px);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .fm-overlay.open .fm-container { transform: translateY(0); }
+
+    /* Progress bar top */
+    .fm-top-bar {
+      height: 4px; background: #F0F2F8;
+      position: relative;
+    }
+    .fm-top-bar-fill {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 0 4px 4px 0;
+      transition: width .4s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Close button */
+    .fm-close {
+      position: absolute; top: 16px; right: 16px; z-index: 10;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #F0F2F8; border: none; cursor: pointer;
+      font-size: 18px; color: var(--text-2); line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
+    }
+    .fm-close:hover { background: #E4E7F0; }
+
+    /* Step wrapper */
+    .fm-body { padding: 32px 36px 36px; }
+
+    .fm-step { display: none; }
+    .fm-step.active { display: block; animation: fmIn .3s ease forwards; }
+    @keyframes fmIn { from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:translateX(0)} }
+    .fm-step.back { animation: fmBack .3s ease forwards; }
+    @keyframes fmBack { from{opacity:0;transform:translateX(-16px)} to{opacity:1;transform:translateX(0)} }
+
+    /* Step header */
+    .fm-step-num {
+      font-family: 'Sora', sans-serif;
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .fm-step h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px; font-weight: 700; letter-spacing: -.02em;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .fm-step-sub {
+      font-size: 14px; color: var(--text-2); margin-bottom: 28px; line-height: 1.5;
+    }
+
+    /* Floating label input */
+    .fm-field {
+      position: relative; margin-bottom: 16px;
+    }
+    .fm-field input {
+      width: 100%; padding: 18px 16px 8px;
+      border: 1.5px solid rgba(0,0,0,.12);
+      border-radius: 14px; font-size: 15px;
+      font-family: 'Inter', sans-serif; color: var(--text);
+      background: #FAFBFF; outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      box-sizing: border-box;
+    }
+    .fm-field input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(91,124,255,.12);
+      background: #fff;
+    }
+    .fm-field label {
+      position: absolute; left: 16px; top: 14px;
+      font-size: 15px; color: var(--text-3);
+      pointer-events: none;
+      transition: top .18s, font-size .18s, color .18s;
+    }
+    .fm-field input:focus ~ label,
+    .fm-field input:not(:placeholder-shown) ~ label {
+      top: 6px; font-size: 10px; font-weight: 600;
+      letter-spacing: .5px; text-transform: uppercase;
+      color: var(--primary);
+    }
+    .fm-field input::placeholder { color: transparent; }
+
+    /* Autocomplete dropdown */
+    .fm-suggestions {
+      position: absolute; left: 0; right: 0; top: calc(100% + 4px);
+      background: #fff; border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      border: 1px solid rgba(0,0,0,.07);
+      z-index: 100; overflow: hidden;
+      display: none;
+    }
+    .fm-suggestions.open { display: block; }
+    .fm-suggestion {
+      padding: 13px 16px; cursor: pointer;
+      font-size: 14px; color: var(--text);
+      display: flex; align-items: flex-start; gap: 10px;
+      border-bottom: 1px solid rgba(0,0,0,.05);
+      transition: background .15s;
+    }
+    .fm-suggestion:last-child { border-bottom: none; }
+    .fm-suggestion:hover { background: #F4F7FB; }
+    .fm-suggestion-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+    .fm-suggestion-main { font-weight: 500; }
+    .fm-suggestion-sub { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+    /* Confirmed location chip */
+    .fm-confirmed {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(0,200,150,.08);
+      border: 1px solid rgba(0,200,150,.22);
+      border-radius: 12px; padding: 12px 16px;
+      margin-top: 8px; margin-bottom: 4px;
+    }
+    .fm-confirmed-icon { font-size: 18px; }
+    .fm-confirmed-text { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+    .fm-confirmed-change {
+      font-size: 12px; color: var(--primary); cursor: pointer;
+      font-weight: 500; text-decoration: underline;
+    }
+
+    /* Radius selector */
+    .fm-group-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-2);
+      margin: 20px 0 10px;
+    }
+    .fm-radius-group, .fm-chip-group {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .fm-radius-btn, .fm-chip {
+      padding: 8px 16px; border-radius: 999px;
+      border: 1.5px solid rgba(0,0,0,.10);
+      background: #FAFBFF; font-size: 13px; font-weight: 500;
+      color: var(--text-2); cursor: pointer;
+      transition: all .18s; font-family: 'Inter', sans-serif;
+    }
+    .fm-radius-btn:hover, .fm-chip:hover {
+      border-color: var(--primary); color: var(--primary);
+    }
+    .fm-radius-btn.active, .fm-chip.active {
+      background: var(--primary); border-color: var(--primary);
+      color: #fff;
+    }
+
+    /* Navigation buttons */
+    .fm-next, .fm-submit {
+      width: 100%; margin-top: 28px;
+      padding: 16px; border-radius: 14px; border: none;
+      background: linear-gradient(90deg, var(--primary), var(--primary-h));
+      color: #fff; font-family: 'Sora', sans-serif;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 6px 20px rgba(91,124,255,.28);
+      transition: transform .15s, box-shadow .2s;
+    }
+    .fm-next:hover, .fm-submit:hover {
+      transform: translateY(-1px); box-shadow: 0 8px 28px rgba(91,124,255,.38);
+    }
+    .fm-next:active, .fm-submit:active { transform: scale(.98); }
+    .fm-next:disabled, .fm-submit:disabled {
+      opacity: .5; cursor: not-allowed; transform: none;
+    }
+    .fm-back-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: none; border: none;
+      font-size: 13px; color: var(--text-2);
+      cursor: pointer; margin-bottom: 20px; padding: 0;
+    }
+    .fm-back-btn:hover { color: var(--text); }
+
+    /* Summary */
+    .fm-summary {
+      background: #F4F7FB; border-radius: 16px; padding: 20px;
+    }
+    .fm-summary-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    .fm-summary-row:last-child { border-bottom: none; }
+    .fm-summary-icon { font-size: 16px; margin-top: 2px; }
+    .fm-summary-label { font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text-3); margin-bottom: 2px; }
+    .fm-summary-val { font-size: 14px; font-weight: 500; color: var(--text); }
+    .fm-legal {
+      font-size: 12px; color: var(--text-3); text-align: center;
+      margin-top: 14px; line-height: 1.5;
+    }
+    .fm-legal a { color: var(--primary); text-decoration: none; }
+
+    /* Success step */
+    .fm-success {
+      text-align: center; padding: 12px 0 8px;
+    }
+    .fm-success-anim {
+      font-size: 56px; margin-bottom: 16px;
+      animation: successPop .5s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+    @keyframes successPop { from{transform:scale(0)} to{transform:scale(1)} }
+    .fm-success h3 {
+      font-family: 'Sora', sans-serif; font-size: 22px;
+      font-weight: 700; margin-bottom: 10px;
+    }
+    .fm-success p { font-size: 15px; color: var(--text-2); line-height: 1.6; margin-bottom: 24px; }
+    .fm-tg-btn {
+      display: block; text-decoration: none;
+      background: linear-gradient(90deg, #2CA5E0, #1A8BCA);
+      color: #fff; padding: 14px 28px; border-radius: 14px;
+      font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600;
+      text-align: center; margin-bottom: 12px;
+      box-shadow: 0 6px 20px rgba(44,165,224,.3);
+      transition: transform .15s;
+    }
+    .fm-tg-btn:hover { transform: translateY(-1px); }
+
+    /* Spinner */
+    .fm-spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin .7s linear infinite; margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    /* Modal mobile */
+    @media (max-width: 540px) {
+      .fm-body { padding: 24px 20px 28px; }
+      .fm-container { border-radius: 20px 20px 0 0; }
+      .fm-overlay { align-items: flex-end; padding: 0; }
+    }
   </style>
 </head>
 <body>
+
+<!-- BOKEH BG -->
+<div class="bg-bokeh">
+  <div class="bk bk1"></div>
+  <div class="bk bk2"></div>
+  <div class="bk bk3"></div>
+  <div class="bk bk4"></div>
+</div>
 
 <!-- NAV -->
 <nav>
   <div class="logo">Bewerb<span>Zen</span></div>
   <ul class="nav-links">
-    <li><a href="#">Возможности</a></li>
-    <li><a href="#">Как работает</a></li>
-    <li><a href="#">Цены</a></li>
+    <li><a href="#how">Как работает</a></li>
+    <li><a href="#pricing">Цены</a></li>
+    <li><a href="#faq">FAQ</a></li>
   </ul>
   <button class="nav-cta">Начать бесплатно</button>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
-  <div class="grid-bg"></div>
-  <div class="hero-text">
-    <div class="badge"><span class="badge-dot"></span>Доступно в Германии</div>
-    <h1>
-      <span class="tg1">Найди работу.</span><br/>
-      <span class="tg2">Без бумажного</span><br/>
-      <span class="tg3">ада.</span>
-    </h1>
-    <p class="subtitle">Еженедельная подборка вакансий под твой профиль + готовый Anschreiben и Lebenslauf одной кнопкой. ATS-оптимизировано. По немецкому стандарту.</p>
-    <div class="hero-btns">
-      <button class="btn-p">Попробовать бесплатно →</button>
-      <button class="btn-g">▶ &nbsp;Как это работает</button>
-    </div>
-    <div class="trust-row">
-      <div class="tp">✓ Бесплатный старт</div>
-      <div class="tp">🇩🇪 Немецкий стандарт</div>
-      <div class="tp">⚡ 10 мин на Bewerbung</div>
-    </div>
-  </div>
-  <div class="hero-vis">
-    <div class="hcard hcard-sm c-vac"><span style="font-size:20px">📋</span><div><div class="hc-val ca">247</div><div class="hc-lbl">новых вакансий</div></div></div>
-    <div class="hcard hcard-main">
-      <div class="hc-head"><div class="hc-icon">📄</div><div><div class="hc-title">Bewerbung готов</div><div class="hc-sub">Software Engineer · München</div></div></div>
-      <div class="pbar"><div class="pfill"></div></div>
-      <div class="tags"><span class="tag ta_">ATS-оптимизирован</span><span class="tag tg_">PDF готов</span><span class="tag ts_">DE стандарт</span></div>
-    </div>
-    <div class="hcard hcard-sm c-mat"><span style="font-size:20px">🎯</span><div><div class="hc-val cg">92%</div><div class="hc-lbl">совпадение профиля</div></div></div>
-    <div class="hcard hcard-sm c-done"><span style="font-size:20px">✅</span><div style="font-size:13px;font-weight:500;color:#fff">Lebenslauf адаптирован</div></div>
-    <div class="hcard hcard-sm c-time"><span style="font-size:20px">⏱️</span><div style="font-size:13px;font-weight:500;color:#fff">Заняло <span style="color:#34D399;font-weight:600">8 мин</span></div></div>
-  </div>
-</section>
+<div class="page">
 
-<!-- VALUE CAROUSEL -->
-<section class="carousel-section">
-  <div class="carousel-header reveal">
-    <div class="section-label">Возможности</div>
-    <h2 class="section-title">Всё что нужно — в одном месте</h2>
-    <p class="section-sub">От поиска вакансии до готового Bewerbung. Без лишних шагов.</p>
-  </div>
-
-  <div class="carousel-wrap reveal">
-    <div class="slides-container" id="slidesContainer">
-
-      <!-- Slide 1: Weekly digest -->
-      <div class="val-slide active" data-idx="0">
-        <div class="val-left">
-          <div class="vs-chapter">01 / 04</div>
-          <h3 class="val-title">Подборка каждую пятницу</h3>
-          <p class="val-text">Один профиль — и каждую пятницу тебе приходит список релевантных вакансий. Без дублей, без спама, без фейков. Только то, что подходит именно тебе.</p>
-          <a class="val-cta">Посмотреть пример →</a>
+  <!-- HERO -->
+  <section>
+    <div class="hero">
+      <div class="hero-text">
+        <div class="badge"><span class="badge-dot"></span>Доступно в Германии</div>
+        <h1>
+          <span class="h1-dark">Найди работу.</span><br/>
+          <span class="h1-blue">Без бумажного ада.</span>
+        </h1>
+        <p class="subtitle">Еженедельная подборка вакансий под твой профиль + готовый Anschreiben и Lebenslauf одной кнопкой. ATS-оптимизировано. По немецкому стандарту.</p>
+        <div class="hero-btns">
+          <button class="btn-primary">Подготовить бесплатно →</button>
+          <button class="btn-ghost">
+            <span class="play-circle">▶</span>
+            Как это работает
+          </button>
         </div>
-        <div class="val-right">
-          <div class="product-mock">
-            <div class="mock-bar"><div class="mock-dot md-r"></div><div class="mock-dot md-y"></div><div class="mock-dot md-g"></div><div style="flex:1;height:4px;background:rgba(255,255,255,.05);border-radius:2px;margin-left:8px"></div></div>
-            <div class="mock-body">
-              <div style="font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px">Пятница, 18 апр · 15 новых вакансий</div>
-              <div class="vac-item">
-                <div class="vac-logo" style="background:rgba(108,140,255,.12)">🏢</div>
-                <div class="vac-info"><div class="vac-title">Frontend Developer</div><div class="vac-company">SAP · Walldorf · €65–85k</div></div>
-                <span class="vac-badge" style="background:rgba(52,211,153,.1);color:#34D399;border:1px solid rgba(52,211,153,.2)">95%</span>
-              </div>
-              <div class="vac-item">
-                <div class="vac-logo" style="background:rgba(251,191,36,.1)">⚡</div>
-                <div class="vac-info"><div class="vac-title">React Engineer</div><div class="vac-company">BMW Group · München · €70–90k</div></div>
-                <span class="vac-badge" style="background:rgba(108,140,255,.1);color:var(--accent-h);border:1px solid var(--border-a)">88%</span>
-              </div>
-              <div class="vac-item">
-                <div class="vac-logo" style="background:rgba(16,185,129,.1)">🌐</div>
-                <div class="vac-info"><div class="vac-title">Software Engineer</div><div class="vac-company">Zalando · Berlin · €75–95k</div></div>
-                <span class="vac-badge" style="background:rgba(108,140,255,.1);color:var(--accent-h);border:1px solid var(--border-a)">82%</span>
-              </div>
-              <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--text-3)">+ ещё 12 вакансий</div>
+        <div class="trust-row">
+          <div class="trust-item"><div class="trust-icon">✓</div>Бесплатный старт</div>
+          <div class="trust-item"><div class="trust-icon">🇩🇪</div>Немецкий стандарт</div>
+          <div class="trust-item"><div class="trust-icon">⚡</div>10 мин на Bewerbung</div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <!-- chips -->
+        <div class="chip ch-vac">
+          <span style="font-size:20px">📋</span>
+          <div><div class="chip-val" style="color:#5B7CFF">247</div><div class="chip-lbl">новых вакансий</div></div>
+        </div>
+        <div class="chip ch-pct">
+          <span style="font-size:20px">🎯</span>
+          <div><div class="chip-val" style="color:#00C896">92%</div><div class="chip-lbl">совпадение</div></div>
+        </div>
+        <div class="chip ch-done">
+          <span style="font-size:20px">✅</span>
+          <div style="font-size:13px;font-weight:500;color:var(--text)">Lebenslauf адаптирован</div>
+        </div>
+        <div class="chip ch-time">
+          <span style="font-size:20px">⏱️</span>
+          <div style="font-size:13px;font-weight:500;color:var(--text)">Заняло <span style="color:#00C896;font-weight:600">8 мин</span></div>
+        </div>
+
+        <!-- main card -->
+        <div class="card-main">
+          <div class="cm-top">
+            <div class="cm-avatar">AL</div>
+            <div><div class="cm-name">Alex Lammers</div><div class="cm-role">Frontend Developer</div></div>
+          </div>
+          <div class="cm-badge">
+            <span class="cm-badge-icon">📄</span>
+            <div>
+              <div class="cm-badge-label">Bewerbung готов</div>
+              <div class="cm-badge-sub">ATS — OK &nbsp;·&nbsp; 92% совпадение</div>
             </div>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-bottom:10px">⏱ 8 минут</div>
+          <div class="cm-tags">
+            <span class="cm-tag ct-b">ATS-оптимизирован</span>
+            <span class="cm-tag ct-g">PDF готов</span>
+            <span class="cm-tag ct-s">DE стандарт</span>
           </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- Slide 2: Anschreiben -->
-      <div class="val-slide" data-idx="1">
-        <div class="val-left">
-          <div class="vs-chapter">02 / 04</div>
-          <h3 class="val-title">Anschreiben за 8 минут</h3>
-          <p class="val-text">Выбрал вакансию — нажал кнопку. Через 8 минут получаешь готовое письмо по немецкому стандарту, адаптированное под конкретную компанию и должность.</p>
-          <a class="val-cta">Посмотреть пример →</a>
-        </div>
-        <div class="val-right">
-          <div class="product-mock">
-            <div class="mock-bar"><div class="mock-dot md-r"></div><div class="mock-dot md-y"></div><div class="mock-dot md-g"></div></div>
-            <div class="letter-mock">
-              <div class="lm-header">
-                <div><div class="lm-name">Max Mustermann</div><div style="font-size:11px;color:var(--text-3)">Musterstraße 1 · 10115 Berlin</div></div>
-                <div class="lm-date">14. April 2026</div>
-              </div>
-              <div class="lm-to">SAP SE<br/>Dietmar-Hopp-Allee 16<br/>69190 Walldorf</div>
-              <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">Bewerbung als Frontend Developer (Ref. #FE-2026-042)</div>
-              <div class="lm-line" style="width:100%"></div>
-              <div class="lm-line" style="width:88%"></div>
-              <div class="lm-line" style="width:94%"></div>
-              <div class="lm-line" style="width:72%"></div>
-              <div class="lm-line" style="width:85%;margin-top:10px"></div>
-              <div class="lm-line" style="width:91%"></div>
-              <div class="lm-line" style="width:60%"></div>
-              <div class="lm-sig">
-                <div class="lm-sig-check">✓</div>
-                <span style="font-size:11px;color:#34D399">ATS-оптимизировано · DE стандарт · PDF готов</span>
-              </div>
-            </div>
-          </div>
-        </div>
+  <!-- STAT BLOCK -->
+  <section class="stat-section reveal">
+    <div class="stat-block">
+      <div class="stat-left">
+        <div class="stat-label">Реальность рынка</div>
+        <div class="stat-num">54 %</div>
+        <div class="stat-desc">не получают ответа.</div>
+        <p class="stat-sub">Ты отправляешь отклики и больше никогда не получаешь ответа. Система работает против тебя.</p>
+        <ul class="stat-checks">
+          <li><div class="check-icon">✓</div>Открыл Stepstone</li>
+          <li><div class="check-icon">✓</div>Составил резюме</li>
+          <li><div class="check-icon">✓</div>Отправил 30 заявок</li>
+          <li style="color:var(--text-3)"><div class="check-icon" style="opacity:.4">✓</div>Получил ответ... ?</li>
+        </ul>
       </div>
-
-      <!-- Slide 3: Lebenslauf -->
-      <div class="val-slide" data-idx="2">
-        <div class="val-left">
-          <div class="vs-chapter">03 / 04</div>
-          <h3 class="val-title">Lebenslauf проходит ATS</h3>
-          <p class="val-text">Загружаешь своё резюме один раз. Для каждой вакансии мы адаптируем его под требования и оптимизируем под ATS-системы работодателей. 70% резюме не доходят до человека — твоё дойдёт.</p>
-          <a class="val-cta">Посмотреть пример →</a>
-        </div>
-        <div class="val-right">
-          <div class="product-mock">
-            <div class="mock-bar"><div class="mock-dot md-r"></div><div class="mock-dot md-y"></div><div class="mock-dot md-g"></div></div>
-            <div class="resume-mock">
-              <div class="rm-header">
-                <div class="rm-avatar">👤</div>
-                <div><div class="rm-name">Max Mustermann</div><div class="rm-role">Frontend Developer</div></div>
-              </div>
-              <div class="rm-section-title">Ключевые навыки</div>
-              <span class="rm-skill">React</span><span class="rm-skill">TypeScript</span><span class="rm-skill">Node.js</span><span class="rm-skill">AWS</span><span class="rm-skill">Agile</span>
-              <div class="rm-section-title">Опыт</div>
-              <div class="lm-line" style="width:100%"></div>
-              <div class="lm-line" style="width:80%"></div>
-              <div class="rm-ats">
-                <div class="rm-ats-score">97%</div>
-                <div><div class="rm-ats-label" style="font-weight:600">ATS Score</div><div class="rm-ats-label">Résumé проходит автоматический отбор</div></div>
-              </div>
-            </div>
+      <div class="stat-right">
+        <div class="stat-card-vis">
+          <div class="scv-label">Входящие</div>
+          <div class="scv-num-row">
+            <span class="scv-big">28</span>
+            <span class="scv-tag">заявок</span>
           </div>
+          <div class="scv-sub">без единого ответа</div>
+          <div class="scv-divider"></div>
+          <div class="scv-item"><div class="scv-dot" style="background:#F87171"></div><span class="scv-item-label">Отказов получено</span><span class="scv-item-val">2</span></div>
+          <div class="scv-item"><div class="scv-dot" style="background:#9CA3AF"></div><span class="scv-item-label">Просмотрено ATS</span><span class="scv-item-val">6</span></div>
+          <div class="scv-item"><div class="scv-dot" style="background:#374151"></div><span class="scv-item-label">Тишина</span><span class="scv-item-val">20</span></div>
+          <div style="height:1px;background:rgba(255,255,255,.1);margin:14px 0"></div>
+          <div style="font-size:12px;color:rgba(255,255,255,.4);font-style:italic">С BewerbZen: 6 заявок → 1 оффер</div>
         </div>
-      </div>
-
-      <!-- Slide 4: One Profile -->
-      <div class="val-slide" data-idx="3">
-        <div class="val-left">
-          <div class="vs-chapter">04 / 04</div>
-          <h3 class="val-title">Один профиль — везде</h3>
-          <p class="val-text">Заполнил один раз: профессия, город, пожелания, резюме. Больше никаких повторных форм. BewerbZen знает всё о тебе и использует это для каждого Bewerbung автоматически.</p>
-          <a class="val-cta">Создать профиль →</a>
-        </div>
-        <div class="val-right">
-          <div class="product-mock">
-            <div class="mock-bar"><div class="mock-dot md-r"></div><div class="mock-dot md-y"></div><div class="mock-dot md-g"></div></div>
-            <div class="profile-mock">
-              <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Мой профиль</div>
-              <div class="pm-row"><div class="pm-icon">💼</div><div><div class="pm-label">Профессия</div><div class="pm-value">Frontend Developer</div></div></div>
-              <div class="pm-row"><div class="pm-icon">📍</div><div><div class="pm-label">Регион поиска</div><div class="pm-value">München, 50 km</div></div></div>
-              <div class="pm-row"><div class="pm-icon">💶</div><div><div class="pm-label">Желаемая зарплата</div><div class="pm-value">от €65 000</div></div></div>
-              <div style="margin-top:4px"><div class="pm-label" style="margin-bottom:8px">Тип занятости</div><span class="pm-pill">Vollzeit</span><span class="pm-pill">Hybrid</span></div>
-              <div style="display:flex;align-items:center;gap:8px;margin-top:16px;padding:10px 12px;border-radius:8px;background:rgba(108,140,255,.08);border:1px solid rgba(108,140,255,.18)"><span style="font-size:14px">✓</span><span style="font-size:12px;color:var(--accent-h)">Резюме загружено · Профиль заполнен на 100%</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /slides-container -->
-
-    <div class="carousel-nav">
-      <div class="slide-counter">Слайд <span id="curNum">1</span> из 4</div>
-      <div class="car-dots" id="carDots"></div>
-      <div class="car-btns">
-        <button class="car-btn" id="carPrev">←</button>
-        <button class="car-btn" id="carNext">→</button>
       </div>
     </div>
-    <div class="slide-prog-wrap"><div class="slide-prog-fill" id="progFill"></div></div>
-  </div>
-</section>
+  </section>
 
-<!-- STATS -->
-<section class="stats-section">
-  <div style="text-align:center" class="reveal">
-    <div class="section-label">Реальность рынка</div>
-    <h2 class="section-title">Почему система сломана</h2>
-  </div>
-  <div class="stats-grid reveal">
-    <div class="stat-card"><div class="stat-n sn-a">4–6 ч</div><div class="stat-d">уходит на подготовку одного Bewerbung. Каждый раз, для каждой вакансии.</div></div>
-    <div class="stat-card"><div class="stat-n sn-r">54%</div><div class="stat-d">соискателей никогда не получают ответа. Просто тишина после недели работы.</div></div>
-    <div class="stat-card"><div class="stat-n sn-y">70%</div><div class="stat-d">резюме отсеивают ATS-роботы ещё до того, как их увидит живой человек.</div></div>
-    <div class="stat-card"><div class="stat-n sn-a">5+</div><div class="stat-d">сайтов нужно обойти. Одни и те же вакансии, разный интерфейс, разная регистрация.</div></div>
-    <div class="stat-card"><div class="stat-n sn-r">75%</div><div class="stat-d">не подают заявку если нет зарплаты. Час работы — и в мусор.</div></div>
-    <div class="stat-card"><div class="stat-n sn-y">Многие</div><div class="stat-d">просто бросают поиск. Система слишком сложная, непрозрачная и безжалостная.</div></div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="how-section">
-  <div style="text-align:center" class="reveal">
-    <div class="section-label">Как это работает</div>
-    <h2 class="section-title">Три шага вместо трёх недель</h2>
-    <p class="section-sub" style="margin-top:14px;color:var(--text-2)">Один раз настроил — каждую неделю получаешь готовые материалы.</p>
-  </div>
-  <div class="steps">
-    <div class="step reveal"><div class="sn sn1">1</div><h3>Создай профиль</h3><p>Профессия, город, пожелания. Один раз — навсегда. Загрузи резюме и больше ничего не заполняй повторно.</p></div>
-    <div class="step reveal rd1"><div class="sn sn2">2</div><h3>Получай подборку</h3><p>Каждую пятницу — список вакансий из официальных немецких источников. Без спама, фейков и дублей.</p></div>
-    <div class="step reveal rd2"><div class="sn sn3">3</div><h3>Жми одну кнопку</h3><p>Выбрал вакансию — получил ATS-оптимизированный Anschreiben и Lebenslauf в PDF за 8 минут.</p></div>
-  </div>
-</section>
-
-<!-- CTA -->
-<div class="cta-wrap reveal">
-  <div class="cta-box">
-    <div class="cta-t">
-      <h2>Начни сегодня. Это бесплатно.</h2>
-      <p>Первые 3 Bewerbung — без оплаты. Без карты. Без обязательств.</p>
+  <!-- STORY CAROUSEL -->
+  <section class="story-section reveal">
+    <div class="story-label-wrap">
+      <div class="section-label">История каждого</div>
+      <h2 class="section-title">Ты не один такой</h2>
+      <p class="section-sub">Так выглядит поиск работы в Германии без правильного инструмента — и что происходит с BewerbZen.</p>
     </div>
-    <button class="btn-w">Попробовать бесплатно →</button>
+    <div class="story-carousel" id="storyCarousel">
+
+      <div class="story-slide active" data-idx="0">
+        <div class="story-overlay"></div>
+        <div class="story-card">
+          <div class="story-step">01 — Начало</div>
+          <h3 class="story-headline">Начал поиск работы.<br><span style="opacity:.75">Всё выглядело просто.</span></h3>
+        </div>
+      </div>
+
+      <div class="story-slide" data-idx="1">
+        <div class="story-overlay"></div>
+        <div class="story-card">
+          <div class="story-step">02 — Хаос</div>
+          <h3 class="story-headline"><span class="sh-accent">30 откликов.</span><br>0 ответов.</h3>
+          <p class="story-copy">Вынужден заходить на десятки сайтов и снова заполнять одни и те же формы — в надежде найти работу мечты.</p>
+        </div>
+      </div>
+
+      <div class="story-slide" data-idx="2">
+        <div class="story-overlay"></div>
+        <div class="story-card">
+          <div class="story-step">03 — Решение</div>
+          <h3 class="story-headline">Попробовал BewerbZen.</h3>
+          <p class="story-copy">Резюме + отклик за 8 минут. ATS-оптимизировано. По немецкому стандарту.</p>
+        </div>
+      </div>
+
+      <div class="story-slide" data-idx="3">
+        <div class="story-overlay"></div>
+        <div class="story-card">
+          <div class="story-step">04 — Результат</div>
+          <h3 class="story-headline">Работа найдена<br>за 3 недели.</h3>
+          <button class="story-cta">Bewerben →</button>
+        </div>
+      </div>
+
+      <button class="story-nav prev" id="storyPrev">‹</button>
+      <button class="story-nav next" id="storyNext">›</button>
+
+      <div class="story-progress">
+        <div class="sp-bar" data-idx="0"></div>
+        <div class="sp-bar" data-idx="1"></div>
+        <div class="sp-bar" data-idx="2"></div>
+        <div class="sp-bar" data-idx="3"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEPS -->
+  <section class="steps-section reveal" id="how">
+    <div class="section-header">
+      <div class="section-label">Как это работает</div>
+      <h2 class="section-title">Три шага вместо трёх недель</h2>
+      <p class="section-sub">Один раз настроил — каждую неделю получаешь готовые материалы.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-num sn1">1</div>
+        <div class="step-title">Создай профиль</div>
+        <p>Профессия, город, пожелания. Один раз — навсегда. Загрузи резюме и больше ничего не заполняй повторно.</p>
+      </div>
+      <div class="step-card reveal rd1">
+        <div class="step-num sn2">2</div>
+        <div class="step-title">Получай подборку</div>
+        <p>Каждую пятницу — список вакансий из официальных немецких источников. Без спама, фейков и дублей.</p>
+      </div>
+      <div class="step-card reveal rd2">
+        <div class="step-num sn3">3</div>
+        <div class="step-title">Жми одну кнопку</div>
+        <p>Выбрал вакансию — получил ATS-оптимизированный Anschreiben и Lebenslauf в PDF за 8 минут.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing-section reveal" id="pricing">
+    <div class="section-header">
+      <div class="section-label">Цены</div>
+      <h2 class="section-title">Прозрачно и честно</h2>
+      <p class="section-sub">Начни бесплатно. Плати только когда получаешь ценность.</p>
+    </div>
+    <div class="pricing-grid">
+
+      <div class="pricing-card">
+        <div class="pc-badge pc-badge-free">Бесплатно</div>
+        <div class="pc-price"><span class="pc-amount">€0</span></div>
+        <div class="pc-desc">Попробуй без карты и обязательств</div>
+        <ul class="pc-features">
+          <li><span class="pc-check">✓</span>3 Bewerbung бесплатно</li>
+          <li><span class="pc-check">✓</span>Anschreiben по немецкому стандарту</li>
+          <li><span class="pc-check">✓</span>ATS-оптимизация</li>
+          <li><span class="pc-check">✓</span>Подборка вакансий в Telegram</li>
+          <li class="pc-dim"><span class="pc-x">—</span>Безлимитная генерация</li>
+          <li class="pc-dim"><span class="pc-x">—</span>Lebenslauf-генератор</li>
+        </ul>
+        <button class="btn-primary pc-btn">Начать бесплатно</button>
+      </div>
+
+      <div class="pricing-card pricing-card--featured">
+        <div class="pc-badge pc-badge-popular">Популярный</div>
+        <div class="pc-price"><span class="pc-amount">€4.99</span><span class="pc-per"> / 3 Bewerbung</span></div>
+        <div class="pc-desc">Для активного поиска работы</div>
+        <ul class="pc-features">
+          <li><span class="pc-check">✓</span>3 дополнительных Bewerbung</li>
+          <li><span class="pc-check">✓</span>Всё из бесплатного тарифа</li>
+          <li><span class="pc-check">✓</span>Anschreiben + Lebenslauf</li>
+          <li><span class="pc-check">✓</span>PDF-экспорт</li>
+          <li><span class="pc-check">✓</span>Приоритетная поддержка</li>
+          <li class="pc-dim"><span class="pc-x">—</span>Безлимитная генерация</li>
+        </ul>
+        <button class="btn-primary pc-btn">Купить пакет</button>
+        <div class="pc-note">Разово, без подписки</div>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pc-badge pc-badge-pro">Pro</div>
+        <div class="pc-price"><span class="pc-amount">€12.99</span><span class="pc-per"> / мес</span></div>
+        <div class="pc-desc">Для тех, кто ищет серьёзно</div>
+        <ul class="pc-features">
+          <li><span class="pc-check">✓</span>Безлимитные Bewerbung</li>
+          <li><span class="pc-check">✓</span>Anschreiben + Lebenslauf</li>
+          <li><span class="pc-check">✓</span>PDF-экспорт</li>
+          <li><span class="pc-check">✓</span>История всех заявок</li>
+          <li><span class="pc-check">✓</span>Персональный профиль</li>
+          <li><span class="pc-check">✓</span>Приоритетная поддержка</li>
+        </ul>
+        <button class="btn-primary pc-btn">Выбрать Pro</button>
+        <div class="pc-note">Отменить можно в любой момент</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section reveal" id="faq">
+    <div class="section-header">
+      <div class="section-label">Вопросы</div>
+      <h2 class="section-title">Часто спрашивают</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q">Это настоящий Bewerbung или шаблон?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">Нет, не шаблон. AI читает конкретное описание вакансии и пишет Anschreiben под неё — с нужными ключевыми словами, правильной структурой и немецким формальным стилем. Каждый раз разный результат.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">На каком языке создаётся Bewerbung?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">На немецком — по немецкому профессиональному стандарту (Anschreiben по DIN 5008). Если вакансия на английском, можно сгенерировать на английском — просто укажи это в тексте.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Мои данные в безопасности?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">Мы не храним персональные данные дольше, чем нужно для генерации. BewerbZen — это инструмент, а не кадровое агентство. Мы не продаём и не передаём данные третьим лицам. Работаем в рамках GDPR.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Что значит ATS-оптимизировано?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">ATS (Applicant Tracking System) — это программы, которые компании используют для автоматической фильтрации резюме. Мы вставляем ключевые слова из описания вакансии так, чтобы ваш Bewerbung прошёл через эти фильтры до реального рекрутера.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Нужен ли хороший немецкий чтобы пользоваться?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">Нет. Интерфейс на русском. Достаточно скопировать текст вакансии и пару слов написать о себе на русском — всё остальное сделает AI. Готовый Anschreiben будет на профессиональном немецком.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Когда появятся вакансии прямо в сервисе?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">Уже сейчас подборки вакансий публикуются в Telegram-канале @BewerbZen. Фильтрация прямо в интерфейсе — в разработке, планируем запустить в мае 2026.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section reveal">
+    <div class="cta-box">
+      <div>
+        <div class="cta-title">Найди работу за 8 минут.</div>
+        <div class="cta-sub">Первые 3 Bewerbung бесплатно. Без карты. Без обязательств.</div>
+      </div>
+      <button class="btn-white">Начать бесплатно →</button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo" style="font-size:18px;margin-bottom:8px">Bewerb<span>Zen</span></div>
+        <p class="footer-tagline">Bewerbung по немецкому стандарту — быстро и правильно.</p>
+        <div class="footer-social">
+          <a href="https://t.me/BewerbZen" target="_blank" class="footer-social-btn">📢 Telegram-канал</a>
+          <a href="https://t.me/BewerbZenBot" target="_blank" class="footer-social-btn">🤖 Попробовать бота</a>
+        </div>
+      </div>
+      <div class="footer-links-group">
+        <div class="footer-col">
+          <div class="footer-col-title">Продукт</div>
+          <a href="#how" class="footer-link">Как работает</a>
+          <a href="#pricing" class="footer-link">Цены</a>
+          <a href="#" class="footer-link">Вакансии</a>
+          <a href="#faq" class="footer-link">FAQ</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Правовое</div>
+          <a href="#" class="footer-link">Impressum</a>
+          <a href="#" class="footer-link">Datenschutz</a>
+          <a href="#" class="footer-link">AGB</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Контакт</div>
+          <a href="https://t.me/mihailcarenc" target="_blank" class="footer-link">@mihailcarenc</a>
+          <a href="mailto:hello@bewerbzen.de" class="footer-link">hello@bewerbzen.de</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 BewerbZen. Alle Rechte vorbehalten.</span>
+      <span style="color:var(--text-3)">bewerbzen.de · Германия</span>
+    </div>
+  </footer>
+
+</div><!-- /page -->
+
+<!-- ═══ REGISTRATION MODAL ═══ -->
+<div class="fm-overlay" id="fmOverlay" role="dialog" aria-modal="true" aria-label="Регистрация">
+  <div class="fm-container" id="fmContainer">
+    <div class="fm-top-bar"><div class="fm-top-bar-fill" id="fmBar" style="width:0%"></div></div>
+    <button class="fm-close" id="fmClose" aria-label="Закрыть">✕</button>
+    <div class="fm-body">
+
+      <!-- STEP 1: Контакт -->
+      <div class="fm-step active" data-step="1">
+        <div class="fm-step-num">Шаг 1 из 4</div>
+        <h3>Как тебя зовут?</h3>
+        <p class="fm-step-sub">Нужно только имя и один способ связи — больше ничего.</p>
+        <div class="fm-field">
+          <input type="text" id="f-name" placeholder=" " autocomplete="given-name" inputmode="text"/>
+          <label for="f-name">Имя</label>
+        </div>
+        <div class="fm-field">
+          <input type="text" id="f-contact" placeholder=" " inputmode="text" autocomplete="off"/>
+          <label for="f-contact">Telegram (@username) или Email</label>
+        </div>
+        <button class="fm-next" id="s1next">Продолжить →</button>
+      </div>
+
+      <!-- STEP 2: Локация с автодополнением -->
+      <div class="fm-step" data-step="2">
+        <button class="fm-back-btn" data-back="1">← Назад</button>
+        <div class="fm-step-num">Шаг 2 из 4</div>
+        <h3>Где искать работу?</h3>
+        <p class="fm-step-sub">Введи город, PLZ или адрес — мы покажем варианты.</p>
+        <div class="fm-field" style="position:relative">
+          <input type="text" id="f-location" placeholder=" " autocomplete="off" inputmode="text"/>
+          <label for="f-location">Город, PLZ или улица</label>
+          <div class="fm-suggestions" id="fmSuggestions"></div>
+        </div>
+        <div id="fmConfirmed" style="display:none"></div>
+        <div class="fm-group-label">Радиус поиска</div>
+        <div class="fm-radius-group" id="radiusGroup">
+          <button class="fm-radius-btn" data-r="10">10 km</button>
+          <button class="fm-radius-btn active" data-r="25">25 km</button>
+          <button class="fm-radius-btn" data-r="50">50 km</button>
+          <button class="fm-radius-btn" data-r="100">100 km</button>
+          <button class="fm-radius-btn" data-r="0">Вся Германия</button>
+        </div>
+        <button class="fm-next" id="s2next">Продолжить →</button>
+      </div>
+
+      <!-- STEP 3: Профессия и предпочтения -->
+      <div class="fm-step" data-step="3">
+        <button class="fm-back-btn" data-back="2">← Назад</button>
+        <div class="fm-step-num">Шаг 3 из 4</div>
+        <h3>Какую работу ищешь?</h3>
+        <p class="fm-step-sub">Укажи профессию и параметры — мы подберём подходящее.</p>
+        <div class="fm-field">
+          <input type="text" id="f-job" placeholder=" " autocomplete="off"/>
+          <label for="f-job">Профессия или должность</label>
+        </div>
+        <div class="fm-group-label">Уровень немецкого</div>
+        <div class="fm-chip-group" id="langGroup">
+          <button class="fm-chip" data-v="none">Нет</button>
+          <button class="fm-chip" data-v="A1-A2">A1–A2</button>
+          <button class="fm-chip active" data-v="B1-B2">B1–B2</button>
+          <button class="fm-chip" data-v="C1-C2">C1–C2</button>
+          <button class="fm-chip" data-v="native">Родной</button>
+        </div>
+        <div class="fm-group-label">Тип занятости</div>
+        <div class="fm-chip-group" id="typeGroup">
+          <button class="fm-chip active" data-v="Vollzeit">Vollzeit</button>
+          <button class="fm-chip" data-v="Teilzeit">Teilzeit</button>
+          <button class="fm-chip" data-v="Minijob">Minijob</button>
+          <button class="fm-chip" data-v="any">Любой</button>
+        </div>
+        <button class="fm-next" id="s3next">Продолжить →</button>
+      </div>
+
+      <!-- STEP 4: Подтверждение -->
+      <div class="fm-step" data-step="4">
+        <button class="fm-back-btn" data-back="3">← Назад</button>
+        <div class="fm-step-num">Шаг 4 из 4</div>
+        <h3>Всё верно?</h3>
+        <p class="fm-step-sub">Проверь данные перед отправкой.</p>
+        <div class="fm-summary" id="fmSummary"></div>
+        <button class="fm-submit" id="fmSubmit">Получить доступ 🚀</button>
+        <p class="fm-legal">Нажимая кнопку, ты принимаешь <a href="#" onclick="return false">политику конфиденциальности</a>. Данные не передаются третьим лицам.</p>
+      </div>
+
+      <!-- STEP 5: Успех -->
+      <div class="fm-step" data-step="5">
+        <div class="fm-success">
+          <div class="fm-success-anim">🎉</div>
+          <h3>Заявка принята!</h3>
+          <p>Михаил свяжется с тобой в течение 24 часов.<br>А пока — подпишись на канал с вакансиями:</p>
+          <a href="https://t.me/BewerbZen" class="fm-tg-btn" target="_blank">📢 Открыть @BewerbZen</a>
+          <a href="https://t.me/BewerbZenBot" class="fm-tg-btn" style="background:linear-gradient(90deg,var(--primary),var(--primary-h));box-shadow:0 6px 20px rgba(91,124,255,.3)" target="_blank">🤖 Попробовать бота</a>
+        </div>
+      </div>
+
+    </div><!-- /fm-body -->
   </div>
 </div>
 
-<!-- FOOTER -->
-<footer>
-  <div class="logo" style="font-size:18px">Bewerb<span>Zen</span></div>
-  <div class="footer-summary">"Резюме, которое проходит ATS и выглядит как продукт."</div>
-  <div>bewerbzen.de &nbsp;·&nbsp; <a href="#">Impressum</a> &nbsp;·&nbsp; <a href="#">Datenschutz</a></div>
-</footer>
-
 <script>
-  // Scroll reveal
+  // ── MODAL LOGIC ──
+  (function() {
+    const overlay   = document.getElementById('fmOverlay');
+    const bar       = document.getElementById('fmBar');
+    const steps     = document.querySelectorAll('.fm-step');
+    const N8N_WEBHOOK = 'https://tsarents.app.n8n.cloud/webhook/bewerbzen-tally';
+    let currentStep = 1;
+    const TOTAL = 4;
+
+    // State
+    const state = {
+      name: '', contact: '',
+      location: '', locationDisplay: '', lat: '', lon: '',
+      radius: '25',
+      job: '', lang: 'B1-B2', type: 'Vollzeit'
+    };
+
+    function openModal() {
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('f-name').focus();
+    }
+    function closeModal() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // All CTA buttons open the modal
+    document.querySelectorAll('.btn-primary, .nav-cta, .btn-white, .story-cta, .pc-btn').forEach(btn => {
+      btn.addEventListener('click', openModal);
+    });
+    document.getElementById('fmClose').addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    function setStep(n, direction) {
+      steps.forEach(s => {
+        s.classList.remove('active', 'back');
+        if (parseInt(s.dataset.step) === n) {
+          s.classList.add('active');
+          if (direction === 'back') s.classList.add('back');
+        }
+      });
+      currentStep = n;
+      const pct = n <= TOTAL ? ((n - 1) / TOTAL * 100) : 100;
+      bar.style.width = pct + '%';
+    }
+
+    // Back buttons
+    document.querySelectorAll('.fm-back-btn').forEach(btn => {
+      btn.addEventListener('click', () => setStep(parseInt(btn.dataset.back), 'back'));
+    });
+
+    // ── STEP 1 ──
+    document.getElementById('s1next').addEventListener('click', () => {
+      const name    = document.getElementById('f-name').value.trim();
+      const contact = document.getElementById('f-contact').value.trim();
+      if (!name) { shake('f-name'); return; }
+      if (!contact) { shake('f-contact'); return; }
+      state.name = name; state.contact = contact;
+      setStep(2);
+    });
+
+    // ── STEP 2: Address autocomplete ──
+    const locInput = document.getElementById('f-location');
+    const suggestions = document.getElementById('fmSuggestions');
+    const confirmed = document.getElementById('fmConfirmed');
+    let debounceTimer, selectedLocation = false;
+
+    locInput.addEventListener('input', () => {
+      selectedLocation = false;
+      confirmed.style.display = 'none';
+      locInput.style.display = 'block';
+      const q = locInput.value.trim();
+      clearTimeout(debounceTimer);
+      if (q.length < 2) { suggestions.classList.remove('open'); return; }
+      debounceTimer = setTimeout(() => fetchAddresses(q), 380);
+    });
+
+    async function fetchAddresses(q) {
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?` + new URLSearchParams({
+          format: 'json', countrycodes: 'de', q,
+          addressdetails: 1, limit: 6, 'accept-language': 'de'
+        });
+        const res = await fetch(url, { headers: { 'User-Agent': 'BewerbZen/1.0' } });
+        const data = await res.json();
+        renderSuggestions(data);
+      } catch { suggestions.classList.remove('open'); }
+    }
+
+    function renderSuggestions(results) {
+      if (!results.length) { suggestions.classList.remove('open'); return; }
+      suggestions.innerHTML = results.map((r, i) => {
+        const a = r.address || {};
+        const city = a.city || a.town || a.village || a.county || '';
+        const plz  = a.postcode || '';
+        const street = a.road ? `${a.road}${a.house_number ? ' ' + a.house_number : ''}` : '';
+        const main  = street || city || r.display_name.split(',')[0];
+        const sub   = [plz, city, a.state].filter(Boolean).join(', ');
+        const icon  = a.road ? '🏠' : '📍';
+        return `<div class="fm-suggestion" data-idx="${i}" data-lat="${r.lat}" data-lon="${r.lon}"
+                     data-display="${encodeURIComponent(main + (plz ? ', ' + plz : '') + (city ? ', ' + city : ''))}"
+                     data-city="${encodeURIComponent(city)}" data-plz="${encodeURIComponent(plz)}">
+          <span class="fm-suggestion-icon">${icon}</span>
+          <div><div class="fm-suggestion-main">${main}</div><div class="fm-suggestion-sub">${sub}</div></div>
+        </div>`;
+      }).join('');
+      suggestions.classList.add('open');
+
+      suggestions.querySelectorAll('.fm-suggestion').forEach(el => {
+        el.addEventListener('click', () => {
+          const display = decodeURIComponent(el.dataset.display);
+          state.location = display;
+          state.locationDisplay = display;
+          state.lat = el.dataset.lat;
+          state.lon = el.dataset.lon;
+          selectedLocation = true;
+          suggestions.classList.remove('open');
+          locInput.style.display = 'none';
+          confirmed.style.display = 'flex';
+          confirmed.innerHTML = `<div class="fm-confirmed">
+            <span class="fm-confirmed-icon">✅</span>
+            <span class="fm-confirmed-text">${display}</span>
+            <span class="fm-confirmed-change" id="changeLocation">Изменить</span>
+          </div>`;
+          document.getElementById('changeLocation').addEventListener('click', () => {
+            confirmed.style.display = 'none';
+            locInput.style.display = 'block';
+            locInput.value = '';
+            locInput.focus();
+            selectedLocation = false;
+          });
+        });
+      });
+    }
+
+    document.addEventListener('click', e => {
+      if (!suggestions.contains(e.target) && e.target !== locInput)
+        suggestions.classList.remove('open');
+    });
+
+    // Radius
+    document.getElementById('radiusGroup').addEventListener('click', e => {
+      const btn = e.target.closest('.fm-radius-btn');
+      if (!btn) return;
+      document.querySelectorAll('.fm-radius-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.radius = btn.dataset.r;
+    });
+
+    document.getElementById('s2next').addEventListener('click', () => {
+      if (!selectedLocation && !locInput.value.trim()) { shake('f-location'); return; }
+      if (!selectedLocation && locInput.value.trim()) {
+        state.location = locInput.value.trim();
+        state.locationDisplay = locInput.value.trim();
+      }
+      setStep(3);
+    });
+
+    // ── STEP 3: Chips ──
+    function setupChips(groupId, stateKey) {
+      document.getElementById(groupId).addEventListener('click', e => {
+        const chip = e.target.closest('.fm-chip');
+        if (!chip) return;
+        document.querySelectorAll(`#${groupId} .fm-chip`).forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        state[stateKey] = chip.dataset.v;
+      });
+    }
+    setupChips('langGroup', 'lang');
+    setupChips('typeGroup', 'type');
+
+    document.getElementById('s3next').addEventListener('click', () => {
+      const job = document.getElementById('f-job').value.trim();
+      if (!job) { shake('f-job'); return; }
+      state.job = job;
+      renderSummary();
+      setStep(4);
+    });
+
+    // ── STEP 4: Summary ──
+    function renderSummary() {
+      const radLabel = state.radius === '0' ? 'Вся Германия' : `${state.radius} km`;
+      document.getElementById('fmSummary').innerHTML = `
+        <div class="fm-summary-row">
+          <span class="fm-summary-icon">👤</span>
+          <div><div class="fm-summary-label">Имя</div><div class="fm-summary-val">${esc(state.name)}</div></div>
+        </div>
+        <div class="fm-summary-row">
+          <span class="fm-summary-icon">💬</span>
+          <div><div class="fm-summary-label">Контакт</div><div class="fm-summary-val">${esc(state.contact)}</div></div>
+        </div>
+        <div class="fm-summary-row">
+          <span class="fm-summary-icon">📍</span>
+          <div><div class="fm-summary-label">Локация</div><div class="fm-summary-val">${esc(state.locationDisplay)} · ${radLabel}</div></div>
+        </div>
+        <div class="fm-summary-row">
+          <span class="fm-summary-icon">💼</span>
+          <div><div class="fm-summary-label">Профессия</div><div class="fm-summary-val">${esc(state.job)}</div></div>
+        </div>
+        <div class="fm-summary-row">
+          <span class="fm-summary-icon">🇩🇪</span>
+          <div><div class="fm-summary-label">Немецкий · Занятость</div><div class="fm-summary-val">${state.lang} · ${state.type}</div></div>
+        </div>`;
+    }
+
+    // ── STEP 5: Submit ──
+    document.getElementById('fmSubmit').addEventListener('click', async () => {
+      const btn = document.getElementById('fmSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="fm-spinner"></span>Отправка...';
+      try {
+        await fetch(N8N_WEBHOOK, {
+          method: 'POST', mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source: 'landing_form',
+            timestamp: new Date().toISOString(),
+            ...state
+          })
+        });
+      } catch { /* no-cors — expect opaque response, that's OK */ }
+      bar.style.width = '100%';
+      setStep(5);
+    });
+
+    // Shake animation for validation
+    function shake(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = 'shakeInput .4s ease';
+      el.focus();
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+  })();
+
+  // Shake keyframes (injected once)
+  const shakeStyle = document.createElement('style');
+  shakeStyle.textContent = '@keyframes shakeInput{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}';
+  document.head.appendChild(shakeStyle);
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
   const obs = new IntersectionObserver(
     entries => entries.forEach((e,i) => { if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'),i*80); }),
     {threshold:.1}
   );
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-  // Carousel (fade)
-  const slides  = document.querySelectorAll('.val-slide');
-  const dotsEl  = document.getElementById('carDots');
-  const progEl  = document.getElementById('progFill');
-  const curNumEl= document.getElementById('curNum');
-  const TOTAL   = slides.length;
-  let cur = 0, autoT;
+  // Story Carousel
+  (function(){
+    const IMG = 'assets/images/story-carousel.png';
+    const slides = document.querySelectorAll('.story-slide');
+    const bars   = document.querySelectorAll('.sp-bar');
+    let cur = 0, timer, paused = false;
 
-  // build dots
-  for(let i=0;i<TOTAL;i++){
-    const b = document.createElement('button');
-    b.className = 'dot' + (i===0?' active':'');
-    b.onclick = () => goTo(i);
-    dotsEl.appendChild(b);
-  }
+    slides.forEach(s => { s.style.backgroundImage = `url('${IMG}')`; });
 
-  function goTo(n){
-    slides[cur].classList.remove('active');
-    cur = ((n%TOTAL)+TOTAL)%TOTAL;
-    slides[cur].classList.add('active');
-    document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active',i===cur));
-    curNumEl.textContent = cur+1;
-    restartProg();
-  }
+    function go(to) {
+      to = ((to % 4) + 4) % 4;
+      slides[cur].classList.remove('active');
+      slides[to].classList.add('active');
+      bars.forEach((b, i) => {
+        b.classList.remove('active','done');
+        if (i < to) b.classList.add('done');
+      });
+      void bars[to].offsetWidth; // force reflow to restart animation
+      bars[to].classList.add('active');
+      cur = to;
+      clearInterval(timer);
+      if (!paused) timer = setInterval(() => go(cur + 1), 5000);
+    }
 
-  function restartProg(){
-    clearTimeout(autoT);
-    progEl.style.transition='none'; progEl.style.width='0%';
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      progEl.style.transition='width 5s linear'; progEl.style.width='100%';
-    }));
-    autoT = setTimeout(()=>goTo(cur+1), 5000);
-  }
+    document.getElementById('storyPrev').onclick = e => { e.stopPropagation(); go(cur - 1); };
+    document.getElementById('storyNext').onclick = e => { e.stopPropagation(); go(cur + 1); };
 
-  document.getElementById('carPrev').onclick = () => goTo(cur-1);
-  document.getElementById('carNext').onclick = () => goTo(cur+1);
-  goTo(0);
+    const carousel = document.getElementById('storyCarousel');
+    carousel.addEventListener('mouseenter', () => { paused = true; clearInterval(timer); });
+    carousel.addEventListener('mouseleave', () => { paused = false; timer = setInterval(() => go(cur + 1), 5000); });
+
+    go(0);
+  })();
 </script>
 </body>
 </html>

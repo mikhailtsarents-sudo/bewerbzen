@@ -1031,6 +1031,10 @@
     ]
   }
   </script>
+
+  <!-- Umami Analytics (GDPR-friendly, no cookies, no cookie banner needed) -->
+  <!-- После регистрации на umami.is замени YOUR_WEBSITE_ID на свой ID -->
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="YOUR_WEBSITE_ID"></script>
 </head>
 <body>
 
@@ -1274,7 +1278,7 @@
           <li><span class="pc-check">✓</span>Приоритетная поддержка</li>
           <li class="pc-dim"><span class="pc-x">—</span>Безлимитная генерация</li>
         </ul>
-        <a href="https://t.me/BewerbZen_bot" target="_blank" class="btn-primary pc-btn" style="display:block;text-align:center;text-decoration:none;">Купить пакет →</a>
+        <a href="https://t.me/BewerbZen_bot" target="_blank" class="btn-primary pc-btn" style="display:block;text-align:center;text-decoration:none;" onclick="typeof umami!=='undefined'&&umami.track('click_buy_pack')">Купить пакет →</a>
         <div class="pc-note">Разово, без подписки</div>
       </div>
 
@@ -1290,7 +1294,7 @@
           <li><span class="pc-check">✓</span>Персональный профиль</li>
           <li><span class="pc-check">✓</span>Приоритетная поддержка</li>
         </ul>
-        <a href="https://t.me/BewerbZen_bot" target="_blank" class="btn-primary pc-btn" style="display:block;text-align:center;text-decoration:none;">Выбрать Pro →</a>
+        <a href="https://t.me/BewerbZen_bot" target="_blank" class="btn-primary pc-btn" style="display:block;text-align:center;text-decoration:none;" onclick="typeof umami!=='undefined'&&umami.track('click_buy_pro')">Выбрать Pro →</a>
         <div class="pc-note">Отменить можно в любой момент</div>
       </div>
 
@@ -1577,7 +1581,7 @@
           <div class="fm-success-anim">🎉</div>
           <h3>Готово!</h3>
           <p style="margin-bottom:8px">Открой бота — он пришлёт подборки вакансий под твой профиль и создаст Anschreiben за 2 минуты:</p>
-          <a href="https://t.me/BewerbZen_bot" class="fm-tg-btn" style="background:linear-gradient(90deg,var(--primary),var(--primary-h));box-shadow:0 6px 20px rgba(91,124,255,.3)" target="_blank">🤖 Открыть @BewerbZen_bot</a>
+          <a href="https://t.me/BewerbZen_bot" class="fm-tg-btn" style="background:linear-gradient(90deg,var(--primary),var(--primary-h));box-shadow:0 6px 20px rgba(91,124,255,.3)" target="_blank" onclick="typeof umami!=='undefined'&&umami.track('click_open_bot_success')">🤖 Открыть @BewerbZen_bot</a>
         </div>
       </div>
 
@@ -1603,10 +1607,16 @@
       job: '', lang: 'B1-B2', type: 'Vollzeit'
     };
 
+    // Umami event helper (safe if script not yet loaded)
+    function track(event, data) {
+      if (typeof umami !== 'undefined') umami.track(event, data);
+    }
+
     function openModal() {
       overlay.classList.add('open');
       document.body.style.overflow = 'hidden';
       document.getElementById('f-name').focus();
+      track('form_open');
     }
     function closeModal() {
       overlay.classList.remove('open');
@@ -1632,6 +1642,7 @@
       currentStep = n;
       const pct = n <= TOTAL ? ((n - 1) / TOTAL * 100) : 100;
       bar.style.width = pct + '%';
+      if (n === 5) track('form_submitted');
     }
 
     // Back buttons

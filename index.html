@@ -7,6 +7,10 @@
   <meta name="description" content="Агрегатор вакансий и AI-генератор Bewerbung для русскоязычных в Германии. Anschreiben + Lebenslauf за 8 минут. ATS-оптимизировано. Первые 3 бесплатно."/>
   <meta name="keywords" content="Bewerbung, Anschreiben, Lebenslauf, работа в Германии, вакансии Германия, Bewerbung erstellen"/>
   <link rel="canonical" href="https://bewerbzen.de/"/>
+  <link rel="alternate" hreflang="ru-DE" href="https://bewerbzen.de/"/>
+  <link rel="alternate" hreflang="ru" href="https://bewerbzen.de/"/>
+  <link rel="alternate" hreflang="x-default" href="https://bewerbzen.de/"/>
+  <meta name="google-site-verification" content="FZ9TzL5ESHfG02haxRERwU96MCwVPUB7x6h1OFMMvZY"/>
 
   <!-- Open Graph -->
   <meta property="og:type"        content="website"/>
@@ -904,7 +908,128 @@
       .fm-container { border-radius: 20px 20px 0 0; }
       .fm-overlay { align-items: flex-end; padding: 0; }
     }
+
+    /* ── LEGAL MODALS ── */
+    .lm-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,.55); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .lm-overlay.open { display: flex; }
+    .lm-box {
+      background: #fff; border-radius: 20px; width: 100%; max-width: 680px;
+      max-height: 85vh; display: flex; flex-direction: column;
+      box-shadow: 0 24px 64px rgba(0,0,0,.18);
+    }
+    .lm-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 28px 20px; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .lm-head h2 { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; }
+    .lm-close {
+      background: none; border: none; font-size: 20px; cursor: pointer;
+      color: var(--text-2); line-height: 1; padding: 4px;
+      transition: color .2s;
+    }
+    .lm-close:hover { color: var(--text); }
+    .lm-body {
+      overflow-y: auto; padding: 24px 28px 32px;
+      font-size: 14px; color: var(--text); line-height: 1.75;
+    }
+    .lm-body h3 { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600; margin: 20px 0 6px; }
+    .lm-body h3:first-child { margin-top: 0; }
+    .lm-body p { margin-bottom: 10px; color: var(--text-2); }
+    .lm-body a { color: var(--primary); text-decoration: none; }
+    .lm-placeholder { background: #FEF9C3; border-radius: 6px; padding: 2px 6px; font-weight: 600; color: #92400E; }
+    @media (max-width: 540px) {
+      .lm-overlay { padding: 0; align-items: flex-end; }
+      .lm-box { border-radius: 20px 20px 0 0; max-height: 90vh; }
+      .lm-head { padding: 20px 20px 16px; }
+      .lm-body { padding: 20px 20px 28px; }
+    }
   </style>
+
+  <!-- Structured Data / JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "BewerbZen",
+    "url": "https://bewerbzen.de",
+    "description": "AI-сервис для создания Bewerbung (Anschreiben и Lebenslauf) на немецком языке для русскоязычных соискателей в Германии. ATS-оптимизировано.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR",
+      "description": "3 Bewerbung бесплатно"
+    },
+    "inLanguage": "ru",
+    "availableLanguage": ["ru", "de"],
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "Русскоязычные соискатели в Германии"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Это настоящий Bewerbung или шаблон?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Нет, не шаблон. AI читает конкретное описание вакансии и пишет Anschreiben под неё — с нужными ключевыми словами, правильной структурой и немецким формальным стилем. Каждый раз разный результат."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "На каком языке создаётся Bewerbung?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "На немецком — по немецкому профессиональному стандарту (Anschreiben по DIN 5008). Если вакансия на английском, можно сгенерировать на английском — просто укажи это в тексте."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Мои данные в безопасности?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Мы не храним персональные данные дольше, чем нужно для генерации. BewerbZen — это инструмент, а не кадровое агентство. Мы не продаём и не передаём данные третьим лицам. Работаем в рамках GDPR."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Что значит ATS-оптимизировано?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ATS (Applicant Tracking System) — это программы, которые компании используют для автоматической фильтрации резюме. Мы вставляем ключевые слова из описания вакансии так, чтобы ваш Bewerbung прошёл через эти фильтры до реального рекрутера."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Нужен ли хороший немецкий чтобы пользоваться?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Нет. Интерфейс на русском. Достаточно скопировать текст вакансии и пару слов написать о себе на русском — всё остальное сделает AI. Готовый Anschreiben будет на профессиональном немецком."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Когда появятся вакансии прямо в сервисе?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Уже сейчас подборки вакансий публикуются в Telegram-канале @BewerbZen. Фильтрация прямо в интерфейсе — в разработке, планируем запустить в мае 2026."
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -935,8 +1060,8 @@
       <div class="hero-text">
         <div class="badge"><span class="badge-dot"></span>Доступно в Германии</div>
         <h1>
-          <span class="h1-dark">Найди работу.</span><br/>
-          <span class="h1-blue">Без бумажного ада.</span>
+          <span class="h1-dark">Bewerbung за 8 минут.</span><br/>
+          <span class="h1-blue">По немецкому стандарту.</span>
         </h1>
         <p class="subtitle">Еженедельная подборка вакансий под твой профиль + готовый Anschreiben и Lebenslauf одной кнопкой. ATS-оптимизировано. По немецкому стандарту.</p>
         <div class="hero-btns">
@@ -1237,9 +1362,9 @@
         </div>
         <div class="footer-col">
           <div class="footer-col-title">Правовое</div>
-          <a href="#" class="footer-link">Impressum</a>
-          <a href="#" class="footer-link">Datenschutz</a>
-          <a href="#" class="footer-link">AGB</a>
+          <a href="#" class="footer-link" onclick="openLegal('impressum');return false;">Impressum</a>
+          <a href="#" class="footer-link" onclick="openLegal('datenschutz');return false;">Datenschutz</a>
+          <a href="#" class="footer-link" onclick="openLegal('agb');return false;">AGB</a>
         </div>
         <div class="footer-col">
           <div class="footer-col-title">Контакт</div>
@@ -1255,6 +1380,111 @@
   </footer>
 
 </div><!-- /page -->
+
+<!-- ═══ LEGAL MODALS ═══ -->
+
+<!-- Impressum -->
+<div class="lm-overlay" id="lm-impressum">
+  <div class="lm-box" role="dialog" aria-modal="true" aria-label="Impressum">
+    <div class="lm-head">
+      <h2>Impressum</h2>
+      <button class="lm-close" onclick="closeLegal('impressum')" aria-label="Schließen">✕</button>
+    </div>
+    <div class="lm-body">
+      <h3>Angaben gemäß § 5 TMG</h3>
+      <p>
+        Mikhail Tsarents<br/>
+        <span class="lm-placeholder" id="impressum-address">[Straße, Hausnummer, PLZ, Stadt einfügen]</span><br/>
+        Deutschland
+      </p>
+      <h3>Kontakt</h3>
+      <p>
+        E-Mail: <a href="mailto:hello@bewerbzen.de">hello@bewerbzen.de</a><br/>
+        Telegram: <a href="https://t.me/mihailcarenc" target="_blank">@mihailcarenc</a>
+      </p>
+      <h3>Hinweis zur Kleinunternehmerregelung</h3>
+      <p>Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerregelung).</p>
+      <h3>Haftungsausschluss</h3>
+      <p>BewerbZen ist ein KI-gestütztes Werkzeug zur Erstellung von Bewerbungsunterlagen. Es handelt sich nicht um eine Personalvermittlung oder eine Rechtsberatung. Die Nutzung erfolgt auf eigene Verantwortung.</p>
+      <h3>Urheberrecht</h3>
+      <p>Die Inhalte dieser Website sind urheberrechtlich geschützt. Die Vervielfältigung, Bearbeitung oder Verbreitung bedarf der schriftlichen Genehmigung des Autors.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Datenschutz -->
+<div class="lm-overlay" id="lm-datenschutz">
+  <div class="lm-box" role="dialog" aria-modal="true" aria-label="Datenschutzerklärung">
+    <div class="lm-head">
+      <h2>Datenschutzerklärung</h2>
+      <button class="lm-close" onclick="closeLegal('datenschutz')" aria-label="Schließen">✕</button>
+    </div>
+    <div class="lm-body">
+      <h3>1. Verantwortlicher</h3>
+      <p>Mikhail Tsarents, E-Mail: <a href="mailto:hello@bewerbzen.de">hello@bewerbzen.de</a></p>
+
+      <h3>2. Welche Daten wir verarbeiten</h3>
+      <p>Wir verarbeiten ausschließlich Daten, die Sie uns aktiv übermitteln:</p>
+      <p>• <strong>Registrierungsformular:</strong> Name, Kontakt (Telegram / E-Mail), Wohnort, gesuchte Stelle. Diese Daten werden einmalig zur Kontaktaufnahme genutzt.<br/>
+      • <strong>Telegram-Bot (@BewerbZen_bot):</strong> Telegram-Nutzer-ID, Chat-ID sowie die von Ihnen gesendeten Texte (Stellenausschreibung, Lebenslauf). Diese Daten werden ausschließlich für die Generierung des Anschreibens verwendet und nicht dauerhaft gespeichert.</p>
+
+      <h3>3. Zweck der Verarbeitung</h3>
+      <p>Die Verarbeitung erfolgt zum Zweck der KI-gestützten Erstellung von Bewerbungsunterlagen (Art. 6 Abs. 1 lit. b DSGVO — Vertragserfüllung) sowie zur einmaligen Kontaktaufnahme mit Interessenten (Art. 6 Abs. 1 lit. a DSGVO — Einwilligung).</p>
+
+      <h3>4. Weitergabe an Dritte</h3>
+      <p>Zur Generierung der Bewerbungsunterlagen werden Ihre Daten an <strong>Anthropic, PBC</strong> (USA) übermittelt, den Anbieter der Claude-KI. Anthropic verarbeitet die Daten gemäß ihrer <a href="https://www.anthropic.com/privacy" target="_blank">Datenschutzrichtlinie</a> und dem EU-US Data Privacy Framework.</p>
+      <p>Eine Weitergabe an sonstige Dritte, Werbepartner oder Personalvermittler findet nicht statt.</p>
+
+      <h3>5. Speicherdauer</h3>
+      <p>Daten aus dem Registrierungsformular werden nach spätestens 12 Monaten gelöscht. Daten im Telegram-Bot werden nach der Generierung nicht dauerhaft gespeichert.</p>
+
+      <h3>6. Ihre Rechte (DSGVO)</h3>
+      <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung sowie Datenübertragbarkeit. Wenden Sie sich dazu an: <a href="mailto:hello@bewerbzen.de">hello@bewerbzen.de</a></p>
+      <p>Außerdem haben Sie das Recht, Beschwerde bei der zuständigen Datenschutzbehörde einzulegen.</p>
+
+      <h3>7. Cookies und Tracking</h3>
+      <p>Diese Website verwendet keine Tracking-Cookies und kein Analytics. Es werden keine personenbezogenen Daten durch Website-Besuch erhoben.</p>
+
+      <h3>8. Hosting</h3>
+      <p>Diese Website wird gehostet bei Netlify, Inc. (USA). Netlify verarbeitet technisch notwendige Verbindungsdaten (IP-Adresse, Zugriffszeit) gemäß ihrer <a href="https://www.netlify.com/privacy/" target="_blank">Datenschutzrichtlinie</a>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- AGB -->
+<div class="lm-overlay" id="lm-agb">
+  <div class="lm-box" role="dialog" aria-modal="true" aria-label="AGB">
+    <div class="lm-head">
+      <h2>Allgemeine Geschäftsbedingungen</h2>
+      <button class="lm-close" onclick="closeLegal('agb')" aria-label="Schließen">✕</button>
+    </div>
+    <div class="lm-body">
+      <h3>§ 1 Geltungsbereich</h3>
+      <p>Diese AGB gelten für die Nutzung des Dienstes BewerbZen (bewerbzen.de) von Mikhail Tsarents.</p>
+
+      <h3>§ 2 Leistungsbeschreibung</h3>
+      <p>BewerbZen ist ein KI-gestütztes Werkzeug zur automatischen Erstellung von Anschreiben auf Basis von Stellenausschreibungen und Nutzerangaben. Der Dienst ist kein Personalvermittler und übernimmt keine Haftung für den Erfolg von Bewerbungen.</p>
+
+      <h3>§ 3 Kostenlose Nutzung und Bezahlangebote</h3>
+      <p>Die ersten 3 Anschreiben sind kostenlos. Weitere Pakete (€4,99 / 3 Anschreiben oder €12,99/Monat) können über den angegebenen Zahlungsweg erworben werden. Preise verstehen sich inkl. MwSt.</p>
+
+      <h3>§ 4 Nutzerpflichten</h3>
+      <p>Der Nutzer verpflichtet sich, keine falschen oder rechtswidrigen Inhalte einzugeben. Die missbräuchliche Nutzung des Dienstes ist untersagt.</p>
+
+      <h3>§ 5 Haftungsausschluss</h3>
+      <p>Die generierten Dokumente werden automatisch erstellt. BewerbZen übernimmt keine Gewähr für die inhaltliche Korrektheit oder den Bewerbungserfolg. Der Nutzer ist selbst verantwortlich für die Überprüfung und Verwendung der generierten Inhalte.</p>
+
+      <h3>§ 6 Widerrufsrecht</h3>
+      <p>Bei digitalen Inhalten, die auf ausdrücklichen Wunsch sofort bereitgestellt werden, erlischt das Widerrufsrecht nach Beginn der Ausführung. Dies wird vor dem Kauf explizit mitgeteilt.</p>
+
+      <h3>§ 7 Anwendbares Recht</h3>
+      <p>Es gilt deutsches Recht. Gerichtsstand ist Deutschland.</p>
+
+      <h3>§ 8 Änderungen</h3>
+      <p>Diese AGB können jederzeit geändert werden. Die jeweils aktuelle Fassung ist auf bewerbzen.de abrufbar.</p>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ REGISTRATION MODAL ═══ -->
 <div class="fm-overlay" id="fmOverlay" role="dialog" aria-modal="true" aria-label="Регистрация">
@@ -1653,6 +1883,24 @@
 
     go(0);
   })();
+
+  // ── LEGAL MODALS ──
+  function openLegal(id) {
+    document.getElementById('lm-' + id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLegal(id) {
+    document.getElementById('lm-' + id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  // Close on backdrop click
+  document.querySelectorAll('.lm-overlay').forEach(el => {
+    el.addEventListener('click', e => { if (e.target === el) closeLegal(el.id.replace('lm-', '')); });
+  });
+  // Close on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.querySelectorAll('.lm-overlay.open').forEach(el => closeLegal(el.id.replace('lm-', '')));
+  });
 </script>
 </body>
 </html>

@@ -1,0 +1,57 @@
+{
+  "name": "BZ Test 2 - TG Trigger",
+  "nodes": [
+    {
+      "id": "tg-1",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "QnYKdsbSqRsqqH0J",
+          "name": "BewerbZen Bot"
+        }
+      }
+    },
+    {
+      "id": "code-1",
+      "name": "Parse",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "jsCode": "return [{json: {test: 1}}];"
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

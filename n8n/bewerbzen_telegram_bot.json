@@ -5,7 +5,7 @@
       "id": "tg-trigger",
       "name": "Telegram Trigger",
       "type": "n8n-nodes-base.telegramTrigger",
-      "typeVersion": 1.1,
+      "typeVersion": 1,
       "position": [
         220,
         300
@@ -13,8 +13,7 @@
       "parameters": {
         "updates": [
           "message"
-        ],
-        "additionalFields": {}
+        ]
       },
       "credentials": {
         "telegramApi": {
@@ -33,7 +32,7 @@
         300
       ],
       "parameters": {
-        "jsCode": "\nconst msg = $input.first().json?.message || {};\nconst text = msg.text || '';\nconst chatId = String(msg.chat?.id || '');\nconst firstName = msg.from?.first_name || 'друг';\nconst command = text.startsWith('/') ? text.split(' ')[0].replace('/','').split('@')[0].toLowerCase() : 'text';\n\nreturn [{ json: { chatId, firstName, text, command, isCommand: text.startsWith('/') } }];\n"
+        "jsCode": "\nconst msg = $input.first().json?.message || {};\nconst text = (msg.text || '').trim();\nconst chatId = String(msg.chat?.id || '');\nconst firstName = msg.from?.first_name || 'друг';\nconst isCommand = text.startsWith('/');\nconst command = isCommand ? text.split(' ')[0].replace('/','').split('@')[0].toLowerCase() : 'text';\nreturn [{ json: { chatId, firstName, text, command, isCommand } }];\n"
       }
     },
     {
@@ -121,9 +120,9 @@
                 "conditions": [
                   {
                     "leftValue": "={{ $json.isCommand }}",
-                    "rightValue": "false",
+                    "rightValue": false,
                     "operator": {
-                      "type": "string",
+                      "type": "boolean",
                       "operation": "equals"
                     }
                   }
@@ -132,11 +131,25 @@
               },
               "renameOutput": true,
               "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.isCommand }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "fallback"
             }
           ]
-        },
-        "options": {
-          "fallbackOutput": "extra"
         }
       }
     },
@@ -163,7 +176,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, text: \"Привет, \" + $json.firstName + \"! 👋\\n\\nЯ — BewerbZen. Помогаю русскоязычным в Германии делать Bewerbung правильно и быстро.\\n\\n📋 Что умею:\\n• Anschreiben под конкретную вакансию\\n• Lebenslauf по немецкому стандарту\\n• Поиск вакансий (скоро)\\n\\nНапиши /bewerben и пришли текст вакансии.\\n\\n✨ Первые 3 Bewerbung — бесплатно\", parse_mode: \"Markdown\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"Привет, \" + $json.firstName + \"! 👋\\n\\nЯ — *BewerbZen*. Помогаю русскоязычным в Германии делать Bewerbung правильно и быстро.\\n\\n📋 *Что умею:*\\n• Anschreiben под конкретную вакансию\\n• Lebenslauf по немецкому стандарту\\n\\nПришли текст вакансии прямо сейчас, или напиши /bewerben\\n\\n✨ *Первые 3 Bewerbung — бесплатно*\" }) }}",
         "options": {}
       }
     },
@@ -190,7 +203,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, text: \"📋 *BewerbZen — справка*\\n\\n/bewerben — составить Anschreiben\\n/status — баланс\\n/help — эта справка\\n\\n💡 Как получить лучший результат:\\n• Полный текст вакансии\\n• Уровень немецкого (B1/B2/C1)\\n\\n🆓 Первые 3 — бесплатно\\n💳 Пакет 3 шт — €4.99\\n♾️ Подписка — €12.99/мес\", parse_mode: \"Markdown\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"📋 *BewerbZen — справка*\\n\\n/bewerben — составить Anschreiben\\n/status — мой баланс\\n/help — эта справка\\n\\n💡 *Как получить лучший результат:*\\n• Полный текст вакансии\\n• Уровень немецкого (B1/B2/C1)\\n\\n🆓 Первые 3 — бесплатно\\n💳 Пакет 3 шт — €4.99\\n♾️ Подписка — €12.99/мес\\n\\nВопросы → @mihailcarenc\" }) }}",
         "options": {}
       }
     },
@@ -217,7 +230,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, text: \"Давай составим Bewerbung! ✍️\\n\\n*Пришли текст вакансии* — скопируй с сайта работодателя или со StepStone / Indeed / Xing.\\n\\nЧем полнее текст — тем точнее Anschreiben.\\n\\n💡 Опционально — добавь в конце:\\n«Я frontend-разработчик, 3 года опыта, B2 немецкий»\", parse_mode: \"Markdown\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"Давай составим Bewerbung! ✍️\\n\\n*Пришли текст вакансии* — скопируй с сайта работодателя или со StepStone / Indeed / Xing.\\n\\n💡 Опционально добавь о себе:\\n_«frontend-разработчик, 3 года, B2 немецкий»_\" }) }}",
         "options": {}
       }
     },
@@ -244,7 +257,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ (() => { const data = $getWorkflowStaticData(\"global\"); const user = (data.users || {})[String($json.chatId)] || { count: 0, isPaid: false }; const rem = Math.max(0, 3 - user.count); return JSON.stringify({ chat_id: $json.chatId, text: \"📊 *Твой статус*\\n\\n✅ Использовано: \" + user.count + \" из 3 бесплатных\\n🎁 Осталось: \" + rem + \"\\n\\n\" + (rem > 0 ? \"Напиши /bewerben чтобы начать →\" : \"Бесплатные использованы. Напиши @mihailcarenc для продления.\"), parse_mode: \"Markdown\" }); })() }}",
+        "jsonBody": "={{ (() => { const d = $getWorkflowStaticData(\"global\"); const u = (d.users||{})[String($json.chatId)]||{count:0}; const r = Math.max(0,3-u.count); return JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"📊 *Твой статус*\\n\\n✅ Использовано: \"+u.count+\" из 3\\n🎁 Осталось бесплатно: \"+r+(r>0?\"\\n\\nНапиши /bewerben чтобы начать →\":\"\\n\\nЛимит исчерпан. Напиши @mihailcarenc для продления.\") }); })() }}",
         "options": {}
       }
     },
@@ -258,7 +271,7 @@
         620
       ],
       "parameters": {
-        "jsCode": "\nconst data = $getWorkflowStaticData('global');\nif (!data.users) data.users = {};\nconst chatId = String($input.first().json.chatId);\nif (!data.users[chatId]) data.users[chatId] = { count: 0, isPaid: false };\nconst user = data.users[chatId];\nconst FREE_LIMIT = 3;\nconst limitOk = user.isPaid || user.count < FREE_LIMIT;\nreturn [{ json: { ...$input.first().json, usageCount: user.count, isPaid: user.isPaid, limitOk: !!limitOk } }];\n"
+        "jsCode": "\nconst data = $getWorkflowStaticData('global');\nif (!data.users) data.users = {};\nconst chatId = String($input.first().json.chatId);\nif (!data.users[chatId]) data.users[chatId] = { count: 0, isPaid: false };\nconst user = data.users[chatId];\nconst limitOk = user.isPaid || user.count < 3;\nreturn [{ json: { ...$input.first().json, usageCount: user.count, limitOk } }];\n"
       }
     },
     {
@@ -280,7 +293,7 @@
           },
           "conditions": [
             {
-              "id": "limit-router-cond",
+              "id": "limit-router-c",
               "leftValue": "={{ !!$json.limitOk }}",
               "rightValue": true,
               "operator": {
@@ -301,7 +314,7 @@
       "typeVersion": 4.2,
       "position": [
         1340,
-        540
+        520
       ],
       "parameters": {
         "method": "POST",
@@ -328,7 +341,7 @@
       "typeVersion": 4.2,
       "position": [
         1340,
-        700
+        720
       ],
       "parameters": {
         "method": "POST",
@@ -344,7 +357,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, text: \"Ты использовал все *3 бесплатных Bewerbung* 🎉\\n\\nЧтобы продолжить:\\n💳 Пакет 3 шт — €4.99\\n♾️ Подписка — €12.99/мес\\n\\nНапиши @mihailcarenc для оплаты.\", parse_mode: \"Markdown\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"Ты использовал все *3 бесплатных Bewerbung* 🎉\\n\\nЧтобы продолжить:\\n💳 Пакет 3 шт — €4.99\\n♾️ Подписка — €12.99/мес\\n\\nНапиши @mihailcarenc для оплаты.\" }) }}",
         "options": {}
       }
     },
@@ -355,7 +368,7 @@
       "typeVersion": 4.2,
       "position": [
         1560,
-        540
+        520
       ],
       "parameters": {
         "method": "POST",
@@ -379,7 +392,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ model: \"claude-opus-4-5\", max_tokens: 2000, messages: [{ role: \"user\", content: \"Ты эксперт по немецким заявлениям о приёме на работу (Bewerbung). Напиши профессиональный Anschreiben на немецком языке для следующей вакансии.\\n\\nВАЖНО: Используй [квадратные скобки] для данных которые соискатель должен заменить сам (имя, адрес, телефон, дата и т.д.)\\n\\nВакансия:\\n\" + $json.text }] }) }}",
+        "jsonBody": "={{ JSON.stringify({ model: \"claude-opus-4-5\", max_tokens: 2000, messages: [{ role: \"user\", content: \"Напиши профессиональный Anschreiben на немецком языке для следующей вакансии. Используй [квадратные скобки] для данных которые соискатель заменит сам.\\n\\nВакансия:\\n\" + $json.text }] }) }}",
         "options": {}
       }
     },
@@ -390,10 +403,10 @@
       "typeVersion": 2,
       "position": [
         1780,
-        540
+        520
       ],
       "parameters": {
-        "jsCode": "\nconst data = $getWorkflowStaticData('global');\nconst chatId = String($input.first().json.chatId);\nif (data.users && data.users[chatId] !== undefined) {\n  data.users[chatId].count = (data.users[chatId].count || 0) + 1;\n}\nconst count = data.users?.[chatId]?.count || 1;\nconst remaining = Math.max(0, 3 - count);\n\nconst apiResp = $input.first().json;\nconst anschreiben = apiResp?.content?.[0]?.text || apiResp?.content || 'Ошибка генерации';\n\nconst firstName = $input.first().json.firstName || 'друг';\nreturn [{ json: { ...$input.first().json, anschreiben, usageCountAfter: count, remaining, firstName } }];\n"
+        "jsCode": "\nconst data = $getWorkflowStaticData('global');\nconst chatId = String($input.first().json.chatId);\nif (data.users?.[chatId] !== undefined) data.users[chatId].count += 1;\nconst count = data.users?.[chatId]?.count || 1;\nconst anschreiben = $input.first().json?.content?.[0]?.text || 'Ошибка генерации — попробуй снова.';\nreturn [{ json: { ...$input.first().json, anschreiben, usageCountAfter: count, remaining: Math.max(0, 3 - count) } }];\n"
       }
     },
     {
@@ -403,7 +416,7 @@
       "typeVersion": 4.2,
       "position": [
         2000,
-        540
+        520
       ],
       "parameters": {
         "method": "POST",
@@ -419,7 +432,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, text: \"✅ *Готово, \" + $json.firstName + \"!*\\n\\n```\\n\" + ($json.anschreiben || \"\").substring(0,3500) + \"\\n```\\n\\n📌 *Что дальше:*\\n1. Замени всё в [квадратных скобках] на свои данные\\n2. Проверь имя контактного лица\\n3. Сохрани как PDF (Google Docs → Файл → PDF)\\n\\n📊 Использовано: \" + $json.usageCountAfter + \" из 3 бесплатных ✨\", parse_mode: \"Markdown\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"✅ *Готово, \" + $json.firstName + \"!*\\n\\n```\\n\" + ($json.anschreiben||\"\").substring(0,3800) + \"\\n```\\n\\n📌 *Что дальше:*\\n1. Замени [квадратные скобки] на свои данные\\n2. Сохрани как PDF\\n3. Приложи к заявке\\n\\n📊 Использовано: \" + $json.usageCountAfter + \" из 3 бесплатных ✨\" }) }}",
         "options": {}
       }
     },
@@ -510,7 +523,7 @@
           "index": 0
         }
       ],
-      "extra": [
+      "fallback": [
         {
           "node": "Send Fallback",
           "type": "main",

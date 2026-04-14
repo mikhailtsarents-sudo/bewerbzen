@@ -2,46 +2,23 @@
 
 ## Статус готовности файлов
 
-| Файл | Статус | Действие |
-|------|--------|----------|
-| `preview.html` | ✅ Готов | Переименовать в `index.html` перед заливкой |
-| `assets/images/story-carousel.png` | ✅ Готов | Карусель, чистый путь |
+| Файл | Статус | Комментарий |
+| ---- | ------ | ----------- |
+| `index.html` | ✅ Готов | Основной файл лендинга (синхронизирован с preview.html) |
+| `preview.html` | ✅ Готов | Рабочая копия (всегда синхронизировать с index.html перед деплоем) |
+| `assets/images/story-carousel.png` | ✅ Готов | Карусель 4-панельная |
 | `assets/images/favicon.svg` | ✅ Готов | Иконка вкладки |
-| `netlify.toml` | ✅ Готов | Конфиг деплоя, редиректы |
+| `assets/images/og-cover.png` | ✅ Готов | OG-обложка 1200×630 для соцсетей |
+| `netlify.toml` | ✅ Готов | Конфиг деплоя, редиректы /bot и /start → Telegram |
 | `robots.txt` | ✅ Готов | SEO |
 | `sitemap.xml` | ✅ Готов | Обновить дату при деплое |
-| `n8n/bewerbzen_telegram_bot.json` | ✅ Готов | Импортировать в n8n |
-| `n8n/bewerbzen_jobs_fetcher.json` | ✅ Готов | Импортировать в n8n |
-| `n8n/bewerbzen_tally_notifier.json` | ✅ Готов | Импортировать в n8n |
+| `n8n/bewerbzen_telegram_bot.json` | ✅ **Развёрнут** | ID: `wSewHe5jlOvtPw1q` |
+| `n8n/bewerbzen_jobs_fetcher.json` | ✅ **Развёрнут** | ID: `qOoPc4Idc0a1Fjk8` |
+| `n8n/bewerbzen_tally_notifier.json` | ✅ **Развёрнут** | ID: `13dT1MNhz9TDx5hN` |
 
 ---
 
-## Шаг 1. Tally форма (10 минут)
-
-1. Зайди на [tally.so](https://tally.so) → Sign up
-2. Создай форму с полями:
-   - Имя (короткий текст)
-   - Telegram или email (короткий текст)
-   - "Сколько откликов ты отправил — и сколько ответов получил?" (длинный текст)
-3. Publish → скопируй ID формы из URL: `tally.so/r/xxxxxx` → `xxxxxx` это и есть ID
-4. Открой `preview.html` → найди строку:
-   ```js
-   const TALLY_URL = 'https://tally.so/r/TALLY_FORM_ID';
-   ```
-5. Замени `TALLY_FORM_ID` на реальный ID формы
-
----
-
-## Шаг 2. Переименовать HTML
-
-```
-preview.html → index.html
-```
-(Netlify по умолчанию раздаёт `index.html`)
-
----
-
-## Шаг 3. Деплой на Netlify (5 минут)
+## Шаг 1. Деплой на Netlify (5 минут)
 
 1. Зайди на [netlify.com](https://netlify.com) → Log in
 2. Sites → Add new site → Deploy manually
@@ -49,63 +26,84 @@ preview.html → index.html
 4. Получи URL вида `random-name.netlify.app`
 5. После покупки домена: Netlify → Domain management → Add custom domain → `bewerbzen.de`
 
+> **Важно:** `index.html` уже синхронизирован. Ничего переименовывать не нужно.
+
 ---
 
-## Шаг 4. Telegram Bot (15 минут)
+## Шаг 2. Telegram Bot (15 минут)
 
 1. @BotFather → `/newbot` → имя `BewerbZen` → username `BewerbZenBot`
-2. Скопируй токен
-3. Создай публичный канал → `@BewerbZen` → добавь бота как admin
+2. Скопируй токен бота
+3. Создай публичный канал → `@BewerbZen` → добавь бота как admin с правами на публикацию
 4. В n8n Cloud (tsarents.app.n8n.cloud):
    - Credentials → Add → Telegram API → вставь токен → назови `BewerbZen Bot`
-   - Скопируй ID credential
+   - Скопируй ID нового credential (вида `abc123...`)
 
 ---
 
-## Шаг 5. Импорт n8n workflows (20 минут)
+## Шаг 3. Настроить n8n workflows (20 минут)
 
-### Для каждого из трёх файлов в `n8n/`:
+Все три workflow уже развёрнуты в n8n. Нужно только подставить реальные значения:
 
-1. n8n → Workflows → Import from file → выбери JSON
-2. После импорта найди все `REPLACE_WITH_CREDENTIAL_ID` → замени на реальный ID
-3. В боте: найди `REPLACE_WITH_CLAUDE_API_KEY` → замени на ключ Claude API
-4. В Tally Notifier: найди `REPLACE_WITH_YOUR_TELEGRAM_CHAT_ID` → вставь свой Telegram ID
+### BewerbZen Telegram Bot MVP (ID: `wSewHe5jlOvtPw1q`)
 
-#### Как узнать свой Telegram ID:
-Напиши @userinfobot в Telegram → он пришлёт твой chat_id
+1. Открой workflow в n8n
+2. Найди все узлы типа Telegram → смени credential на `BewerbZen Bot` (новый)
+3. Найди узел `Claude API — Anschreiben` → в заголовке `x-api-key` замени `REPLACE_WITH_CLAUDE_API_KEY` на реальный ключ
+4. Активируй workflow
 
-#### Claude API ключ:
+#### Claude API ключ
+
 [console.anthropic.com](https://console.anthropic.com) → API Keys → Create Key
 
----
+### BewerbZen Tally Form → Telegram Notification (ID: `13dT1MNhz9TDx5hN`)
 
-## Шаг 6. Подключить Tally Webhook к n8n
+1. Найди узел `Notify Mikhail` → замени `REPLACE_WITH_YOUR_TELEGRAM_CHAT_ID` на свой ID
+2. Как узнать свой Telegram chat_id: напиши @userinfobot → он пришлёт число (например: `120796715`)
+3. Активируй workflow
 
-1. В n8n: открой workflow `BewerbZen Tally Form → Telegram`
-2. Нажми на узел `Tally Webhook` → скопируй Production URL
-   - Будет вида: `https://tsarents.app.n8n.cloud/webhook/bewerbzen-tally`
-3. В Tally: открой форму → Integrations → Webhooks → Add webhook → вставь URL
-4. Активируй workflow в n8n
+### BewerbZen Jobs Fetcher (ID: `qOoPc4Idc0a1Fjk8`)
 
----
-
-## Шаг 7. Активировать все workflows
-
-В n8n переключи все три workflow в Active:
-- [x] BewerbZen Telegram Bot MVP
-- [x] BewerbZen Jobs Fetcher
-- [x] BewerbZen Tally Form → Telegram
+1. Найди узел отправки в Telegram → смени credential на `BewerbZen Bot`
+2. Замени `CHANNEL_ID` на `@BewerbZen` (или числовой ID канала)
+3. Активируй workflow
 
 ---
 
-## Шаг 8. Финальная проверка
+## Шаг 4. Подключить Webhook для регистрационной формы
 
-- [ ] Открыть bewerbzen.de — лендинг загружается
-- [ ] Нажать кнопку CTA — открывается Tally форма
-- [ ] Заполнить форму — приходит уведомление в Telegram от бота
-- [ ] Написать боту `/start` — приходит приветствие
-- [ ] Написать боту текст вакансии — приходит Anschreiben за ~20 сек
-- [ ] Канал @BewerbZen — бот публикует вакансии
+Форма на лендинге отправляет данные на:
+
+```text
+https://tsarents.app.n8n.cloud/webhook/bewerbzen-tally
+```
+
+Это уже захардкожено в `index.html`. После активации workflow Tally Notifier webhook будет принимать запросы.
+
+---
+
+## Шаг 5. Зарегистрировать Telegram Webhook для бота
+
+После активации бота в n8n, зарегистрируй webhook:
+
+```text
+GET https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook?url=<N8N_WEBHOOK_URL>
+```
+
+N8N Webhook URL — скопируй из узла `Telegram Trigger` в workflow бота.
+
+---
+
+## Шаг 6. Финальная проверка
+
+- [ ] Открыть сайт — лендинг загружается
+- [ ] Нажать кнопку «Начать бесплатно» — открывается регистрационная форма
+- [ ] Заполнить и отправить форму — приходит уведомление в Telegram
+- [ ] Написать боту `/start` — приходит приветствие с inline-кнопками
+- [ ] Написать боту `/bewerben` — бот просит прислать вакансию
+- [ ] Прислать текст вакансии — бот генерирует Anschreiben за ~20 сек
+- [ ] После 3-го Bewerbung — бот отправляет сообщение об исчерпании лимита
+- [ ] Канал @BewerbZen — бот публикует вакансии (Jobs Fetcher активен)
 
 ---
 
@@ -113,13 +111,14 @@ preview.html → index.html
 
 - ❌ Stripe (после первых платящих пользователей)
 - ❌ Gotenberg PDF (после валидации спроса)
-- ❌ Трекинг лимитов 3/3 (после первых 10 пользователей)
 - ❌ Полноценный Lebenslauf-генератор (фаза 2)
 - ❌ Регистрация Kleingewerbe (до первых €ew заработанных)
 
+> Трекинг 3 бесплатных ✅ уже реализован через workflow static data в боте.
+
 ---
 
-## Домен (опционально на старте)
+## Домен
 
 bewerbzen.de — регистрировать через INWX или Namecheap (~€10/год)
-После регистрации: Netlify → Add custom domain → следовать инструкции (DNS CNAME/A запись)
+После регистрации: Netlify → Domain management → Add custom domain → bewerbzen.de → следовать инструкции (DNS CNAME/A запись, займёт до 24ч)

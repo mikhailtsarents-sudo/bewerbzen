@@ -7,8 +7,8 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1,
       "position": [
-        220,
-        300
+        200,
+        400
       ],
       "parameters": {
         "updates": [
@@ -23,265 +23,26 @@
       }
     },
     {
-      "id": "parse-msg",
+      "id": "parse",
       "name": "Parse Message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        440,
-        300
+        420,
+        400
       ],
       "parameters": {
-        "jsCode": "\nconst msg = $input.first().json?.message || {};\nconst text = (msg.text || '').trim();\nconst chatId = String(msg.chat?.id || '');\nconst firstName = msg.from?.first_name || 'друг';\nconst isCommand = text.startsWith('/');\nconst command = isCommand ? text.split(' ')[0].replace('/','').split('@')[0].toLowerCase() : 'text';\nreturn [{ json: { chatId, firstName, text, command, isCommand } }];\n"
+        "jsCode": "\nconst msg = $input.first().json?.message || {};\nconst text = (msg.text || '').trim();\nconst chatId = String(msg.chat?.id || '');\nconst firstName = msg.from?.first_name || 'друг';\nconst isCmd = text.startsWith('/');\nconst raw = isCmd ? text.split(' ')[0].replace('/','').split('@')[0].toLowerCase() : '';\nconst known = ['start','help','bewerben','status'];\nconst command = isCmd ? (known.includes(raw) ? raw : 'unknown') : 'text';\nreturn [{ json: { chatId, firstName, text, command } }];\n"
       }
     },
     {
-      "id": "cmd-router",
-      "name": "Command Router",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3,
-      "position": [
-        660,
-        300
-      ],
-      "parameters": {
-        "rules": {
-          "rules": [
-            {
-              "conditions": {
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.command }}",
-                    "rightValue": "start",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "start"
-            },
-            {
-              "conditions": {
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.command }}",
-                    "rightValue": "help",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "help"
-            },
-            {
-              "conditions": {
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.command }}",
-                    "rightValue": "bewerben",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "bewerben"
-            },
-            {
-              "conditions": {
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.command }}",
-                    "rightValue": "status",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "status"
-            },
-            {
-              "conditions": {
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.isCommand }}",
-                    "rightValue": false,
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "text"
-            },
-            {
-              "conditions": {
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.isCommand }}",
-                    "rightValue": true,
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "fallback"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "send-welcome",
-      "name": "Send Welcome",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        900,
-        60
-      ],
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.telegram.org/bot8734398212:AAH25Qdzy97iMOQyyfTX1neXz9cOadSaB5Q/sendMessage",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"Привет, \" + $json.firstName + \"! 👋\\n\\nЯ — *BewerbZen*. Помогаю русскоязычным в Германии делать Bewerbung правильно и быстро.\\n\\n📋 *Что умею:*\\n• Anschreiben под конкретную вакансию\\n• Lebenslauf по немецкому стандарту\\n\\nПришли текст вакансии прямо сейчас, или напиши /bewerben\\n\\n✨ *Первые 3 Bewerbung — бесплатно*\" }) }}",
-        "options": {}
-      }
-    },
-    {
-      "id": "send-help",
-      "name": "Send Help",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        900,
-        200
-      ],
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.telegram.org/bot8734398212:AAH25Qdzy97iMOQyyfTX1neXz9cOadSaB5Q/sendMessage",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"📋 *BewerbZen — справка*\\n\\n/bewerben — составить Anschreiben\\n/status — мой баланс\\n/help — эта справка\\n\\n💡 *Как получить лучший результат:*\\n• Полный текст вакансии\\n• Уровень немецкого (B1/B2/C1)\\n\\n🆓 Первые 3 — бесплатно\\n💳 Пакет 3 шт — €4.99\\n♾️ Подписка — €12.99/мес\\n\\nВопросы → @mihailcarenc\" }) }}",
-        "options": {}
-      }
-    },
-    {
-      "id": "ask-vacancy",
-      "name": "Ask for Vacancy",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        900,
-        340
-      ],
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.telegram.org/bot8734398212:AAH25Qdzy97iMOQyyfTX1neXz9cOadSaB5Q/sendMessage",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"Давай составим Bewerbung! ✍️\\n\\n*Пришли текст вакансии* — скопируй с сайта работодателя или со StepStone / Indeed / Xing.\\n\\n💡 Опционально добавь о себе:\\n_«frontend-разработчик, 3 года, B2 немецкий»_\" }) }}",
-        "options": {}
-      }
-    },
-    {
-      "id": "send-status",
-      "name": "Send Status",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        900,
-        480
-      ],
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.telegram.org/bot8734398212:AAH25Qdzy97iMOQyyfTX1neXz9cOadSaB5Q/sendMessage",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ (() => { const d = $getWorkflowStaticData(\"global\"); const u = (d.users||{})[String($json.chatId)]||{count:0}; const r = Math.max(0,3-u.count); return JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"📊 *Твой статус*\\n\\n✅ Использовано: \"+u.count+\" из 3\\n🎁 Осталось бесплатно: \"+r+(r>0?\"\\n\\nНапиши /bewerben чтобы начать →\":\"\\n\\nЛимит исчерпан. Напиши @mihailcarenc для продления.\") }); })() }}",
-        "options": {}
-      }
-    },
-    {
-      "id": "check-limit",
-      "name": "Check & Track Usage",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        900,
-        620
-      ],
-      "parameters": {
-        "jsCode": "\nconst data = $getWorkflowStaticData('global');\nif (!data.users) data.users = {};\nconst chatId = String($input.first().json.chatId);\nif (!data.users[chatId]) data.users[chatId] = { count: 0, isPaid: false };\nconst user = data.users[chatId];\nconst limitOk = user.isPaid || user.count < 3;\nreturn [{ json: { ...$input.first().json, usageCount: user.count, limitOk } }];\n"
-      }
-    },
-    {
-      "id": "limit-router",
-      "name": "Limit Router",
+      "id": "if-start",
+      "name": "Is /start?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1120,
-        620
+        640,
+        200
       ],
       "parameters": {
         "conditions": {
@@ -293,12 +54,331 @@
           },
           "conditions": [
             {
-              "id": "limit-router-c",
+              "id": "if-startc",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "start",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "if-help",
+      "name": "Is /help?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        360
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "if-helpc",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "help",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "if-bewerben",
+      "name": "Is /bewerben?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        520
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "if-bewerbenc",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "bewerben",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "if-status",
+      "name": "Is /status?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        680
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "if-statusc",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "status",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "if-text",
+      "name": "Is text?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        840
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "if-textc",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "text",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "send-welcome",
+      "name": "Send Welcome",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        120
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8734398212:AAH25Qdzy97iMOQyyfTX1neXz9cOadSaB5Q/sendMessage",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"Привет, \" + $json.firstName + \"! 👋\\n\\nЯ — *BewerbZen*. Помогаю русскоязычным в Германии делать Bewerbung быстро и правильно.\\n\\n📋 *Что умею:*\\n• Anschreiben под вакансию\\n• Lebenslauf по немецкому стандарту\\n\\nПришли текст вакансии или напиши /bewerben\\n\\n✨ *Первые 3 Bewerbung — бесплатно*\" }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "send-help",
+      "name": "Send Help",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        280
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8734398212:AAH25Qdzy97iMOQyyfTX1neXz9cOadSaB5Q/sendMessage",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"📋 *BewerbZen — справка*\\n\\n/bewerben — составить Anschreiben\\n/status — мой баланс\\n/help — эта справка\\n\\n🆓 Первые 3 — бесплатно\\n💳 Пакет 3 шт — €4.99\\n♾️ Подписка — €12.99/мес\\n\\nВопросы → @mihailcarenc\" }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "ask-vacancy",
+      "name": "Ask for Vacancy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        440
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8734398212:AAH25Qdzy97iMOQyyfTX1neXz9cOadSaB5Q/sendMessage",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"Давай составим Bewerbung! ✍️\\n\\n*Пришли текст вакансии* — скопируй со StepStone, Indeed или сайта компании.\\n\\n💡 Опционально добавь о себе: специальность, опыт, уровень немецкого.\" }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "send-status",
+      "name": "Send Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        600
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8734398212:AAH25Qdzy97iMOQyyfTX1neXz9cOadSaB5Q/sendMessage",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ (() => { const d = $getWorkflowStaticData(\"global\"); const u = (d.users||{})[String($json.chatId)]||{count:0}; const r = Math.max(0,3-u.count); return JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"📊 *Твой статус*\\n\\nИспользовано: \"+u.count+\" из 3\\nОсталось бесплатно: \"+r }); })() }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "send-fallback",
+      "name": "Send Fallback",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        920
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8734398212:AAH25Qdzy97iMOQyyfTX1neXz9cOadSaB5Q/sendMessage",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, text: \"Не понял команду. Напиши /help для справки.\" }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "check-limit",
+      "name": "Check Limit",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        760
+      ],
+      "parameters": {
+        "jsCode": "\nconst data = $getWorkflowStaticData('global');\nif (!data.users) data.users = {};\nconst chatId = String($input.first().json.chatId);\nif (!data.users[chatId]) data.users[chatId] = { count: 0, isPaid: false };\nconst user = data.users[chatId];\nconst limitOk = user.isPaid || user.count < 3;\nreturn [{ json: { ...$input.first().json, usageCount: user.count, limitOk } }];\n"
+      }
+    },
+    {
+      "id": "limit-if",
+      "name": "Limit OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        760
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "limit-cond",
               "leftValue": "={{ !!$json.limitOk }}",
               "rightValue": true,
               "operator": {
                 "type": "boolean",
-                "operation": "equals"
+                "operation": "equals",
+                "singleValue": true
               }
             }
           ],
@@ -314,7 +394,7 @@
       "typeVersion": 4.2,
       "position": [
         1340,
-        520
+        680
       ],
       "parameters": {
         "method": "POST",
@@ -330,7 +410,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, text: \"⏳ Генерирую Anschreiben...\\nОбычно 15–20 секунд.\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, text: \"⏳ Генерирую Anschreiben... ~15–20 секунд.\" }) }}",
         "options": {}
       }
     },
@@ -341,7 +421,7 @@
       "typeVersion": 4.2,
       "position": [
         1340,
-        720
+        840
       ],
       "parameters": {
         "method": "POST",
@@ -357,18 +437,18 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"Ты использовал все *3 бесплатных Bewerbung* 🎉\\n\\nЧтобы продолжить:\\n💳 Пакет 3 шт — €4.99\\n♾️ Подписка — €12.99/мес\\n\\nНапиши @mihailcarenc для оплаты.\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"Ты использовал все *3 бесплатных Bewerbung* 🎉\\n\\n💳 Пакет 3 шт — €4.99\\n♾️ Подписка — €12.99/мес\\n\\nНапиши @mihailcarenc для оплаты.\" }) }}",
         "options": {}
       }
     },
     {
       "id": "claude-api",
-      "name": "Claude API — Anschreiben",
+      "name": "Claude API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
         1560,
-        520
+        680
       ],
       "parameters": {
         "method": "POST",
@@ -392,21 +472,21 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ model: \"claude-opus-4-5\", max_tokens: 2000, messages: [{ role: \"user\", content: \"Напиши профессиональный Anschreiben на немецком языке для следующей вакансии. Используй [квадратные скобки] для данных которые соискатель заменит сам.\\n\\nВакансия:\\n\" + $json.text }] }) }}",
+        "jsonBody": "={{ JSON.stringify({ model: \"claude-opus-4-5\", max_tokens: 2000, messages: [{ role: \"user\", content: \"Напиши профессиональный Anschreiben на немецком языке. Используй [квадратные скобки] для данных которые соискатель заменит сам.\\n\\nВакансия:\\n\" + $json.text }] }) }}",
         "options": {}
       }
     },
     {
-      "id": "format-result",
+      "id": "format",
       "name": "Format Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
         1780,
-        520
+        680
       ],
       "parameters": {
-        "jsCode": "\nconst data = $getWorkflowStaticData('global');\nconst chatId = String($input.first().json.chatId);\nif (data.users?.[chatId] !== undefined) data.users[chatId].count += 1;\nconst count = data.users?.[chatId]?.count || 1;\nconst anschreiben = $input.first().json?.content?.[0]?.text || 'Ошибка генерации — попробуй снова.';\nreturn [{ json: { ...$input.first().json, anschreiben, usageCountAfter: count, remaining: Math.max(0, 3 - count) } }];\n"
+        "jsCode": "\nconst data = $getWorkflowStaticData('global');\nconst chatId = String($input.first().json.chatId);\nif (data.users?.[chatId]) data.users[chatId].count += 1;\nconst count = data.users?.[chatId]?.count || 1;\nconst anschreiben = $input.first().json?.content?.[0]?.text || 'Ошибка — попробуй снова (/bewerben).';\nreturn [{ json: { ...$input.first().json, anschreiben, usageCountAfter: count, remaining: Math.max(0,3-count) } }];\n"
       }
     },
     {
@@ -416,7 +496,7 @@
       "typeVersion": 4.2,
       "position": [
         2000,
-        520
+        680
       ],
       "parameters": {
         "method": "POST",
@@ -432,34 +512,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"✅ *Готово, \" + $json.firstName + \"!*\\n\\n```\\n\" + ($json.anschreiben||\"\").substring(0,3800) + \"\\n```\\n\\n📌 *Что дальше:*\\n1. Замени [квадратные скобки] на свои данные\\n2. Сохрани как PDF\\n3. Приложи к заявке\\n\\n📊 Использовано: \" + $json.usageCountAfter + \" из 3 бесплатных ✨\" }) }}",
-        "options": {}
-      }
-    },
-    {
-      "id": "send-fallback",
-      "name": "Send Fallback",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        900,
-        760
-      ],
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.telegram.org/bot8734398212:AAH25Qdzy97iMOQyyfTX1neXz9cOadSaB5Q/sendMessage",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, text: \"Не понял команду. Напиши /help чтобы увидеть список команд.\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, parse_mode: \"Markdown\", text: \"✅ *Готово, \" + $json.firstName + \"!*\\n\\n```\\n\" + ($json.anschreiben||\"\").substring(0,3800) + \"\\n```\\n\\n📌 Замени [квадратные скобки] на свои данные, сохрани как PDF.\\n\\n📊 Использовано: \" + $json.usageCountAfter + \" из 3 ✨\" }) }}",
         "options": {}
       }
     }
@@ -480,69 +533,115 @@
       "main": [
         [
           {
-            "node": "Command Router",
+            "node": "Is /start?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Command Router": {
-      "start": [
-        {
-          "node": "Send Welcome",
-          "type": "main",
-          "index": 0
-        }
-      ],
-      "help": [
-        {
-          "node": "Send Help",
-          "type": "main",
-          "index": 0
-        }
-      ],
-      "bewerben": [
-        {
-          "node": "Ask for Vacancy",
-          "type": "main",
-          "index": 0
-        }
-      ],
-      "status": [
-        {
-          "node": "Send Status",
-          "type": "main",
-          "index": 0
-        }
-      ],
-      "text": [
-        {
-          "node": "Check & Track Usage",
-          "type": "main",
-          "index": 0
-        }
-      ],
-      "fallback": [
-        {
-          "node": "Send Fallback",
-          "type": "main",
-          "index": 0
-        }
-      ]
-    },
-    "Check & Track Usage": {
+    "Is /start?": {
       "main": [
         [
           {
-            "node": "Limit Router",
+            "node": "Send Welcome",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is /help?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Limit Router": {
+    "Is /help?": {
+      "main": [
+        [
+          {
+            "node": "Send Help",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is /bewerben?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is /bewerben?": {
+      "main": [
+        [
+          {
+            "node": "Ask for Vacancy",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is /status?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is /status?": {
+      "main": [
+        [
+          {
+            "node": "Send Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is text?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is text?": {
+      "main": [
+        [
+          {
+            "node": "Check Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Fallback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Limit": {
+      "main": [
+        [
+          {
+            "node": "Limit OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit OK?": {
       "main": [
         [
           {
@@ -564,14 +663,14 @@
       "main": [
         [
           {
-            "node": "Claude API — Anschreiben",
+            "node": "Claude API",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Claude API — Anschreiben": {
+    "Claude API": {
       "main": [
         [
           {

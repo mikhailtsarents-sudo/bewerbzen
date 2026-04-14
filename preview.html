@@ -13,14 +13,14 @@
   <meta property="og:url"         content="https://bewerbzen.de/"/>
   <meta property="og:title"       content="BewerbZen — Bewerbung за 8 минут"/>
   <meta property="og:description" content="AI-генератор Anschreiben и Lebenslauf для русскоязычных в Германии. ATS-оптимизировано. Первые 3 бесплатно."/>
-  <meta property="og:image"       content="https://bewerbzen.de/assets/images/og-cover.png"/>
+  <meta property="og:image"       content="https://bewerbzen.de/assets/images/og-cover.svg"/>
   <meta property="og:locale"      content="ru_RU"/>
 
   <!-- Twitter Card -->
   <meta name="twitter:card"        content="summary_large_image"/>
   <meta name="twitter:title"       content="BewerbZen — Bewerbung за 8 минут"/>
   <meta name="twitter:description" content="Находи вакансии и отправляй Bewerbung по немецкому стандарту — быстро и правильно."/>
-  <meta name="twitter:image"       content="https://bewerbzen.de/assets/images/og-cover.png"/>
+  <meta name="twitter:image"       content="https://bewerbzen.de/assets/images/og-cover.svg"/>
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg"/>
@@ -310,13 +310,113 @@
     .btn-white:hover { transform: scale(1.02); box-shadow: 0 6px 28px rgba(0,0,0,.22); }
 
     /* ── FOOTER ── */
-    footer {
-      padding: 24px 48px; border-top: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 13px; color: var(--text-3); max-width: 1200px; margin: 0 auto;
+    .site-footer {
+      border-top: 1px solid var(--border);
+      background: #FAFBFF;
+      padding: 60px 48px 0;
     }
-    footer a { color: var(--text-3); text-decoration: none; }
-    footer a:hover { color: var(--text-2); }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 2fr;
+      gap: 64px; padding-bottom: 48px;
+    }
+    .footer-tagline { font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 20px; max-width: 240px; }
+    .footer-social { display: flex; flex-direction: column; gap: 8px; }
+    .footer-social-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 14px;
+      font-size: 13px; font-weight: 500; color: var(--text);
+      text-decoration: none; transition: border-color .2s, color .2s;
+    }
+    .footer-social-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .footer-links-group { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; }
+    .footer-col-title { font-family:'Sora',sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text); margin-bottom: 14px; }
+    .footer-link { display: block; font-size: 14px; color: var(--text-2); text-decoration: none; margin-bottom: 10px; transition: color .2s; }
+    .footer-link:hover { color: var(--primary); }
+    .footer-bottom {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--text-3);
+    }
+    @media (max-width: 900px) {
+      .footer-inner { grid-template-columns: 1fr; gap: 40px; }
+      .site-footer { padding: 40px 28px 0; }
+    }
+    @media (max-width: 767px) {
+      .site-footer { padding: 32px 20px 0; }
+      .footer-links-group { grid-template-columns: 1fr 1fr; gap: 24px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; padding: 16px 0; }
+    }
+
+    /* ── PRICING ── */
+    .pricing-section { padding: 80px 48px; max-width: 1200px; margin: 0 auto; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; align-items: start; }
+    .pricing-card {
+      background: var(--card-bg); border-radius: var(--r-card);
+      padding: 32px 28px; box-shadow: var(--shadow); border: 1px solid var(--border);
+      position: relative; transition: transform .2s, box-shadow .2s;
+    }
+    .pricing-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .pricing-card--featured {
+      border: 2px solid var(--primary);
+      box-shadow: 0 20px 60px rgba(91,124,255,.18);
+      transform: scale(1.03);
+    }
+    .pricing-card--featured:hover { transform: scale(1.03) translateY(-4px); }
+    .pc-badge {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 999px; margin-bottom: 20px;
+    }
+    .pc-badge-free    { background: rgba(0,0,0,.06); color: var(--text-2); }
+    .pc-badge-popular { background: rgba(91,124,255,.12); color: var(--primary); }
+    .pc-badge-pro     { background: rgba(0,200,150,.1); color: #00A87B; }
+    .pc-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 8px; }
+    .pc-amount { font-family:'Sora',sans-serif; font-size: 40px; font-weight: 700; color: var(--text); letter-spacing: -.03em; }
+    .pc-per { font-size: 14px; color: var(--text-2); }
+    .pc-desc { font-size: 14px; color: var(--text-2); margin-bottom: 24px; line-height: 1.5; }
+    .pc-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .pc-features li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text); }
+    .pc-features .pc-dim { color: var(--text-3); }
+    .pc-check { color: var(--secondary); font-weight: 700; font-size: 13px; flex-shrink: 0; }
+    .pc-x { color: var(--text-3); font-size: 13px; flex-shrink: 0; }
+    .pc-btn { width: 100%; text-align: center; padding: 14px; margin-bottom: 10px; }
+    .pc-note { font-size: 12px; color: var(--text-3); text-align: center; }
+
+    /* ── FAQ ── */
+    .faq-section { padding: 80px 48px; max-width: 800px; margin: 0 auto; }
+    .faq-list { display: flex; flex-direction: column; gap: 2px; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q {
+      width: 100%; text-align: left; padding: 20px 0;
+      background: none; border: none; cursor: pointer;
+      font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 600;
+      color: var(--text); display: flex; justify-content: space-between; align-items: center;
+      gap: 16px; line-height: 1.4;
+    }
+    .faq-q:hover { color: var(--primary); }
+    .faq-arrow { font-size: 18px; color: var(--text-3); transition: transform .25s; flex-shrink: 0; }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); color: var(--primary); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      font-size: 15px; color: var(--text-2); line-height: 1.7;
+      transition: max-height .3s ease, padding .3s ease;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding-bottom: 20px; }
+
+    /* Pricing responsive */
+    @media (max-width: 900px) {
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+      .pricing-card--featured { transform: none; }
+      .pricing-card--featured:hover { transform: translateY(-4px); }
+    }
+    @media (max-width: 767px) {
+      .pricing-section { padding: 40px 20px; }
+      .faq-section { padding: 40px 20px; }
+      .faq-q { font-size: 15px; }
+    }
 
     /* ── STORY CAROUSEL ── */
     .story-section { width: 100%; padding: 0 0 0; }
@@ -814,9 +914,9 @@
 <nav>
   <div class="logo">Bewerb<span>Zen</span></div>
   <ul class="nav-links">
-    <li><a href="#">Возможности</a></li>
-    <li><a href="#">Как работает</a></li>
-    <li><a href="#">Цены</a></li>
+    <li><a href="#how">Как работает</a></li>
+    <li><a href="#pricing">Цены</a></li>
+    <li><a href="#faq">FAQ</a></li>
   </ul>
   <button class="nav-cta">Начать бесплатно</button>
 </nav>
@@ -981,7 +1081,7 @@
   </section>
 
   <!-- STEPS -->
-  <section class="steps-section reveal">
+  <section class="steps-section reveal" id="how">
     <div class="section-header">
       <div class="section-label">Как это работает</div>
       <h2 class="section-title">Три шага вместо трёх недель</h2>
@@ -1006,6 +1106,99 @@
     </div>
   </section>
 
+  <!-- PRICING -->
+  <section class="pricing-section reveal" id="pricing">
+    <div class="section-header">
+      <div class="section-label">Цены</div>
+      <h2 class="section-title">Прозрачно и честно</h2>
+      <p class="section-sub">Начни бесплатно. Плати только когда получаешь ценность.</p>
+    </div>
+    <div class="pricing-grid">
+
+      <div class="pricing-card">
+        <div class="pc-badge pc-badge-free">Бесплатно</div>
+        <div class="pc-price"><span class="pc-amount">€0</span></div>
+        <div class="pc-desc">Попробуй без карты и обязательств</div>
+        <ul class="pc-features">
+          <li><span class="pc-check">✓</span>3 Bewerbung бесплатно</li>
+          <li><span class="pc-check">✓</span>Anschreiben по немецкому стандарту</li>
+          <li><span class="pc-check">✓</span>ATS-оптимизация</li>
+          <li><span class="pc-check">✓</span>Подборка вакансий в Telegram</li>
+          <li class="pc-dim"><span class="pc-x">—</span>Безлимитная генерация</li>
+          <li class="pc-dim"><span class="pc-x">—</span>Lebenslauf-генератор</li>
+        </ul>
+        <button class="btn-primary pc-btn">Начать бесплатно</button>
+      </div>
+
+      <div class="pricing-card pricing-card--featured">
+        <div class="pc-badge pc-badge-popular">Популярный</div>
+        <div class="pc-price"><span class="pc-amount">€4.99</span><span class="pc-per"> / 3 Bewerbung</span></div>
+        <div class="pc-desc">Для активного поиска работы</div>
+        <ul class="pc-features">
+          <li><span class="pc-check">✓</span>3 дополнительных Bewerbung</li>
+          <li><span class="pc-check">✓</span>Всё из бесплатного тарифа</li>
+          <li><span class="pc-check">✓</span>Anschreiben + Lebenslauf</li>
+          <li><span class="pc-check">✓</span>PDF-экспорт</li>
+          <li><span class="pc-check">✓</span>Приоритетная поддержка</li>
+          <li class="pc-dim"><span class="pc-x">—</span>Безлимитная генерация</li>
+        </ul>
+        <button class="btn-primary pc-btn">Купить пакет</button>
+        <div class="pc-note">Разово, без подписки</div>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pc-badge pc-badge-pro">Pro</div>
+        <div class="pc-price"><span class="pc-amount">€12.99</span><span class="pc-per"> / мес</span></div>
+        <div class="pc-desc">Для тех, кто ищет серьёзно</div>
+        <ul class="pc-features">
+          <li><span class="pc-check">✓</span>Безлимитные Bewerbung</li>
+          <li><span class="pc-check">✓</span>Anschreiben + Lebenslauf</li>
+          <li><span class="pc-check">✓</span>PDF-экспорт</li>
+          <li><span class="pc-check">✓</span>История всех заявок</li>
+          <li><span class="pc-check">✓</span>Персональный профиль</li>
+          <li><span class="pc-check">✓</span>Приоритетная поддержка</li>
+        </ul>
+        <button class="btn-primary pc-btn">Выбрать Pro</button>
+        <div class="pc-note">Отменить можно в любой момент</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section reveal" id="faq">
+    <div class="section-header">
+      <div class="section-label">Вопросы</div>
+      <h2 class="section-title">Часто спрашивают</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q">Это настоящий Bewerbung или шаблон?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">Нет, не шаблон. AI читает конкретное описание вакансии и пишет Anschreiben под неё — с нужными ключевыми словами, правильной структурой и немецким формальным стилем. Каждый раз разный результат.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">На каком языке создаётся Bewerbung?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">На немецком — по немецкому профессиональному стандарту (Anschreiben по DIN 5008). Если вакансия на английском, можно сгенерировать на английском — просто укажи это в тексте.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Мои данные в безопасности?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">Мы не храним персональные данные дольше, чем нужно для генерации. BewerbZen — это инструмент, а не кадровое агентство. Мы не продаём и не передаём данные третьим лицам. Работаем в рамках GDPR.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Что значит ATS-оптимизировано?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">ATS (Applicant Tracking System) — это программы, которые компании используют для автоматической фильтрации резюме. Мы вставляем ключевые слова из описания вакансии так, чтобы ваш Bewerbung прошёл через эти фильтры до реального рекрутера.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Нужен ли хороший немецкий чтобы пользоваться?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">Нет. Интерфейс на русском. Достаточно скопировать текст вакансии и пару слов написать о себе на русском — всё остальное сделает AI. Готовый Anschreiben будет на профессиональном немецком.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Когда появятся вакансии прямо в сервисе?<span class="faq-arrow">↓</span></button>
+        <div class="faq-a">Уже сейчас подборки вакансий публикуются в Telegram-канале @BewerbZen. Фильтрация прямо в интерфейсе — в разработке, планируем запустить в мае 2026.</div>
+      </div>
+    </div>
+  </section>
+
   <!-- CTA -->
   <section class="cta-section reveal">
     <div class="cta-box">
@@ -1018,10 +1211,41 @@
   </section>
 
   <!-- FOOTER -->
-  <footer>
-    <div class="logo" style="font-size:17px">Bewerb<span>Zen</span></div>
-    <div style="font-size:12px;color:var(--text-3);font-style:italic">"Резюме, которое проходит ATS и выглядит как продукт."</div>
-    <div>bewerbzen.de &nbsp;·&nbsp; <a href="#">Impressum</a> &nbsp;·&nbsp; <a href="#">Datenschutz</a></div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo" style="font-size:18px;margin-bottom:8px">Bewerb<span>Zen</span></div>
+        <p class="footer-tagline">Bewerbung по немецкому стандарту — быстро и правильно.</p>
+        <div class="footer-social">
+          <a href="https://t.me/BewerbZen" target="_blank" class="footer-social-btn">📢 Telegram-канал</a>
+          <a href="https://t.me/BewerbZenBot" target="_blank" class="footer-social-btn">🤖 Попробовать бота</a>
+        </div>
+      </div>
+      <div class="footer-links-group">
+        <div class="footer-col">
+          <div class="footer-col-title">Продукт</div>
+          <a href="#how" class="footer-link">Как работает</a>
+          <a href="#pricing" class="footer-link">Цены</a>
+          <a href="#" class="footer-link">Вакансии</a>
+          <a href="#faq" class="footer-link">FAQ</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Правовое</div>
+          <a href="#" class="footer-link">Impressum</a>
+          <a href="#" class="footer-link">Datenschutz</a>
+          <a href="#" class="footer-link">AGB</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Контакт</div>
+          <a href="https://t.me/mihailcarenc" target="_blank" class="footer-link">@mihailcarenc</a>
+          <a href="mailto:hello@bewerbzen.de" class="footer-link">hello@bewerbzen.de</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 BewerbZen. Alle Rechte vorbehalten.</span>
+      <span style="color:var(--text-3)">bewerbzen.de · Германия</span>
+    </div>
   </footer>
 
 </div><!-- /page -->
@@ -1155,7 +1379,7 @@
     }
 
     // All CTA buttons open the modal
-    document.querySelectorAll('.btn-primary, .nav-cta, .btn-white, .story-cta').forEach(btn => {
+    document.querySelectorAll('.btn-primary, .nav-cta, .btn-white, .story-cta, .pc-btn').forEach(btn => {
       btn.addEventListener('click', openModal);
     });
     document.getElementById('fmClose').addEventListener('click', closeModal);
@@ -1373,6 +1597,16 @@
   const shakeStyle = document.createElement('style');
   shakeStyle.textContent = '@keyframes shakeInput{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}';
   document.head.appendChild(shakeStyle);
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
 
   const obs = new IntersectionObserver(
     entries => entries.forEach((e,i) => { if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'),i*80); }),

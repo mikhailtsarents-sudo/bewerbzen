@@ -17,7 +17,7 @@
       "id": "tg-trigger",
       "name": "Telegram Trigger",
       "type": "n8n-nodes-base.telegramTrigger",
-      "typeVersion": 1.1,
+      "typeVersion": 1,
       "position": [
         220,
         300
@@ -158,7 +158,7 @@
       "id": "send-start",
       "name": "Send Welcome",
       "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
+      "typeVersion": 1,
       "position": [
         900,
         60
@@ -182,7 +182,7 @@
       "id": "send-help",
       "name": "Send Help",
       "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
+      "typeVersion": 1,
       "position": [
         900,
         200
@@ -206,7 +206,7 @@
       "id": "send-bewerben-prompt",
       "name": "Ask for Vacancy",
       "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
+      "typeVersion": 1,
       "position": [
         900,
         340
@@ -230,7 +230,7 @@
       "id": "send-status",
       "name": "Send Status",
       "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
+      "typeVersion": 1,
       "position": [
         900,
         480
@@ -252,7 +252,7 @@
       "id": "send-typing",
       "name": "Send Loading",
       "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
+      "typeVersion": 1,
       "position": [
         1560,
         620
@@ -297,7 +297,7 @@
       "id": "claude-api",
       "name": "Claude API — Anschreiben",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "typeVersion": 4,
       "position": [
         1780,
         620
@@ -327,7 +327,7 @@
       "id": "send-result",
       "name": "Send Anschreiben",
       "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
+      "typeVersion": 1,
       "position": [
         2220,
         620
@@ -349,7 +349,7 @@
       "id": "send-fallback",
       "name": "Send Fallback",
       "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
+      "typeVersion": 1,
       "position": [
         900,
         760

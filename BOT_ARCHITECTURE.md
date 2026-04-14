@@ -6,100 +6,151 @@
 **n8n:** tsarents.app.n8n.cloud  
 **Бот:** @BewerbZen_bot (токен хранится в n8n credential "BewerbZen Bot")  
 **Claude API ключ:** bewerbzen2 (в n8n workflow, ключ в Anthropic Console)  
-**Claude модель:** `claude-sonnet-4-6`
+**Claude модель:** `claude-sonnet-4-6`  
+**Нод в workflow:** 30
 
 ---
 
 ## Диалоговый флоу
 
 ```
-/start         → Приветствие
+/start         → Start Handler:
+                 - Новый пользователь → Онбординг (3 шага)
+                 - Вернувшийся       → Приветствие с профилем
+
 /help          → Справка по командам
-/status        → Статус использования
+/status        → Статус использования (сколько Bewerbungen осталось)
 /bewerben      → Запускает создание Anschreiben:
                  1. Бот спрашивает ВАКАНСИЮ
                  2. Пользователь присылает текст вакансии
                  3. Бот спрашивает РЕЗЮМЕ
                  4. Пользователь присылает резюме (текст/фото/PDF)
-                 5. Claude генерирует Anschreiben
-                 6. Бот отправляет результат
+                 5. Claude генерирует JSON {anschreiben, betreff, kontakt}
+                 6. Бот отправляет все три части
 ```
+
+## Онбординг (новые пользователи)
+
+При первом `/start` бот проводит 3-шаговый опрос:
+
+| Шаг | Состояние | Вопрос | Сохраняется |
+|-----|-----------|--------|-------------|
+| 1 | `onboarding_job` | Какую должность ищешь? | `user.job_title` |
+| 2 | `onboarding_city` | В каком городе? | `user.city` |
+| 3 | `onboarding_lang` | Язык подборок (русский/немецкий)? | `user.language` |
+
+После онбординга: `user.onboarded = true`, `user.state = 'idle'`  
+Старые пользователи (без поля `onboarded`): автоматически считаются онбордированными.
+
+## Вывод результата /bewerben
+
+Claude возвращает валидный JSON. Бот отправляет три части:
+
+```
+✅ Готово, [Имя]!
+
+📧 Betreff (тема письма):
+`Bewerbung als [Position] – [Name]`
+
+📮 Куда отправить:
+jobs@company.de / Hr. Müller
+
+📄 Anschreiben:
+```
+Sehr geehrte Damen und Herren...
+```
+
+📌 Замени [квадратные скобки] на свои данные, сохрани как PDF.
+📊 Использовано: 1 из 3 ✨
+```
+
+Если контакт не найден в вакансии — блок «Куда отправить» не показывается.
 
 ## Поддерживаемые форматы CV
 
 | Формат | Описание | Лимит |
 |--------|----------|-------|
 | Текст | На любом языке | до 3000 символов |
-| Фото 📷 | Фото резюме или паспорта | до 5 МБ |
+| Фото 📷 | Фото резюме | до 5 МБ |
 | PDF 📎 | PDF документ | до 5 МБ |
 | Документ | Word и другие | до 5 МБ |
 
-Поддерживаемые языки CV: немецкий, русский, украинский, арабский и любые другие — Claude читает всё.
-
 ## Лимиты
 
-| Параметр | Значение | Причина |
-|----------|----------|---------|
-| Текст вакансии | 5000 символов | Достаточно для любой вакансии |
-| Текст CV | 3000 символов | Достаточно для краткого резюме |
-| Файл (фото/PDF) | 5 МБ | Любое резюме умещается |
-| Бесплатных Bewerbung | 3 штуки | Freemium модель |
+| Параметр | Значение |
+|----------|----------|
+| Текст вакансии | 5000 символов |
+| Текст CV | 3000 символов |
+| Файл (фото/PDF) | 5 МБ |
+| Claude max_tokens | 3000 |
+| Бесплатных Bewerbung | 3 штуки |
 
-При превышении лимитов бот отправляет понятное сообщение с просьбой сократить.
-
-## Состояние пользователя (State Machine)
+## Состояние пользователя (Static Data)
 
 Хранится в `$getWorkflowStaticData('global').users[chatId]`:
 
 ```js
 {
-  count: 0,          // Количество использованных Bewerbung
-  isPaid: false,     // Платный пользователь (разблокирует безлимит)
-  state: 'idle',     // Текущее состояние: idle | waiting_vacancy | waiting_cv
-  vacancy: ''        // Временно хранит текст вакансии между шагами
+  count: 0,               // Количество использованных Bewerbung
+  isPaid: false,          // Платный пользователь (безлимит)
+  state: 'idle',          // Текущее состояние (см. ниже)
+  vacancy: '',            // Временно: текст вакансии между шагами
+  onboarded: false,       // Прошёл ли онбординг
+  job_title: '',          // Должность (из онбординга)
+  city: '',               // Город поиска (из онбординга)
+  language: 'ru',         // Язык подборок: 'ru' | 'de'
+  registered_at: ''       // ISO timestamp регистрации
 }
 ```
 
-**Состояния:**
+**Состояния (`state`):**
 - `idle` — обычный режим, принимает команды
 - `waiting_vacancy` — ждёт текст вакансии после `/bewerben`
 - `waiting_cv` — ждёт резюме после получения вакансии
-- После успешной генерации → автоматически сбрасывается в `idle`
+- `onboarding_job` — ждёт название должности (шаг 1)
+- `onboarding_city` — ждёт город (шаг 2)
+- `onboarding_lang` — ждёт язык подборок (шаг 3)
 
-## Архитектура нод (28 нод)
+## Архитектура нод (30 нод)
 
 ```
 Telegram Trigger
-└── Parse Message (Code) — определяет команду/состояние/тип файла
-    ├── Is /start? → Send Welcome
-    ├── Is /help?  → Send Help
-    ├── Is /bewerben? → Set Bewerben State (Code) → Ask Vacancy
-    ├── Is /status? → Send Status
-    ├── Is waiting_vacancy? → Save Vacancy (Code) → Ask CV
+└── Parse Message (Code) — определяет route и userState
+    ├── Is /start?   → Start Handler (Code)
+    │                  ├── Новый: онбординг шаг 1 (auto HTTP)
+    │                  └── Вернувшийся: welcome back (auto HTTP)
+    ├── Is /help?    → Send Help
+    ├── Is /bewerben? → Set Bewerben State → Ask Vacancy
+    ├── Is /status?  → Send Status
+    ├── Is waiting_vacancy? → Save Vacancy → Ask CV
     ├── Is cv_text?
     │   └── Prepare Text Input (Code)
     │       └── Check Limit (Code)
-    │           ├── Limit OK? → Claude API → Format Result → Send Anschreiben
-    │           └── Limit exceeded → Send Limit Exceeded
+    │           ├── OK  → Claude API → Format Result → Send Anschreiben
+    │           └── !OK → Send Limit Exceeded
     ├── Is cv_file?
-    │   └── Get File Info (httpRequest)
-    │       └── Get File URL (Code) — проверяет размер файла
-    │           └── Download File (httpRequest)
-    │               └── Prepare File Input (Code)
-    │                   └── Check Limit → Claude API → ...
-    └── Send Fallback
+    │   └── Get File Info → Get File URL → Download File
+    │       └── Prepare File Input → Check Limit → ...
+    └── Is onboarding?
+        ├── true → Handle Onboarding (Code) — шаги 1/2/3 (auto HTTP)
+        └── false → Send Fallback
 ```
 
 ## Промпт для Claude
 
-Claude получает:
-1. **Текст вакансии** — полностью, как прислал пользователь
-2. **Резюме/о себе** — текст или извлечённый из файла
+Claude получает текст вакансии + резюме (текст или файл) и возвращает JSON:
 
-Инструкция Claude:
+```json
+{
+  "anschreiben": "...",
+  "betreff": "Bewerbung als [Position] – [Name]",
+  "kontakt": "hr@company.de / Hr. Müller — или 'Nicht angegeben'"
+}
+```
+
+Правила:
 - Писать Anschreiben на немецком языке
 - Использовать ТОЛЬКО навыки из резюме, релевантные вакансии
-- НЕ упоминать нерелевантные навыки
 - [Квадратные скобки] для данных которые пользователь заменит сам
 
 ## Тарификация (Freemium)
@@ -107,21 +158,21 @@ Claude получает:
 - 3 бесплатных Anschreiben
 - После: пакет €4.99 (3 шт.) или подписка €12.99/мес
 - Оплата пока через @mihailcarenc (Stripe — фаза 2)
-- Платный статус включается через `data.users[chatId].isPaid = true` в static data
+- Платный статус: `data.users[chatId].isPaid = true` в static data
 
 ---
 
 ## Что НЕ реализовано (фаза 2)
 
-- Lebenslauf генерация (ждём валидации спроса)
+- Jobs Fetcher — workflow для автоматической рассылки вакансий пользователям по профилю
 - Stripe оплата (после первых платящих пользователей)
 - Gotenberg PDF экспорт
-- Telegram канал @BewerbZen (нужно создать)
-- Автоматическая отправка вакансий (Jobs Fetcher workflow)
+- Lebenslauf генерация (ждём валидации спроса)
+- Deep linking: сайт → бот (передача данных из формы)
 
 ---
 
-## Credentiials и ключи
+## Credentials и ключи
 
 | Сервис | Где хранится |
 |--------|-------------|
@@ -129,3 +180,16 @@ Claude получает:
 | Claude API Key | Прямо в ноде "Claude API" workflow |
 | n8n API Key | У Михаила (не хранить в репо) |
 | Anthropic аккаунт | mikhail.tsarents@gmail.com |
+
+---
+
+## История изменений
+
+| Дата | Изменение |
+|------|-----------|
+| 2026-04-14 | Создан бот, базовый флоу /bewerben |
+| 2026-04-14 | Добавлен онбординг (3 шага: должность, город, язык) |
+| 2026-04-14 | Claude теперь возвращает JSON: anschreiben + betreff + kontakt |
+| 2026-04-14 | Claude max_tokens увеличен до 3000 |
+| 2026-04-14 | Удалены все ссылки на @BewerbZen канал (канал не существует) |
+| 2026-04-14 | Расширена структура данных пользователя (job_title, city, language, registered_at) |

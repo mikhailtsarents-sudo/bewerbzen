@@ -1925,5 +1925,757 @@
     if (e.key === 'Escape') document.querySelectorAll('.lm-overlay.open').forEach(el => closeLegal(el.id.replace('lm-', '')));
   });
 </script>
+
+
+<!-- ═══ MULTILANGUAGE (i18n) ═══ -->
+<script>
+(function () {
+'use strict';
+
+/* ── TRANSLATIONS ──────────────────────────────────────────────────────── */
+const T = {
+
+ru: {
+  dir: 'ltr', font: null,
+  nav_how: 'Как работает', nav_pricing: 'Цены', nav_cta: 'Начать бесплатно',
+  hero_badge: 'Доступно в Германии',
+  h1_line1: 'Bewerbung за 8 минут.', h1_line2: 'По немецкому стандарту.',
+  hero_sub: 'Еженедельная подборка вакансий под твой профиль + готовый Anschreiben и Lebenslauf одной кнопкой. ATS-оптимизировано. По немецкому стандарту.',
+  hero_cta: 'Подготовить бесплатно →', hero_ghost: 'Как это работает',
+  trust1: 'Бесплатный старт', trust2: 'Немецкий стандарт', trust3: '10 мин на Bewerbung',
+  chip_vac: 'новых вакансий', chip_match: 'совпадение',
+  chip_done: 'Lebenslauf адаптирован', chip_time: 'Заняло ',
+  card_badge: 'Bewerbung готов',
+  stat_label: 'Реальность рынка', stat_desc: 'не получают ответа.',
+  stat_sub: 'Ты отправляешь отклики и больше никогда не получаешь ответа. Система работает против тебя.',
+  check1: 'Открыл Stepstone', check2: 'Составил резюме', check3: 'Отправил 30 заявок', check4: 'Получил ответ... ?',
+  inbox_label: 'Входящие', inbox_tag: 'заявок', inbox_sub: 'без единого ответа',
+  inbox_r1: 'Отказов получено', inbox_r2: 'Просмотрено ATS', inbox_r3: 'Тишина',
+  inbox_bz: 'С BewerbZen: 6 заявок → 1 оффер',
+  story_label: 'История каждого', story_title: 'Ты не один такой',
+  story_sub: 'Так выглядит поиск работы в Германии без правильного инструмента — и что происходит с BewerbZen.',
+  s1_step: '01 — Начало', s1_h: 'Начал поиск работы.<br><span style="opacity:.75">Всё выглядело просто.</span>',
+  s2_step: '02 — Хаос', s2_h: '<span class="sh-accent">30 откликов.</span><br>0 ответов.', s2_p: 'Вынужден заходить на десятки сайтов и снова заполнять одни и те же формы — в надежде найти работу мечты.',
+  s3_step: '03 — Решение', s3_h: 'Попробовал BewerbZen.', s3_p: 'Резюме + отклик за 8 минут. ATS-оптимизировано. По немецкому стандарту.',
+  s4_step: '04 — Результат', s4_h: 'Работа найдена<br>за 3 недели.', story_cta: 'Bewerben →',
+  how_label: 'Как это работает', how_title: 'Три шага вместо трёх недель', how_sub: 'Один раз настроил — каждую неделю получаешь готовые материалы.',
+  step1_t: 'Создай профиль', step1_p: 'Профессия, город, пожелания. Один раз — навсегда. Загрузи резюме и больше ничего не заполняй повторно.',
+  step2_t: 'Получай подборку', step2_p: 'Каждую пятницу — список вакансий из официальных немецких источников. Без спама, фейков и дублей.',
+  step3_t: 'Жми одну кнопку', step3_p: 'Выбрал вакансию — получил ATS-оптимизированный Anschreiben и Lebenslauf в PDF за 8 минут.',
+  pr_label: 'Цены', pr_title: 'Прозрачно и честно', pr_sub: 'Начни бесплатно. Плати только когда получаешь ценность.',
+  plan_free: 'Бесплатно', plan_pop: 'Популярный', plan_pro: 'Pro',
+  plan_free_desc: 'Попробуй без карты и обязательств', plan_pop_desc: 'Для активного поиска работы', plan_pro_desc: 'Для тех, кто ищет серьёзно',
+  f1: '3 Bewerbung бесплатно', f2: 'Anschreiben по немецкому стандарту', f3: 'ATS-оптимизация', f4: 'Подборка вакансий в Telegram',
+  f5: 'Безлимитная генерация', f6: 'Lebenslauf-генератор',
+  f7: '3 дополнительных Bewerbung', f8: 'Всё из бесплатного тарифа', f9: 'Anschreiben + Lebenslauf', f10: 'PDF-экспорт', f11: 'Приоритетная поддержка',
+  f12: 'Безлимитные Bewerbung', f13: 'История всех заявок', f14: 'Персональный профиль',
+  btn_free: 'Начать бесплатно', btn_pack: 'Купить пакет →', btn_pro: 'Выбрать Pro →',
+  note_pack: 'Разово, без подписки', note_pro: 'Отменить можно в любой момент',
+  faq_label: 'Вопросы', faq_title: 'Часто спрашивают',
+  faq_q1: 'Это настоящий Bewerbung или шаблон?', faq_a1: 'Нет, не шаблон. AI читает конкретное описание вакансии и пишет Anschreiben под неё — с нужными ключевыми словами, правильной структурой и немецким формальным стилем. Каждый раз разный результат.',
+  faq_q2: 'На каком языке создаётся Bewerbung?', faq_a2: 'На немецком — по немецкому профессиональному стандарту (Anschreiben по DIN 5008). Если вакансия на английском, можно сгенерировать на английском — просто укажи это в тексте.',
+  faq_q3: 'Мои данные в безопасности?', faq_a3: 'Мы не храним персональные данные дольше, чем нужно для генерации. BewerbZen — это инструмент, а не кадровое агентство. Мы не продаём и не передаём данные третьим лицам. Работаем в рамках GDPR.',
+  faq_q4: 'Что значит ATS-оптимизировано?', faq_a4: 'ATS (Applicant Tracking System) — это программы, которые компании используют для автоматической фильтрации резюме. Мы вставляем ключевые слова из описания вакансии так, чтобы ваш Bewerbung прошёл через эти фильтры до реального рекрутера.',
+  faq_q5: 'Нужен ли хороший немецкий чтобы пользоваться?', faq_a5: 'Нет. Достаточно скопировать текст вакансии и пару слов написать о себе на русском — всё остальное сделает AI. Готовый Anschreiben будет на профессиональном немецком.',
+  faq_q6: 'Когда появятся вакансии прямо в сервисе?', faq_a6: 'Подборки вакансий по твоему профилю бот присылает прямо в Telegram. Фильтрация прямо в интерфейсе — в разработке, планируем запустить в мае 2026.',
+  cta_title: 'Найди работу за 8 минут.', cta_sub: 'Первые 3 Bewerbung бесплатно. Без карты. Без обязательств.', cta_btn: 'Начать бесплатно →',
+  footer_tag: 'Bewerbung по немецкому стандарту — быстро и правильно.', footer_bot: '🤖 Попробовать бота',
+  footer_product: 'Продукт', footer_legal: 'Правовое', footer_contact: 'Контакт',
+  footer_how: 'Как работает', footer_pricing: 'Цены', footer_jobs: 'Вакансии',
+  footer_copy: '© 2026 BewerbZen. Alle Rechte vorbehalten.',
+  fm_step1: 'Шаг 1 из 4', fm_q1: 'Как тебя зовут?', fm_q1_sub: 'Нужно только имя и один способ связи — больше ничего.',
+  fm_name_lbl: 'Имя', fm_contact_lbl: 'Telegram (@username) или Email',
+  fm_step2: 'Шаг 2 из 4', fm_q2: 'Где искать работу?', fm_q2_sub: 'Введи город, PLZ или адрес — мы покажем варианты.',
+  fm_loc_lbl: 'Город, PLZ или улица', fm_radius_lbl: 'Радиус поиска', fm_radius_all: 'Вся Германия',
+  fm_step3: 'Шаг 3 из 4', fm_q3: 'Какую работу ищешь?', fm_q3_sub: 'Укажи профессию и параметры — мы подберём подходящее.',
+  fm_job_lbl: 'Профессия или должность', fm_lang_lbl: 'Уровень немецкого',
+  fm_lang0: 'Нет', fm_lang1: 'A1–A2', fm_lang2: 'B1–B2', fm_lang3: 'C1–C2', fm_lang4: 'Родной',
+  fm_type_lbl: 'Тип занятости', fm_type_any: 'Любой',
+  fm_step4: 'Шаг 4 из 4', fm_q4: 'Всё верно?', fm_q4_sub: 'Проверь данные перед отправкой.',
+  fm_lbl_name: '👤 Имя', fm_lbl_contact: '💬 Контакт', fm_lbl_loc: '📍 Локация', fm_lbl_job: '💼 Профессия', fm_lbl_lang: '🇩🇪 Немецкий · Занятость',
+  fm_submit: 'Получить доступ 🚀', fm_legal: 'Нажимая кнопку, ты принимаешь <a href="#" onclick="return false">политику конфиденциальности</a>. Данные не передаются третьим лицам.',
+  fm_back: '← Назад', fm_next: 'Продолжить →', fm_change: 'Изменить',
+  fm_success_title: 'Готово!', fm_success_msg: 'Открой бота — профиль уже сохранён, он сразу пришлёт вакансии и создаст Anschreiben за 2 минуты:',
+  fm_success_btn: '🤖 Открыть @BewerbZen_bot',
+},
+
+de: {
+  dir: 'ltr', font: null,
+  nav_how: 'So funktioniert\'s', nav_pricing: 'Preise', nav_cta: 'Kostenlos starten',
+  hero_badge: 'Verfügbar in Deutschland',
+  h1_line1: 'Bewerbung in 8 Minuten.', h1_line2: 'Nach deutschem Standard.',
+  hero_sub: 'Wöchentliche Stellenauswahl für dein Profil + fertiges Anschreiben und Lebenslauf auf Knopfdruck. ATS-optimiert. Nach deutschem Standard.',
+  hero_cta: 'Kostenlos vorbereiten →', hero_ghost: 'So funktioniert\'s',
+  trust1: 'Kostenloser Start', trust2: 'Deutscher Standard', trust3: '10 Min pro Bewerbung',
+  chip_vac: 'neue Stellen', chip_match: 'Übereinstimmung',
+  chip_done: 'Lebenslauf angepasst', chip_time: 'Dauer: ',
+  card_badge: 'Bewerbung fertig',
+  stat_label: 'Markt-Realität', stat_desc: 'bekommen keine Antwort.',
+  stat_sub: 'Du schickst Bewerbungen und hörst nie wieder etwas. Das System arbeitet gegen dich.',
+  check1: 'Stepstone geöffnet', check2: 'Lebenslauf erstellt', check3: '30 Bewerbungen verschickt', check4: 'Antwort erhalten... ?',
+  inbox_label: 'Posteingang', inbox_tag: 'Bewerbungen', inbox_sub: 'ohne eine einzige Antwort',
+  inbox_r1: 'Absagen erhalten', inbox_r2: 'Von ATS geprüft', inbox_r3: 'Keine Antwort',
+  inbox_bz: 'Mit BewerbZen: 6 Bewerbungen → 1 Angebot',
+  story_label: 'Jeder kennt das', story_title: 'Du bist nicht allein',
+  story_sub: 'So sieht die Jobsuche in Deutschland ohne das richtige Tool aus — und was mit BewerbZen passiert.',
+  s1_step: '01 — Anfang', s1_h: 'Jobsuche gestartet.<br><span style="opacity:.75">Alles sah einfach aus.</span>',
+  s2_step: '02 — Chaos', s2_h: '<span class="sh-accent">30 Bewerbungen.</span><br>0 Antworten.', s2_p: 'Du musst auf Dutzende Webseiten gehen und immer wieder dieselben Formulare ausfüllen — in der Hoffnung, deinen Traumjob zu finden.',
+  s3_step: '03 — Lösung', s3_h: 'BewerbZen ausprobiert.', s3_p: 'Lebenslauf + Bewerbung in 8 Minuten. ATS-optimiert. Nach deutschem Standard.',
+  s4_step: '04 — Ergebnis', s4_h: 'Job in 3 Wochen<br>gefunden.', story_cta: 'Bewerben →',
+  how_label: 'So funktioniert\'s', how_title: 'Drei Schritte statt drei Wochen', how_sub: 'Einmal einrichten — jede Woche fertige Unterlagen erhalten.',
+  step1_t: 'Profil erstellen', step1_p: 'Beruf, Stadt, Wünsche. Einmal — für immer. Lade deinen Lebenslauf hoch und fülle nie wieder ein Formular aus.',
+  step2_t: 'Auswahl erhalten', step2_p: 'Jeden Freitag — eine Liste von Stellen aus offiziellen deutschen Quellen. Kein Spam, keine Fakes, keine Duplikate.',
+  step3_t: 'Knopf drücken', step3_p: 'Stelle ausgewählt — ATS-optimiertes Anschreiben und Lebenslauf als PDF in 8 Minuten.',
+  pr_label: 'Preise', pr_title: 'Transparent und fair', pr_sub: 'Starte kostenlos. Zahle nur, wenn du Wert erhältst.',
+  plan_free: 'Kostenlos', plan_pop: 'Beliebt', plan_pro: 'Pro',
+  plan_free_desc: 'Ohne Karte und Verpflichtungen testen', plan_pop_desc: 'Für aktive Jobsuche', plan_pro_desc: 'Für ernsthafte Bewerber',
+  f1: '3 Bewerbungen kostenlos', f2: 'Anschreiben nach deutschem Standard', f3: 'ATS-Optimierung', f4: 'Stellenauswahl per Telegram',
+  f5: 'Unbegrenzte Generierung', f6: 'Lebenslauf-Generator',
+  f7: '3 zusätzliche Bewerbungen', f8: 'Alles aus dem kostenlosen Plan', f9: 'Anschreiben + Lebenslauf', f10: 'PDF-Export', f11: 'Prioritäts-Support',
+  f12: 'Unbegrenzte Bewerbungen', f13: 'Verlauf aller Bewerbungen', f14: 'Persönliches Profil',
+  btn_free: 'Kostenlos starten', btn_pack: 'Paket kaufen →', btn_pro: 'Pro wählen →',
+  note_pack: 'Einmalig, kein Abo', note_pro: 'Jederzeit kündbar',
+  faq_label: 'Fragen', faq_title: 'Häufig gefragt',
+  faq_q1: 'Ist das ein echtes Anschreiben oder eine Vorlage?', faq_a1: 'Keine Vorlage. Die KI liest die konkrete Stellenbeschreibung und schreibt ein Anschreiben genau dafür — mit den richtigen Keywords, der richtigen Struktur und deutschem Formalstil. Jedes Mal ein anderes Ergebnis.',
+  faq_q2: 'In welcher Sprache wird das Anschreiben erstellt?', faq_a2: 'Auf Deutsch — nach dem deutschen Berufsstandard (Anschreiben nach DIN 5008). Bei einer englischsprachigen Stelle kann auch Englisch generiert werden — einfach im Text angeben.',
+  faq_q3: 'Sind meine Daten sicher?', faq_a3: 'Wir speichern keine personenbezogenen Daten länger als für die Generierung nötig. BewerbZen ist ein Werkzeug, keine Personalvermittlung. Wir verkaufen keine Daten. DSGVO-konform.',
+  faq_q4: 'Was bedeutet ATS-optimiert?', faq_a4: 'ATS (Applicant Tracking System) sind Programme, die Unternehmen zur automatischen Filterung von Bewerbungen verwenden. Wir fügen Keywords aus der Stellenbeschreibung so ein, dass deine Bewerbung die Filter bis zum echten Recruiter passiert.',
+  faq_q5: 'Brauche ich gutes Deutsch zur Nutzung?', faq_a5: 'Nein. Die Oberfläche ist auf Deutsch. Es genügt, den Stellentext einzufügen und ein paar Angaben zur eigenen Person zu machen — den Rest erledigt die KI. Das fertige Anschreiben ist auf professionellem Deutsch.',
+  faq_q6: 'Wann kommen Stellen direkt in den Service?', faq_a6: 'Stellenauswahl passend zu deinem Profil schickt der Bot direkt per Telegram. Die Filterung im Interface ist in Entwicklung — geplant für Mai 2026.',
+  cta_title: 'Job in 8 Minuten finden.', cta_sub: 'Erste 3 Bewerbungen kostenlos. Ohne Karte. Ohne Verpflichtungen.', cta_btn: 'Kostenlos starten →',
+  footer_tag: 'Bewerbung nach deutschem Standard — schnell und richtig.', footer_bot: '🤖 Bot ausprobieren',
+  footer_product: 'Produkt', footer_legal: 'Rechtliches', footer_contact: 'Kontakt',
+  footer_how: 'So funktioniert\'s', footer_pricing: 'Preise', footer_jobs: 'Stellen',
+  footer_copy: '© 2026 BewerbZen. Alle Rechte vorbehalten.',
+  fm_step1: 'Schritt 1 von 4', fm_q1: 'Wie heißt du?', fm_q1_sub: 'Nur Name und ein Kontaktweg — mehr nicht.',
+  fm_name_lbl: 'Name', fm_contact_lbl: 'Telegram (@benutzername) oder E-Mail',
+  fm_step2: 'Schritt 2 von 4', fm_q2: 'Wo suchst du Arbeit?', fm_q2_sub: 'Stadt, PLZ oder Adresse eingeben — wir zeigen Optionen.',
+  fm_loc_lbl: 'Stadt, PLZ oder Straße', fm_radius_lbl: 'Suchradius', fm_radius_all: 'Ganz Deutschland',
+  fm_step3: 'Schritt 3 von 4', fm_q3: 'Welche Arbeit suchst du?', fm_q3_sub: 'Beruf und Parameter angeben — wir finden Passendes.',
+  fm_job_lbl: 'Beruf oder Stelle', fm_lang_lbl: 'Deutschkenntnisse',
+  fm_lang0: 'Keine', fm_lang1: 'A1–A2', fm_lang2: 'B1–B2', fm_lang3: 'C1–C2', fm_lang4: 'Muttersprache',
+  fm_type_lbl: 'Beschäftigungsart', fm_type_any: 'Beliebig',
+  fm_step4: 'Schritt 4 von 4', fm_q4: 'Alles korrekt?', fm_q4_sub: 'Daten vor dem Absenden prüfen.',
+  fm_lbl_name: '👤 Name', fm_lbl_contact: '💬 Kontakt', fm_lbl_loc: '📍 Ort', fm_lbl_job: '💼 Beruf', fm_lbl_lang: '🇩🇪 Deutsch · Beschäftigung',
+  fm_submit: 'Zugang erhalten 🚀', fm_legal: 'Mit Klick akzeptierst du die <a href="#" onclick="return false">Datenschutzerklärung</a>. Keine Weitergabe an Dritte.',
+  fm_back: '← Zurück', fm_next: 'Weiter →', fm_change: 'Ändern',
+  fm_success_title: 'Fertig!', fm_success_msg: 'Öffne den Bot — dein Profil ist gespeichert, er schickt sofort Stellen und erstellt ein Anschreiben in 2 Minuten:',
+  fm_success_btn: '🤖 @BewerbZen_bot öffnen',
+},
+
+ar: {
+  dir: 'rtl', font: 'Noto Sans Arabic',
+  nav_how: 'كيف يعمل', nav_pricing: 'الأسعار', nav_cta: 'ابدأ مجاناً',
+  hero_badge: 'متاح في ألمانيا',
+  h1_line1: 'طلب عمل في 8 دقائق.', h1_line2: 'وفق المعيار الألماني.',
+  hero_sub: 'اختيار أسبوعي للوظائف حسب ملفك الشخصي + خطاب تقديم وسيرة ذاتية بنقرة واحدة. محسّن لأنظمة ATS. وفق المعيار الألماني.',
+  hero_cta: 'ابدأ مجاناً ←', hero_ghost: 'كيف يعمل',
+  trust1: 'بداية مجانية', trust2: 'المعيار الألماني', trust3: '10 دقائق لكل طلب',
+  chip_vac: 'وظيفة جديدة', chip_match: 'تطابق',
+  chip_done: 'السيرة الذاتية جاهزة', chip_time: 'استغرق ',
+  card_badge: 'طلب التوظيف جاهز',
+  stat_label: 'واقع السوق', stat_desc: 'لا يحصلون على رد.',
+  stat_sub: 'ترسل طلباتك ولا تسمع شيئاً أبداً. النظام يعمل ضدك.',
+  check1: 'فتح Stepstone', check2: 'إعداد السيرة الذاتية', check3: 'إرسال 30 طلباً', check4: 'الحصول على رد... ؟',
+  inbox_label: 'البريد الوارد', inbox_tag: 'طلباً', inbox_sub: 'بدون رد واحد',
+  inbox_r1: 'رفض', inbox_r2: 'فحص ATS', inbox_r3: 'صمت',
+  inbox_bz: 'مع BewerbZen: 6 طلبات ← عرض عمل واحد',
+  story_label: 'قصة الجميع', story_title: 'لست وحدك',
+  story_sub: 'هكذا تبدو البحث عن عمل في ألمانيا بدون الأداة المناسبة — وما يحدث مع BewerbZen.',
+  s1_step: '01 — البداية', s1_h: 'بدأت البحث عن عمل.<br><span style="opacity:.75">بدا الأمر بسيطاً.</span>',
+  s2_step: '02 — الفوضى', s2_h: '<span class="sh-accent">30 طلباً.</span><br>0 ردود.', s2_p: 'مضطر للدخول على عشرات المواقع وملء نفس النماذج مراراً — أملاً في إيجاد وظيفة أحلامك.',
+  s3_step: '03 — الحل', s3_h: 'جرّبت BewerbZen.', s3_p: 'سيرة ذاتية + طلب في 8 دقائق. محسّن لـ ATS. وفق المعيار الألماني.',
+  s4_step: '04 — النتيجة', s4_h: 'وجدت وظيفة<br>في 3 أسابيع.', story_cta: 'قدّم الآن ←',
+  how_label: 'كيف يعمل', how_title: 'ثلاث خطوات بدل ثلاثة أسابيع', how_sub: 'اضبط مرة واحدة — احصل على مواد جاهزة كل أسبوع.',
+  step1_t: 'أنشئ ملفك الشخصي', step1_p: 'المهنة، المدينة، التفضيلات. مرة واحدة — للأبد. أرفق سيرتك الذاتية ولا تملأ أي نموذج مجدداً.',
+  step2_t: 'احصل على الاختيارات', step2_p: 'كل جمعة — قائمة وظائف من مصادر ألمانية رسمية. بدون إسبام أو إعلانات مزيفة.',
+  step3_t: 'اضغط زراً واحداً', step3_p: 'اختر الوظيفة — احصل على خطاب تقديم وسيرة ذاتية PDF محسّنة لـ ATS في 8 دقائق.',
+  pr_label: 'الأسعار', pr_title: 'شفافية وصدق', pr_sub: 'ابدأ مجاناً. ادفع فقط عندما تحصل على قيمة.',
+  plan_free: 'مجاني', plan_pop: 'الأكثر شيوعاً', plan_pro: 'Pro',
+  plan_free_desc: 'جرّب بدون بطاقة أو التزامات', plan_pop_desc: 'للبحث النشط عن عمل', plan_pro_desc: 'لمن يبحث بجدية',
+  f1: '3 طلبات مجانية', f2: 'خطاب تقديم وفق المعيار الألماني', f3: 'تحسين ATS', f4: 'اختيار وظائف عبر Telegram',
+  f5: 'توليد غير محدود', f6: 'مولّد السيرة الذاتية',
+  f7: '3 طلبات إضافية', f8: 'كل مزايا الخطة المجانية', f9: 'خطاب تقديم + سيرة ذاتية', f10: 'تصدير PDF', f11: 'دعم أولوية',
+  f12: 'طلبات غير محدودة', f13: 'سجل جميع الطلبات', f14: 'ملف شخصي',
+  btn_free: 'ابدأ مجاناً', btn_pack: '← شراء الحزمة', btn_pro: '← اختيار Pro',
+  note_pack: 'دفع مرة واحدة، بدون اشتراك', note_pro: 'يمكن الإلغاء في أي وقت',
+  faq_label: 'أسئلة', faq_title: 'الأسئلة الشائعة',
+  faq_q1: 'هل هو طلب حقيقي أم نموذج؟', faq_a1: 'ليس نموذجاً. الذكاء الاصطناعي يقرأ وصف الوظيفة المحدد ويكتب خطاب تقديم خاصاً بها — بالكلمات المفتاحية الصحيحة والهيكل الصحيح والأسلوب الرسمي الألماني. نتيجة مختلفة في كل مرة.',
+  faq_q2: 'بأي لغة يُنشأ خطاب التقديم؟', faq_a2: 'بالألمانية — وفق المعيار المهني الألماني. إذا كانت الوظيفة بالإنجليزية، يمكن التوليد بالإنجليزية — فقط اذكر ذلك في النص.',
+  faq_q3: 'هل بياناتي آمنة؟', faq_a3: 'لا نحتفظ بالبيانات الشخصية أطول مما هو ضروري للتوليد. BewerbZen أداة وليس وكالة توظيف. لا نبيع البيانات ولا نشاركها. نعمل وفق GDPR.',
+  faq_q4: 'ماذا يعني محسّن لـ ATS؟', faq_a4: 'ATS هي برامج تستخدمها الشركات لتصفية الطلبات تلقائياً. ندرج الكلمات المفتاحية من وصف الوظيفة بحيث يصل طلبك إلى المسؤول الحقيقي.',
+  faq_q5: 'هل أحتاج إلى معرفة الألمانية للاستخدام؟', faq_a5: 'لا. الواجهة بالعربية. يكفي نسخ نص الوظيفة وكتابة بضع كلمات عنك — والذكاء الاصطناعي يتكفل بالباقي. خطاب التقديم سيكون بالألمانية الاحترافية.',
+  faq_q6: 'متى ستظهر الوظائف مباشرة في الخدمة؟', faq_a6: 'يرسل البوت اختيارات الوظائف المناسبة لملفك مباشرة عبر Telegram. التصفية داخل الواجهة قيد التطوير — مخطط لها في مايو 2026.',
+  cta_title: 'اعثر على عمل في 8 دقائق.', cta_sub: 'أول 3 طلبات مجانية. بدون بطاقة. بدون التزامات.', cta_btn: 'ابدأ مجاناً ←',
+  footer_tag: 'طلب توظيف وفق المعيار الألماني — سريع وصحيح.', footer_bot: '🤖 جرّب البوت',
+  footer_product: 'المنتج', footer_legal: 'قانوني', footer_contact: 'التواصل',
+  footer_how: 'كيف يعمل', footer_pricing: 'الأسعار', footer_jobs: 'الوظائف',
+  footer_copy: '© 2026 BewerbZen. جميع الحقوق محفوظة.',
+  fm_step1: 'الخطوة 1 من 4', fm_q1: 'ما اسمك؟', fm_q1_sub: 'نحتاج فقط الاسم وطريقة تواصل واحدة.',
+  fm_name_lbl: 'الاسم', fm_contact_lbl: 'Telegram (@معرّف) أو البريد الإلكتروني',
+  fm_step2: 'الخطوة 2 من 4', fm_q2: 'أين تبحث عن عمل؟', fm_q2_sub: 'أدخل المدينة أو الرمز البريدي.',
+  fm_loc_lbl: 'المدينة أو الرمز البريدي', fm_radius_lbl: 'نطاق البحث', fm_radius_all: 'كل ألمانيا',
+  fm_step3: 'الخطوة 3 من 4', fm_q3: 'ما نوع العمل الذي تبحث عنه؟', fm_q3_sub: 'حدد المهنة والمعطيات.',
+  fm_job_lbl: 'المهنة أو المنصب', fm_lang_lbl: 'مستوى الألمانية',
+  fm_lang0: 'لا يوجد', fm_lang1: 'A1–A2', fm_lang2: 'B1–B2', fm_lang3: 'C1–C2', fm_lang4: 'اللغة الأم',
+  fm_type_lbl: 'نوع التوظيف', fm_type_any: 'أي نوع',
+  fm_step4: 'الخطوة 4 من 4', fm_q4: 'كل شيء صحيح؟', fm_q4_sub: 'راجع البيانات قبل الإرسال.',
+  fm_lbl_name: '👤 الاسم', fm_lbl_contact: '💬 التواصل', fm_lbl_loc: '📍 الموقع', fm_lbl_job: '💼 المهنة', fm_lbl_lang: '🇩🇪 الألمانية · التوظيف',
+  fm_submit: 'احصل على الوصول 🚀', fm_legal: 'بالضغط تقبل <a href="#" onclick="return false">سياسة الخصوصية</a>. لا تتم مشاركة البيانات مع أطراف ثالثة.',
+  fm_back: 'رجوع →', fm_next: '← متابعة', fm_change: 'تعديل',
+  fm_success_title: 'تم!', fm_success_msg: 'افتح البوت — ملفك محفوظ، سيرسل وظائف فوراً ويُنشئ خطاب تقديم في دقيقتين:',
+  fm_success_btn: '🤖 فتح @BewerbZen_bot',
+},
+
+tr: {
+  dir: 'ltr', font: null,
+  nav_how: 'Nasıl çalışır', nav_pricing: 'Fiyatlar', nav_cta: 'Ücretsiz başla',
+  hero_badge: 'Almanya\'da mevcut',
+  h1_line1: '8 dakikada Bewerbung.', h1_line2: 'Alman standardına göre.',
+  hero_sub: 'Profiline göre haftalık iş ilanları + tek tıkla hazır Anschreiben ve Lebenslauf. ATS optimize edilmiş. Alman standardına göre.',
+  hero_cta: 'Ücretsiz hazırla →', hero_ghost: 'Nasıl çalışır',
+  trust1: 'Ücretsiz başlangıç', trust2: 'Alman standardı', trust3: 'Başvuru başına 10 dk',
+  chip_vac: 'yeni ilan', chip_match: 'uyum',
+  chip_done: 'Lebenslauf uyarlandı', chip_time: 'Sürdü ',
+  card_badge: 'Bewerbung hazır',
+  stat_label: 'Piyasa gerçeği', stat_desc: 'yanıt alamıyor.',
+  stat_sub: 'Başvurularını gönderiyorsun ama bir daha haber almıyorsun. Sistem sana karşı çalışıyor.',
+  check1: 'Stepstone\'u açtı', check2: 'CV hazırladı', check3: '30 başvuru gönderdi', check4: 'Yanıt aldı... ?',
+  inbox_label: 'Gelen kutusu', inbox_tag: 'başvuru', inbox_sub: 'tek yanıt yok',
+  inbox_r1: 'Red alındı', inbox_r2: 'ATS tarafından görüldü', inbox_r3: 'Sessizlik',
+  inbox_bz: 'BewerbZen ile: 6 başvuru → 1 teklif',
+  story_label: 'Herkesin hikayesi', story_title: 'Yalnız değilsin',
+  story_sub: 'Doğru araç olmadan Almanya\'da iş arama böyle görünüyor — BewerbZen ile ne oluyor.',
+  s1_step: '01 — Başlangıç', s1_h: 'İş aramaya başladım.<br><span style="opacity:.75">Her şey kolay görünüyordu.</span>',
+  s2_step: '02 — Kaos', s2_h: '<span class="sh-accent">30 başvuru.</span><br>0 yanıt.', s2_p: 'Hayalindeki işi bulmak umuduyla onlarca siteye girip aynı formları doldurmak zorunda kalıyorsun.',
+  s3_step: '03 — Çözüm', s3_h: 'BewerbZen\'i denedim.', s3_p: 'CV + başvuru 8 dakikada. ATS optimize edilmiş. Alman standardına göre.',
+  s4_step: '04 — Sonuç', s4_h: '3 haftada<br>iş bulundu.', story_cta: 'Başvur →',
+  how_label: 'Nasıl çalışır', how_title: 'Üç hafta yerine üç adım', how_sub: 'Bir kez kur — her hafta hazır materyaller al.',
+  step1_t: 'Profil oluştur', step1_p: 'Meslek, şehir, tercihler. Bir kez — sonsuza kadar. CV\'ni yükle ve bir daha form doldurma.',
+  step2_t: 'Seçki al', step2_p: 'Her Cuma — resmi Alman kaynaklarından iş ilanları listesi. Spam yok, sahte ilan yok, kopya yok.',
+  step3_t: 'Tek tuşa bas', step3_p: 'İlanı seç — 8 dakikada ATS optimize edilmiş Anschreiben ve Lebenslauf PDF olarak hazır.',
+  pr_label: 'Fiyatlar', pr_title: 'Şeffaf ve dürüst', pr_sub: 'Ücretsiz başla. Yalnızca değer aldığında öde.',
+  plan_free: 'Ücretsiz', plan_pop: 'Popüler', plan_pro: 'Pro',
+  plan_free_desc: 'Kart olmadan dene', plan_pop_desc: 'Aktif iş arayanlar için', plan_pro_desc: 'Ciddi arayanlar için',
+  f1: '3 ücretsiz Bewerbung', f2: 'Alman standardına göre Anschreiben', f3: 'ATS optimizasyonu', f4: 'Telegram\'da iş seçkisi',
+  f5: 'Sınırsız üretim', f6: 'Lebenslauf üreticisi',
+  f7: '3 ek Bewerbung', f8: 'Ücretsiz plandaki her şey', f9: 'Anschreiben + Lebenslauf', f10: 'PDF export', f11: 'Öncelikli destek',
+  f12: 'Sınırsız Bewerbung', f13: 'Tüm başvuruların geçmişi', f14: 'Kişisel profil',
+  btn_free: 'Ücretsiz başla', btn_pack: 'Paket satın al →', btn_pro: 'Pro\'yu seç →',
+  note_pack: 'Tek seferlik, abonelik yok', note_pro: 'İstediğinde iptal et',
+  faq_label: 'Sorular', faq_title: 'Sık sorulanlar',
+  faq_q1: 'Bu gerçek bir Bewerbung mu, yoksa şablon mu?', faq_a1: 'Şablon değil. Yapay zeka konkret iş ilanını okur ve tam ona özel bir Anschreiben yazar — doğru anahtar kelimeler, doğru yapı ve Alman resmi üslubuyla. Her seferinde farklı sonuç.',
+  faq_q2: 'Bewerbung hangi dilde oluşturuluyor?', faq_a2: 'Almanca — Alman mesleki standardına göre (DIN 5008). İngilizce ilanlar için İngilizce de üretilebilir — metinde belirt.',
+  faq_q3: 'Verilerim güvende mi?', faq_a3: 'Kişisel verileri üretim için gerekenden uzun süre saklamıyoruz. BewerbZen bir araçtır, insan kaynakları ajansı değil. GDPR uyumlu.',
+  faq_q4: 'ATS optimize edilmiş ne anlama geliyor?', faq_a4: 'ATS (Applicant Tracking System) şirketlerin başvuruları otomatik filtrelemek için kullandığı yazılımlardır. İlan açıklamasındaki anahtar kelimeleri ekleyerek başvurunun gerçek işe alım görevlisine ulaşmasını sağlıyoruz.',
+  faq_q5: 'Kullanmak için iyi Almanca bilmek gerekiyor mu?', faq_a5: 'Hayır. Arayüz Türkçedir. İlan metnini kopyalamak ve kendin hakkında birkaç kelime yazmak yeterli — gerisini yapay zeka halleder. Hazır Anschreiben profesyonel Almancada olacak.',
+  faq_q6: 'İlanlar ne zaman direkt serviste görünecek?', faq_a6: 'Profiline uygun iş seçkilerini bot Telegram üzerinden direkt gönderiyor. Arayüzde filtreleme geliştirme aşamasında — Mayıs 2026\'da planlanıyor.',
+  cta_title: '8 dakikada iş bul.', cta_sub: 'İlk 3 Bewerbung ücretsiz. Kart yok. Yükümlülük yok.', cta_btn: 'Ücretsiz başla →',
+  footer_tag: 'Alman standardına göre Bewerbung — hızlı ve doğru.', footer_bot: '🤖 Botu dene',
+  footer_product: 'Ürün', footer_legal: 'Hukuki', footer_contact: 'İletişim',
+  footer_how: 'Nasıl çalışır', footer_pricing: 'Fiyatlar', footer_jobs: 'İlanlar',
+  footer_copy: '© 2026 BewerbZen. Tüm hakları saklıdır.',
+  fm_step1: 'Adım 1 / 4', fm_q1: 'Adın ne?', fm_q1_sub: 'Sadece isim ve bir iletişim yolu — hepsi bu.',
+  fm_name_lbl: 'İsim', fm_contact_lbl: 'Telegram (@kullanıcıadı) veya E-posta',
+  fm_step2: 'Adım 2 / 4', fm_q2: 'Nerede iş arıyorsun?', fm_q2_sub: 'Şehir, posta kodu veya adres gir.',
+  fm_loc_lbl: 'Şehir, PLZ veya sokak', fm_radius_lbl: 'Arama yarıçapı', fm_radius_all: 'Tüm Almanya',
+  fm_step3: 'Adım 3 / 4', fm_q3: 'Hangi işi arıyorsun?', fm_q3_sub: 'Meslek ve parametreler gir.',
+  fm_job_lbl: 'Meslek veya pozisyon', fm_lang_lbl: 'Almanca seviyesi',
+  fm_lang0: 'Yok', fm_lang1: 'A1–A2', fm_lang2: 'B1–B2', fm_lang3: 'C1–C2', fm_lang4: 'Anadil',
+  fm_type_lbl: 'Çalışma türü', fm_type_any: 'Herhangi',
+  fm_step4: 'Adım 4 / 4', fm_q4: 'Her şey doğru mu?', fm_q4_sub: 'Göndermeden önce bilgileri kontrol et.',
+  fm_lbl_name: '👤 İsim', fm_lbl_contact: '💬 İletişim', fm_lbl_loc: '📍 Konum', fm_lbl_job: '💼 Meslek', fm_lbl_lang: '🇩🇪 Almanca · Çalışma türü',
+  fm_submit: 'Erişim al 🚀', fm_legal: 'Butona basarak <a href="#" onclick="return false">gizlilik politikasını</a> kabul ediyorsun. Veriler üçüncü taraflarla paylaşılmaz.',
+  fm_back: '← Geri', fm_next: 'Devam →', fm_change: 'Değiştir',
+  fm_success_title: 'Hazır!', fm_success_msg: 'Botu aç — profilin kaydedildi, hemen ilanlar gönderecek ve 2 dakikada Anschreiben oluşturacak:',
+  fm_success_btn: '🤖 @BewerbZen_bot\'u aç',
+},
+
+uk: {
+  dir: 'ltr', font: null,
+  nav_how: 'Як це працює', nav_pricing: 'Ціни', nav_cta: 'Почати безкоштовно',
+  hero_badge: 'Доступно в Німеччині',
+  h1_line1: 'Bewerbung за 8 хвилин.', h1_line2: 'За німецьким стандартом.',
+  hero_sub: 'Щотижневий добір вакансій під твій профіль + готовий Anschreiben і Lebenslauf одним натисканням. ATS-оптимізовано. За німецьким стандартом.',
+  hero_cta: 'Підготувати безкоштовно →', hero_ghost: 'Як це працює',
+  trust1: 'Безкоштовний старт', trust2: 'Німецький стандарт', trust3: '10 хв на Bewerbung',
+  chip_vac: 'нових вакансій', chip_match: 'збіг',
+  chip_done: 'Lebenslauf адаптовано', chip_time: 'Зайняло ',
+  card_badge: 'Bewerbung готовий',
+  stat_label: 'Реальність ринку', stat_desc: 'не отримують відповіді.',
+  stat_sub: 'Ти надсилаєш відгуки і більше ніколи не отримуєш відповіді. Система працює проти тебе.',
+  check1: 'Відкрив Stepstone', check2: 'Склав резюме', check3: 'Надіслав 30 заявок', check4: 'Отримав відповідь... ?',
+  inbox_label: 'Вхідні', inbox_tag: 'заявок', inbox_sub: 'без жодної відповіді',
+  inbox_r1: 'Відмов отримано', inbox_r2: 'Переглянуто ATS', inbox_r3: 'Тиша',
+  inbox_bz: 'З BewerbZen: 6 заявок → 1 оффер',
+  story_label: 'Історія кожного', story_title: 'Ти не один',
+  story_sub: 'Так виглядає пошук роботи в Німеччині без правильного інструменту — і що відбувається з BewerbZen.',
+  s1_step: '01 — Початок', s1_h: 'Почав шукати роботу.<br><span style="opacity:.75">Все виглядало просто.</span>',
+  s2_step: '02 — Хаос', s2_h: '<span class="sh-accent">30 відгуків.</span><br>0 відповідей.', s2_p: 'Змушений заходити на десятки сайтів і знову заповнювати ті самі форми — в надії знайти роботу мрії.',
+  s3_step: '03 — Рішення', s3_h: 'Спробував BewerbZen.', s3_p: 'Резюме + відгук за 8 хвилин. ATS-оптимізовано. За німецьким стандартом.',
+  s4_step: '04 — Результат', s4_h: 'Роботу знайдено<br>за 3 тижні.', story_cta: 'Bewerben →',
+  how_label: 'Як це працює', how_title: 'Три кроки замість трьох тижнів', how_sub: 'Одного разу налаштував — щотижня отримуєш готові матеріали.',
+  step1_t: 'Створи профіль', step1_p: 'Професія, місто, побажання. Один раз — назавжди. Завантаж резюме і більше нічого не заповнюй повторно.',
+  step2_t: 'Отримуй добірку', step2_p: 'Щоп\'ятниці — список вакансій з офіційних німецьких джерел. Без спаму, фейків та дублів.',
+  step3_t: 'Натисни одну кнопку', step3_p: 'Обрав вакансію — отримав ATS-оптимізований Anschreiben і Lebenslauf у PDF за 8 хвилин.',
+  pr_label: 'Ціни', pr_title: 'Прозоро і чесно', pr_sub: 'Почни безкоштовно. Плати лише коли отримуєш цінність.',
+  plan_free: 'Безкоштовно', plan_pop: 'Популярний', plan_pro: 'Pro',
+  plan_free_desc: 'Спробуй без картки та зобов\'язань', plan_pop_desc: 'Для активного пошуку роботи', plan_pro_desc: 'Для тих, хто шукає серйозно',
+  f1: '3 Bewerbung безкоштовно', f2: 'Anschreiben за німецьким стандартом', f3: 'ATS-оптимізація', f4: 'Добірка вакансій у Telegram',
+  f5: 'Безлімітна генерація', f6: 'Генератор Lebenslauf',
+  f7: '3 додаткових Bewerbung', f8: 'Все з безкоштовного тарифу', f9: 'Anschreiben + Lebenslauf', f10: 'PDF-експорт', f11: 'Пріоритетна підтримка',
+  f12: 'Безлімітні Bewerbung', f13: 'Історія всіх заявок', f14: 'Персональний профіль',
+  btn_free: 'Почати безкоштовно', btn_pack: 'Купити пакет →', btn_pro: 'Обрати Pro →',
+  note_pack: 'Разово, без підписки', note_pro: 'Скасувати можна в будь-який момент',
+  faq_label: 'Питання', faq_title: 'Часто запитують',
+  faq_q1: 'Це справжній Bewerbung чи шаблон?', faq_a1: 'Не шаблон. AI читає конкретний опис вакансії і пише Anschreiben під неї — з потрібними ключовими словами, правильною структурою і німецьким формальним стилем. Щоразу різний результат.',
+  faq_q2: 'Якою мовою створюється Bewerbung?', faq_a2: 'Німецькою — за німецьким професійним стандартом (Anschreiben за DIN 5008). Якщо вакансія англійською, можна згенерувати англійською — просто вкажи це в тексті.',
+  faq_q3: 'Мої дані в безпеці?', faq_a3: 'Ми не зберігаємо персональні дані довше, ніж потрібно для генерації. BewerbZen — це інструмент, а не кадрове агентство. Ми не продаємо і не передаємо дані третім особам. Працюємо в рамках GDPR.',
+  faq_q4: 'Що означає ATS-оптимізовано?', faq_a4: 'ATS (Applicant Tracking System) — це програми, які компанії використовують для автоматичної фільтрації резюме. Ми вставляємо ключові слова з опису вакансії так, щоб твій Bewerbung пройшов через ці фільтри до реального рекрутера.',
+  faq_q5: 'Чи потрібна хороша німецька для користування?', faq_a5: 'Ні. Достатньо скопіювати текст вакансії і написати кілька слів про себе українською — все інше зробить AI. Готовий Anschreiben буде на професійній німецькій.',
+  faq_q6: 'Коли з\'являться вакансії прямо в сервісі?', faq_a6: 'Добірки вакансій за твоїм профілем бот надсилає прямо в Telegram. Фільтрація прямо в інтерфейсі — в розробці, плануємо запустити у травні 2026.',
+  cta_title: 'Знайди роботу за 8 хвилин.', cta_sub: 'Перші 3 Bewerbung безкоштовно. Без картки. Без зобов\'язань.', cta_btn: 'Почати безкоштовно →',
+  footer_tag: 'Bewerbung за німецьким стандартом — швидко і правильно.', footer_bot: '🤖 Спробувати бота',
+  footer_product: 'Продукт', footer_legal: 'Правове', footer_contact: 'Контакт',
+  footer_how: 'Як це працює', footer_pricing: 'Ціни', footer_jobs: 'Вакансії',
+  footer_copy: '© 2026 BewerbZen. Alle Rechte vorbehalten.',
+  fm_step1: 'Крок 1 з 4', fm_q1: 'Як тебе звати?', fm_q1_sub: 'Потрібні лише ім\'я та один спосіб зв\'язку.',
+  fm_name_lbl: 'Ім\'я', fm_contact_lbl: 'Telegram (@username) або Email',
+  fm_step2: 'Крок 2 з 4', fm_q2: 'Де шукати роботу?', fm_q2_sub: 'Введи місто, PLZ або адресу.',
+  fm_loc_lbl: 'Місто, PLZ або вулиця', fm_radius_lbl: 'Радіус пошуку', fm_radius_all: 'Вся Німеччина',
+  fm_step3: 'Крок 3 з 4', fm_q3: 'Яку роботу шукаєш?', fm_q3_sub: 'Вкажи професію та параметри.',
+  fm_job_lbl: 'Професія або посада', fm_lang_lbl: 'Рівень німецької',
+  fm_lang0: 'Немає', fm_lang1: 'A1–A2', fm_lang2: 'B1–B2', fm_lang3: 'C1–C2', fm_lang4: 'Рідна',
+  fm_type_lbl: 'Тип зайнятості', fm_type_any: 'Будь-який',
+  fm_step4: 'Крок 4 з 4', fm_q4: 'Все вірно?', fm_q4_sub: 'Перевір дані перед відправкою.',
+  fm_lbl_name: '👤 Ім\'я', fm_lbl_contact: '💬 Контакт', fm_lbl_loc: '📍 Локація', fm_lbl_job: '💼 Професія', fm_lbl_lang: '🇩🇪 Німецька · Зайнятість',
+  fm_submit: 'Отримати доступ 🚀', fm_legal: 'Натискаючи кнопку, ти приймаєш <a href="#" onclick="return false">політику конфіденційності</a>. Дані не передаються третім особам.',
+  fm_back: '← Назад', fm_next: 'Продовжити →', fm_change: 'Змінити',
+  fm_success_title: 'Готово!', fm_success_msg: 'Відкрий бота — профіль вже збережено, він одразу надішле вакансії та створить Anschreiben за 2 хвилини:',
+  fm_success_btn: '🤖 Відкрити @BewerbZen_bot',
+},
+
+en: {
+  dir: 'ltr', font: null,
+  nav_how: 'How it works', nav_pricing: 'Pricing', nav_cta: 'Start free',
+  hero_badge: 'Available in Germany',
+  h1_line1: 'Bewerbung in 8 minutes.', h1_line2: 'To German standard.',
+  hero_sub: 'Weekly job selection tailored to your profile + ready Anschreiben and Lebenslauf with one click. ATS-optimised. To German standard.',
+  hero_cta: 'Prepare for free →', hero_ghost: 'How it works',
+  trust1: 'Free start', trust2: 'German standard', trust3: '10 min per application',
+  chip_vac: 'new jobs', chip_match: 'match',
+  chip_done: 'Lebenslauf adapted', chip_time: 'Took ',
+  card_badge: 'Bewerbung ready',
+  stat_label: 'Market reality', stat_desc: 'get no reply.',
+  stat_sub: 'You send applications and never hear back. The system works against you.',
+  check1: 'Opened Stepstone', check2: 'Built CV', check3: 'Sent 30 applications', check4: 'Got reply... ?',
+  inbox_label: 'Inbox', inbox_tag: 'applications', inbox_sub: 'without a single reply',
+  inbox_r1: 'Rejections', inbox_r2: 'Seen by ATS', inbox_r3: 'Silence',
+  inbox_bz: 'With BewerbZen: 6 applications → 1 offer',
+  story_label: 'Everyone\'s story', story_title: 'You\'re not alone',
+  story_sub: 'This is what job hunting in Germany looks like without the right tool — and what happens with BewerbZen.',
+  s1_step: '01 — Start', s1_h: 'Started job hunting.<br><span style="opacity:.75">Everything looked easy.</span>',
+  s2_step: '02 — Chaos', s2_h: '<span class="sh-accent">30 applications.</span><br>0 replies.', s2_p: 'Forced to visit dozens of sites and fill in the same forms over and over — hoping to find your dream job.',
+  s3_step: '03 — Solution', s3_h: 'Tried BewerbZen.', s3_p: 'CV + application in 8 minutes. ATS-optimised. To German standard.',
+  s4_step: '04 — Result', s4_h: 'Job found<br>in 3 weeks.', story_cta: 'Apply →',
+  how_label: 'How it works', how_title: 'Three steps instead of three weeks', how_sub: 'Set up once — receive ready materials every week.',
+  step1_t: 'Create your profile', step1_p: 'Profession, city, preferences. Once — forever. Upload your CV and never fill a form again.',
+  step2_t: 'Get your selection', step2_p: 'Every Friday — a list of jobs from official German sources. No spam, no fakes, no duplicates.',
+  step3_t: 'Press one button', step3_p: 'Pick a job — get ATS-optimised Anschreiben and Lebenslauf in PDF in 8 minutes.',
+  pr_label: 'Pricing', pr_title: 'Transparent and fair', pr_sub: 'Start free. Pay only when you get value.',
+  plan_free: 'Free', plan_pop: 'Popular', plan_pro: 'Pro',
+  plan_free_desc: 'Try without card or commitments', plan_pop_desc: 'For active job seekers', plan_pro_desc: 'For serious applicants',
+  f1: '3 free Bewerbungen', f2: 'Anschreiben to German standard', f3: 'ATS optimisation', f4: 'Job selection via Telegram',
+  f5: 'Unlimited generation', f6: 'Lebenslauf generator',
+  f7: '3 additional Bewerbungen', f8: 'Everything from free plan', f9: 'Anschreiben + Lebenslauf', f10: 'PDF export', f11: 'Priority support',
+  f12: 'Unlimited Bewerbungen', f13: 'Full application history', f14: 'Personal profile',
+  btn_free: 'Start free', btn_pack: 'Buy pack →', btn_pro: 'Choose Pro →',
+  note_pack: 'One-time, no subscription', note_pro: 'Cancel any time',
+  faq_label: 'Questions', faq_title: 'Frequently asked',
+  faq_q1: 'Is this a real Bewerbung or a template?', faq_a1: 'Not a template. The AI reads the specific job description and writes an Anschreiben for it — with the right keywords, structure and German formal style. A different result every time.',
+  faq_q2: 'What language is the Bewerbung created in?', faq_a2: 'In German — to German professional standard (Anschreiben per DIN 5008). For English-language jobs, it can generate in English — just specify in the text.',
+  faq_q3: 'Is my data safe?', faq_a3: 'We don\'t store personal data longer than needed for generation. BewerbZen is a tool, not a recruitment agency. We don\'t sell or share data. GDPR compliant.',
+  faq_q4: 'What does ATS-optimised mean?', faq_a4: 'ATS (Applicant Tracking System) are programs companies use to automatically filter applications. We insert keywords from the job description so your Bewerbung passes through these filters to reach a real recruiter.',
+  faq_q5: 'Do I need good German to use it?', faq_a5: 'No. The interface is in English. Just paste the job text and write a few words about yourself — the AI does the rest. The finished Anschreiben will be in professional German.',
+  faq_q6: 'When will jobs appear directly in the service?', faq_a6: 'The bot sends job selections matching your profile directly via Telegram. In-interface filtering is in development — planned for May 2026.',
+  cta_title: 'Find a job in 8 minutes.', cta_sub: 'First 3 Bewerbungen free. No card. No obligations.', cta_btn: 'Start free →',
+  footer_tag: 'Bewerbung to German standard — fast and correct.', footer_bot: '🤖 Try the bot',
+  footer_product: 'Product', footer_legal: 'Legal', footer_contact: 'Contact',
+  footer_how: 'How it works', footer_pricing: 'Pricing', footer_jobs: 'Jobs',
+  footer_copy: '© 2026 BewerbZen. All rights reserved.',
+  fm_step1: 'Step 1 of 4', fm_q1: 'What\'s your name?', fm_q1_sub: 'Just a name and one contact method — nothing more.',
+  fm_name_lbl: 'Name', fm_contact_lbl: 'Telegram (@username) or Email',
+  fm_step2: 'Step 2 of 4', fm_q2: 'Where are you looking for work?', fm_q2_sub: 'Enter city, postcode or address.',
+  fm_loc_lbl: 'City, postcode or street', fm_radius_lbl: 'Search radius', fm_radius_all: 'All Germany',
+  fm_step3: 'Step 3 of 4', fm_q3: 'What kind of work are you looking for?', fm_q3_sub: 'Specify profession and parameters.',
+  fm_job_lbl: 'Profession or position', fm_lang_lbl: 'German level',
+  fm_lang0: 'None', fm_lang1: 'A1–A2', fm_lang2: 'B1–B2', fm_lang3: 'C1–C2', fm_lang4: 'Native',
+  fm_type_lbl: 'Employment type', fm_type_any: 'Any',
+  fm_step4: 'Step 4 of 4', fm_q4: 'Everything correct?', fm_q4_sub: 'Check details before submitting.',
+  fm_lbl_name: '👤 Name', fm_lbl_contact: '💬 Contact', fm_lbl_loc: '📍 Location', fm_lbl_job: '💼 Profession', fm_lbl_lang: '🇩🇪 German · Employment',
+  fm_submit: 'Get access 🚀', fm_legal: 'By clicking you accept the <a href="#" onclick="return false">privacy policy</a>. Data is not shared with third parties.',
+  fm_back: '← Back', fm_next: 'Continue →', fm_change: 'Change',
+  fm_success_title: 'Done!', fm_success_msg: 'Open the bot — your profile is saved, it will send jobs instantly and create an Anschreiben in 2 minutes:',
+  fm_success_btn: '🤖 Open @BewerbZen_bot',
+},
+
+}; // end T
+
+/* ── LANGUAGE DETECTION ──────────────────────────────────────────────── */
+const SUPPORTED = ['ru','de','ar','tr','uk','en'];
+const LANG_MAP = { az:'ru', be:'ru', kk:'ru', ky:'ru', uz:'ru', tg:'ru', mn:'ru', // CIS → ru
+                   fa:'ar', ur:'ar', ps:'ar',                                       // Farsi/Urdu → ar
+                   az:'tr', ky:'tr' };                                              // Closest Turkic
+
+function detectLang() {
+  const saved = localStorage.getItem('bz_lang');
+  if (saved && SUPPORTED.includes(saved)) return saved;
+  const nav = (navigator.languages?.[0] || navigator.language || 'ru').toLowerCase().split('-')[0];
+  if (SUPPORTED.includes(nav)) return nav;
+  return LANG_MAP[nav] || 'en';
+}
+
+/* ── APPLY TRANSLATIONS ──────────────────────────────────────────────── */
+function q(sel) { return document.querySelector(sel); }
+function qa(sel) { return document.querySelectorAll(sel); }
+function set(sel, txt, html) {
+  const el = q(sel); if (!el) return;
+  if (html) el.innerHTML = txt; else el.textContent = txt;
+}
+function sets(els, txt) { els.forEach(el => { if(el) el.textContent = txt; }); }
+
+function applyLang(lang) {
+  const t = T[lang] || T.en;
+
+  // ── Direction & font ──
+  document.documentElement.lang = lang;
+  document.documentElement.dir = t.dir;
+  document.body.style.fontFamily = t.font
+    ? `'${t.font}', var(--font-body, 'Inter'), sans-serif` : '';
+
+  // Load Arabic font if needed
+  if (t.font && !document.getElementById('bz-arabic-font')) {
+    const link = document.createElement('link');
+    link.id = 'bz-arabic-font';
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${t.font.replace(/ /g,'+')}:wght@400;500;600;700&display=swap`;
+    document.head.appendChild(link);
+  }
+
+  // ── Nav ──
+  set('.nav-links li:nth-child(1) a', t.nav_how);
+  set('.nav-links li:nth-child(2) a', t.nav_pricing);
+  set('.nav-cta', t.nav_cta);
+
+  // ── Hero ──
+  const badge = q('.badge');
+  if (badge) { const dot = badge.querySelector('.badge-dot'); badge.textContent = t.hero_badge; if(dot) badge.prepend(dot); }
+  set('.h1-dark', t.h1_line1);
+  set('.h1-blue', t.h1_line2);
+  set('.subtitle', t.hero_sub);
+
+  // Primary + ghost btns in hero
+  const heroBtns = qa('.hero-btns button');
+  if (heroBtns[0]) heroBtns[0].textContent = t.hero_cta;
+  if (heroBtns[1]) {
+    const play = heroBtns[1].querySelector('.play-circle');
+    heroBtns[1].textContent = t.hero_ghost;
+    if (play) heroBtns[1].prepend(play);
+  }
+
+  // Trust row
+  const trustItems = qa('.trust-item');
+  const trustKeys = ['trust1','trust2','trust3'];
+  trustItems.forEach((el, i) => {
+    const icon = el.querySelector('.trust-icon');
+    el.textContent = t[trustKeys[i]] || '';
+    if (icon) el.prepend(icon);
+  });
+
+  // Chips
+  const chipLbls = qa('.chip-lbl');
+  if (chipLbls[0]) chipLbls[0].textContent = t.chip_vac;
+  if (chipLbls[1]) chipLbls[1].textContent = t.chip_match;
+  const chipDone = q('.ch-done div');
+  if (chipDone) chipDone.textContent = t.chip_done;
+  const chipTime = q('.ch-time div');
+  if (chipTime) chipTime.innerHTML = t.chip_time + '<span style="color:#00C896;font-weight:600">8 min</span>';
+
+  // Card badge
+  set('.cm-badge-label', t.card_badge);
+
+  // ── Stat section ──
+  set('.stat-label', t.stat_label);
+  set('.stat-desc', t.stat_desc);
+  set('.stat-sub', t.stat_sub);
+  const checks = qa('.stat-checks li');
+  const checkKeys = ['check1','check2','check3','check4'];
+  checks.forEach((li, i) => {
+    const icon = li.querySelector('.check-icon');
+    li.textContent = t[checkKeys[i]] || '';
+    if (icon) li.prepend(icon);
+  });
+  set('.scv-label', t.inbox_label);
+  set('.scv-tag', t.inbox_tag);
+  set('.scv-sub', t.inbox_sub);
+  const scvItems = qa('.scv-item-label');
+  if (scvItems[0]) scvItems[0].textContent = t.inbox_r1;
+  if (scvItems[1]) scvItems[1].textContent = t.inbox_r2;
+  if (scvItems[2]) scvItems[2].textContent = t.inbox_r3;
+  const bz_note = q('.stat-card-vis div[style*="italic"]');
+  if (bz_note) bz_note.textContent = t.inbox_bz;
+
+  // ── Story carousel ──
+  set('.story-label-wrap .section-label', t.story_label);
+  set('.story-label-wrap .section-title', t.story_title);
+  set('.story-label-wrap .section-sub', t.story_sub);
+  const slides = qa('.story-slide');
+  const slideData = [
+    {step:'s1_step', h:'s1_h'},
+    {step:'s2_step', h:'s2_h', p:'s2_p'},
+    {step:'s3_step', h:'s3_h', p:'s3_p'},
+    {step:'s4_step', h:'s4_h'},
+  ];
+  slides.forEach((slide, i) => {
+    const d = slideData[i]; if (!d) return;
+    const stepEl = slide.querySelector('.story-step'); if(stepEl) stepEl.textContent = t[d.step] || '';
+    const hEl = slide.querySelector('.story-headline'); if(hEl) hEl.innerHTML = t[d.h] || '';
+    const pEl = slide.querySelector('.story-copy'); if(pEl && d.p) pEl.textContent = t[d.p] || '';
+    const ctaEl = slide.querySelector('.story-cta'); if(ctaEl) ctaEl.textContent = t.story_cta || '';
+  });
+
+  // ── How it works ──
+  set('.steps-section .section-label', t.how_label);
+  set('.steps-section .section-title', t.how_title);
+  set('.steps-section .section-sub', t.how_sub);
+  const stepCards = qa('.step-card');
+  const stepKeys = [['step1_t','step1_p'],['step2_t','step2_p'],['step3_t','step3_p']];
+  stepCards.forEach((card, i) => {
+    const [tk, pk] = stepKeys[i] || [];
+    const title = card.querySelector('.step-title'); if(title && tk) title.textContent = t[tk];
+    const p = card.querySelector('p'); if(p && pk) p.textContent = t[pk];
+  });
+
+  // ── Pricing ──
+  set('.pricing-section .section-label', t.pr_label);
+  set('.pricing-section .section-title', t.pr_title);
+  set('.pricing-section .section-sub', t.pr_sub);
+  const pCards = qa('.pricing-card');
+  if (pCards[0]) {
+    set('.pc-badge-free', t.plan_free);
+    pCards[0].querySelector('.pc-desc').textContent = t.plan_free_desc;
+    const flis = pCards[0].querySelectorAll('.pc-features li');
+    [t.f1,t.f2,t.f3,t.f4,t.f5,t.f6].forEach((txt,i) => {
+      if (!flis[i]) return;
+      const icon = flis[i].querySelector('span'); flis[i].textContent = txt; if(icon) flis[i].prepend(icon);
+    });
+    const btn0 = pCards[0].querySelector('.btn-primary'); if(btn0) btn0.textContent = t.btn_free;
+  }
+  if (pCards[1]) {
+    set('.pc-badge-popular', t.plan_pop);
+    pCards[1].querySelector('.pc-desc').textContent = t.plan_pop_desc;
+    const flis = pCards[1].querySelectorAll('.pc-features li');
+    [t.f7,t.f8,t.f9,t.f10,t.f11,t.f5].forEach((txt,i) => {
+      if (!flis[i]) return;
+      const icon = flis[i].querySelector('span'); flis[i].textContent = txt; if(icon) flis[i].prepend(icon);
+    });
+    const btn1 = pCards[1].querySelector('.btn-primary,.pc-btn'); if(btn1) btn1.textContent = t.btn_pack;
+    const note1 = pCards[1].querySelector('.pc-note'); if(note1) note1.textContent = t.note_pack;
+  }
+  if (pCards[2]) {
+    set('.pc-badge-pro', t.plan_pro);
+    pCards[2].querySelector('.pc-desc').textContent = t.plan_pro_desc;
+    const flis = pCards[2].querySelectorAll('.pc-features li');
+    [t.f12,t.f9,t.f10,t.f13,t.f14,t.f11].forEach((txt,i) => {
+      if (!flis[i]) return;
+      const icon = flis[i].querySelector('span'); flis[i].textContent = txt; if(icon) flis[i].prepend(icon);
+    });
+    const btn2 = pCards[2].querySelector('.btn-primary,.pc-btn'); if(btn2) btn2.textContent = t.btn_pro;
+    const note2 = pCards[2].querySelector('.pc-note'); if(note2) note2.textContent = t.note_pro;
+  }
+
+  // ── FAQ ──
+  set('.faq-section .section-label', t.faq_label);
+  set('.faq-section .section-title', t.faq_title);
+  const faqItems = qa('.faq-item');
+  const faqKeys = [['faq_q1','faq_a1'],['faq_q2','faq_a2'],['faq_q3','faq_a3'],
+                   ['faq_q4','faq_a4'],['faq_q5','faq_a5'],['faq_q6','faq_a6']];
+  faqItems.forEach((item, i) => {
+    const [qk, ak] = faqKeys[i] || [];
+    const btn = item.querySelector('.faq-q');
+    if (btn && qk) {
+      const arrow = btn.querySelector('.faq-arrow');
+      btn.textContent = t[qk]; if(arrow) btn.appendChild(arrow);
+    }
+    const ans = item.querySelector('.faq-a'); if(ans && ak) ans.textContent = t[ak];
+  });
+
+  // ── CTA section ──
+  set('.cta-title', t.cta_title);
+  set('.cta-sub', t.cta_sub);
+  const ctaBtn = q('.cta-section .btn-white'); if(ctaBtn) ctaBtn.textContent = t.cta_btn;
+
+  // ── Footer ──
+  set('.footer-tagline', t.footer_tag);
+  const footerBot = q('.footer-social-btn'); if(footerBot) footerBot.textContent = t.footer_bot;
+  const fCols = qa('.footer-col-title');
+  if (fCols[0]) fCols[0].textContent = t.footer_product;
+  if (fCols[1]) fCols[1].textContent = t.footer_legal;
+  if (fCols[2]) fCols[2].textContent = t.footer_contact;
+  const fLinks = qa('.footer-col:first-child .footer-link');
+  if (fLinks[0]) fLinks[0].textContent = t.footer_how;
+  if (fLinks[1]) fLinks[1].textContent = t.footer_pricing;
+  if (fLinks[2]) fLinks[2].textContent = t.footer_jobs;
+  const fCopy = q('.footer-bottom span:first-child'); if(fCopy) fCopy.textContent = t.footer_copy;
+
+  // ── Form ──
+  // Step labels
+  const fmSteps = qa('.fm-step-num');
+  if (fmSteps[0]) fmSteps[0].textContent = t.fm_step1;
+  if (fmSteps[1]) fmSteps[1].textContent = t.fm_step2;
+  if (fmSteps[2]) fmSteps[2].textContent = t.fm_step3;
+  if (fmSteps[3]) fmSteps[3].textContent = t.fm_step4;
+  // Step titles
+  const fmTitles = qa('.fm-step h3');
+  if (fmTitles[0]) fmTitles[0].textContent = t.fm_q1;
+  if (fmTitles[1]) fmTitles[1].textContent = t.fm_q2;
+  if (fmTitles[2]) fmTitles[2].textContent = t.fm_q3;
+  if (fmTitles[3]) fmTitles[3].textContent = t.fm_q4;
+  // Step subtitles
+  const fmSubs = qa('.fm-step .fm-step-sub');
+  if (fmSubs[0]) fmSubs[0].textContent = t.fm_q1_sub;
+  if (fmSubs[1]) fmSubs[1].textContent = t.fm_q2_sub;
+  if (fmSubs[2]) fmSubs[2].textContent = t.fm_q3_sub;
+  if (fmSubs[3]) fmSubs[3].textContent = t.fm_q4_sub;
+  // Labels & placeholders
+  const nameInput = q('#f-name'); if(nameInput) nameInput.placeholder = t.fm_name_lbl;
+  const contactInput = q('#f-contact'); if(contactInput) contactInput.placeholder = t.fm_contact_lbl;
+  const locInput = q('#f-location'); if(locInput) locInput.placeholder = t.fm_loc_lbl;
+  const jobInput = q('#f-job'); if(jobInput) jobInput.placeholder = t.fm_job_lbl;
+  // Field group labels
+  const fmGrpLabels = qa('.fm-group-label');
+  if (fmGrpLabels[0]) fmGrpLabels[0].textContent = t.fm_radius_lbl;
+  if (fmGrpLabels[1]) fmGrpLabels[1].textContent = t.fm_lang_lbl;
+  if (fmGrpLabels[2]) fmGrpLabels[2].textContent = t.fm_type_lbl;
+  // Radius "all Germany" button
+  const radAll = q('[data-r="0"]'); if(radAll) radAll.textContent = t.fm_radius_all;
+  // Language chip labels
+  const langChips = qa('#langGroup .fm-chip');
+  const langKeys = ['fm_lang0','fm_lang1','fm_lang2','fm_lang3','fm_lang4'];
+  langChips.forEach((chip, i) => { chip.textContent = t[langKeys[i]] || chip.textContent; });
+  // Employment "any"
+  const typeChips = qa('#typeGroup .fm-chip');
+  typeChips.forEach(chip => { if(chip.dataset.v === 'any') chip.textContent = t.fm_type_any; });
+  // Back buttons
+  qa('.fm-back-btn').forEach(btn => { btn.textContent = t.fm_back; });
+  // Next buttons
+  const nextBtns = qa('.fm-next');
+  nextBtns.forEach(btn => { btn.textContent = t.fm_next; });
+  // Change location link
+  const changeEl = q('#changeLocation'); if(changeEl) changeEl.textContent = t.fm_change;
+  // Submit
+  const submitBtn = q('#fmSubmit'); if(submitBtn) submitBtn.textContent = t.fm_submit;
+  // Legal note
+  const legalNote = q('.fm-legal'); if(legalNote) legalNote.innerHTML = t.fm_legal;
+  // Summary labels
+  const sumLabels = qa('.fm-sum-label');
+  const sumKeys = ['fm_lbl_name','fm_lbl_contact','fm_lbl_loc','fm_lbl_job','fm_lbl_lang'];
+  sumLabels.forEach((el, i) => { if(t[sumKeys[i]]) el.textContent = t[sumKeys[i]]; });
+  // Success screen
+  set('.fm-success h3', t.fm_success_title);
+  const succP = q('.fm-success p'); if(succP) succP.textContent = t.fm_success_msg;
+  const botBtn = q('#botDeepLink'); if(botBtn) botBtn.textContent = t.fm_success_btn;
+
+  // RTL-specific form adjustments
+  if (t.dir === 'rtl') {
+    document.querySelectorAll('input, textarea').forEach(el => el.style.textAlign = 'right');
+  } else {
+    document.querySelectorAll('input, textarea').forEach(el => el.style.textAlign = '');
+  }
+
+  // Save choice
+  localStorage.setItem('bz_lang', lang);
+  currentLang = lang;
+  updateSwitcherUI(lang);
+}
+
+/* ── LANGUAGE SWITCHER ───────────────────────────────────────────────── */
+const LANG_FLAGS = { ru:'🇷🇺', de:'🇩🇪', ar:'🇸🇦', tr:'🇹🇷', uk:'🇺🇦', en:'🇬🇧' };
+const LANG_NAMES = { ru:'РУС', de:'DE', ar:'عر', tr:'TR', uk:'УКР', en:'EN' };
+let currentLang = 'ru';
+
+function buildSwitcher() {
+  const sw = document.createElement('div');
+  sw.id = 'bz-lang-sw';
+  sw.innerHTML = `
+    <button id="bz-lang-btn" aria-label="Language / Язык">
+      <span id="bz-lang-flag">🌐</span>
+      <span id="bz-lang-name">RU</span>
+      <span style="font-size:10px;opacity:.6">▾</span>
+    </button>
+    <div id="bz-lang-menu">
+      ${SUPPORTED.map(l => `<button class="bz-lang-opt" data-l="${l}">${LANG_FLAGS[l]} ${LANG_NAMES[l]}</button>`).join('')}
+    </div>`;
+  document.body.appendChild(sw);
+
+  const style = document.createElement('style');
+  style.textContent = `
+    #bz-lang-sw{position:fixed;bottom:24px;right:24px;z-index:9999;font-family:inherit}
+    [dir=rtl] #bz-lang-sw{right:auto;left:24px}
+    #bz-lang-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);
+      backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.18);
+      color:#fff;border-radius:24px;padding:8px 14px;cursor:pointer;font-size:14px;
+      font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.25);transition:background .2s}
+    #bz-lang-btn:hover{background:rgba(255,255,255,.22)}
+    #bz-lang-menu{display:none;position:absolute;bottom:48px;right:0;
+      background:rgba(18,24,38,.95);backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,.12);border-radius:16px;
+      padding:8px;min-width:140px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+    [dir=rtl] #bz-lang-menu{right:auto;left:0}
+    #bz-lang-menu.open{display:block;animation:bzFadeIn .15s ease}
+    @keyframes bzFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .bz-lang-opt{display:flex;align-items:center;gap:8px;width:100%;
+      padding:8px 12px;background:none;border:none;color:#e2e8f0;
+      border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;
+      transition:background .15s;text-align:left}
+    [dir=rtl] .bz-lang-opt{text-align:right}
+    .bz-lang-opt:hover{background:rgba(91,124,255,.25)}
+    .bz-lang-opt.active{background:rgba(91,124,255,.35);color:#7c9cff}
+  `;
+  document.head.appendChild(style);
+
+  document.getElementById('bz-lang-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('bz-lang-menu').classList.toggle('open');
+  });
+  document.addEventListener('click', () => document.getElementById('bz-lang-menu').classList.remove('open'));
+  document.querySelectorAll('.bz-lang-opt').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      applyLang(btn.dataset.l);
+      document.getElementById('bz-lang-menu').classList.remove('open');
+      if(typeof umami!=='undefined') umami.track('lang_switch', {lang: btn.dataset.l});
+    });
+  });
+}
+
+function updateSwitcherUI(lang) {
+  const flagEl = document.getElementById('bz-lang-flag');
+  const nameEl = document.getElementById('bz-lang-name');
+  if (flagEl) flagEl.textContent = LANG_FLAGS[lang] || '🌐';
+  if (nameEl) nameEl.textContent = LANG_NAMES[lang] || lang.toUpperCase();
+  document.querySelectorAll('.bz-lang-opt').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.l === lang);
+  });
+}
+
+/* ── INIT ────────────────────────────────────────────────────────────── */
+buildSwitcher();
+const initLang = detectLang();
+applyLang(initLang);
+
+})();
+</script>
+
 </body>
 </html>

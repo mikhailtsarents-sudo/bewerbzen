@@ -101,7 +101,8 @@ Sehr geehrte Damen und Herren...
   job_title: '',          // Должность (из онбординга)
   city: '',               // Город поиска (из онбординга)
   language: 'ru',         // Язык подборок: 'ru' | 'de'
-  registered_at: ''       // ISO timestamp регистрации
+  registered_at: '',      // ISO timestamp регистрации
+  ui_lang: 'ru'           // Язык интерфейса бота: 'ru'|'de'|'ar'|'tr'|'uk'|'en' (из Telegram language_code)
 }
 ```
 
@@ -241,3 +242,7 @@ Headers: X-API-Key: jobboerse-jobsuche
 | 2026-04-15 | Нудж при /bewerben без онбординга — предлагает /start |
 | 2026-04-15 | Claude API error handler: сбрасывает state, отправляет retry-сообщение |
 | 2026-04-15 | /help переделан в Code node с улучшенным форматированием |
+| 2026-04-15 | Мультиязычность бота: 6 языков (ru/de/ar/tr/uk/en), автоопределение из Telegram language_code |
+| 2026-04-15 | Ask Vacancy, Ask CV, Send Anschreiben, Send Limit Exceeded, Send Fallback переведены в Code nodes |
+| 2026-04-15 | user.ui_lang сохраняется в staticData, все сообщения бота переведены на язык пользователя |
+| 2026-04-15 | Мультиязычность сайта: 6 языков, RTL для арабского, автоопределение OS, переключатель языка |

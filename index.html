@@ -1580,8 +1580,8 @@
         <div class="fm-success">
           <div class="fm-success-anim">🎉</div>
           <h3>Готово!</h3>
-          <p style="margin-bottom:8px">Открой бота — он пришлёт подборки вакансий под твой профиль и создаст Anschreiben за 2 минуты:</p>
-          <a href="https://t.me/BewerbZen_bot" class="fm-tg-btn" style="background:linear-gradient(90deg,var(--primary),var(--primary-h));box-shadow:0 6px 20px rgba(91,124,255,.3)" target="_blank" onclick="typeof umami!=='undefined'&&umami.track('click_open_bot_success')">🤖 Открыть @BewerbZen_bot</a>
+          <p style="margin-bottom:8px">Открой бота — профиль уже сохранён, он сразу пришлёт вакансии и создаст Anschreiben за 2 минуты:</p>
+          <a id="botDeepLink" href="https://t.me/BewerbZen_bot" class="fm-tg-btn" style="background:linear-gradient(90deg,var(--primary),var(--primary-h));box-shadow:0 6px 20px rgba(91,124,255,.3)" target="_blank" onclick="typeof umami!=='undefined'&&umami.track('click_open_bot_success')">🤖 Открыть @BewerbZen_bot</a>
         </div>
       </div>
 
@@ -1809,6 +1809,19 @@
       const btn = document.getElementById('fmSubmit');
       btn.disabled = true;
       btn.innerHTML = '<span class="fm-spinner"></span>Отправка...';
+
+      // Build Telegram deep link: encode job+city as base64url for /start payload
+      // Format: "job_title|city" → base64url (max 64 chars)
+      try {
+        const job = (state.job || '').substring(0, 25);
+        const city = (state.locationDisplay || '').substring(0, 15);
+        const payload = job + '|' + city;
+        const encoded = btoa(unescape(encodeURIComponent(payload)))
+          .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '').substring(0, 64);
+        document.getElementById('botDeepLink').href =
+          `https://t.me/BewerbZen_bot?start=${encoded}`;
+      } catch(e) { /* keep default href if encoding fails */ }
+
       try {
         await fetch(N8N_WEBHOOK, {
           method: 'POST', mode: 'no-cors',

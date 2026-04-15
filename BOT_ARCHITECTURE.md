@@ -18,8 +18,10 @@
                  - Новый пользователь → Онбординг (3 шага)
                  - Вернувшийся       → Приветствие с профилем
 
-/help          → Справка по командам
-/status        → Статус использования (сколько Bewerbungen осталось)
+/help          → Справка (Code node): команды, форматы, лимиты
+/status        → Профиль + статистика пользователя (Code node)
+/jobs          → Свежие вакансии по профилю (Bundesagentur API)
+/stats         → ⚠️ Только для @mihailcarenc: сводная статистика бота
 /bewerben      → Запускает создание Anschreiben:
                  1. Бот спрашивает ВАКАНСИЮ
                  2. Пользователь присылает текст вакансии
@@ -111,7 +113,7 @@ Sehr geehrte Damen und Herren...
 - `onboarding_city` — ждёт город (шаг 2)
 - `onboarding_lang` — ждёт язык подборок (шаг 3)
 
-## Архитектура нод (30 нод)
+## Архитектура нод (37 нод)
 
 ```
 Telegram Trigger
@@ -131,9 +133,12 @@ Telegram Trigger
     ├── Is cv_file?
     │   └── Get File Info → Get File URL → Download File
     │       └── Prepare File Input → Check Limit → ...
+    ├── Is /stats?  → Send Stats (Code) — только для admin chat_id
     └── Is onboarding?
         ├── true → Handle Onboarding (Code) — шаги 1/2/3 (auto HTTP)
         └── false → Send Fallback
+
+Claude API ошибка → Claude Error (Code) — сбрасывает state в idle, отправляет retry-сообщение
 ```
 
 ## Промпт для Claude
@@ -227,3 +232,12 @@ Headers: X-API-Key: jobboerse-jobsuche
 | 2026-04-14 | Claude max_tokens увеличен до 3000 |
 | 2026-04-14 | Удалены все ссылки на @BewerbZen канал (канал не существует) |
 | 2026-04-14 | Расширена структура данных пользователя (job_title, city, language, registered_at) |
+| 2026-04-15 | Добавлен /jobs (по запросу), рассылка изменена на пятницу 16:00 |
+| 2026-04-15 | Аналитика: last_seen, visits, returned_at, jobs_count в staticData |
+| 2026-04-15 | /status переделан в Code node (читает staticData надёжно) |
+| 2026-04-15 | Umami аналитика на сайте (ID: eafea19f) |
+| 2026-04-15 | Зарегистрированы команды бота через setMyCommands |
+| 2026-04-15 | Добавлен /stats (только admin): сводная статистика по всем пользователям |
+| 2026-04-15 | Нудж при /bewerben без онбординга — предлагает /start |
+| 2026-04-15 | Claude API error handler: сбрасывает state, отправляет retry-сообщение |
+| 2026-04-15 | /help переделан в Code node с улучшенным форматированием |

@@ -1,13 +1,49 @@
-# BewerbZen Bot — Архитектура и логика работы
+# BewerbZen — Архитектура проекта, бота, сайта и VPS
 
-## Статус: ✅ Активен (Apr 14, 2026)
+## Статус: ✅ Активен, миграция сайта на VPS (Apr 28, 2026)
 
 **Workflow ID:** `wSewHe5jlOvtPw1q`  
 **n8n:** tsarents.app.n8n.cloud  
 **Бот:** @BewerbZen_bot (токен хранится в n8n credential "BewerbZen Bot")  
 **Claude API ключ:** bewerbzen2 (в n8n workflow, ключ в Anthropic Console)  
 **Claude модель:** `claude-sonnet-4-6`  
-**Нод в workflow:** 30
+**Нод в workflow:** 43
+
+## Текущий production snapshot
+
+| Компонент | Статус | Где живет |
+|-----------|--------|-----------|
+| Telegram bot | Активен | n8n cloud workflow `wSewHe5jlOvtPw1q` |
+| Landing/site | Перенесен на VPS, DNS еще смотрит на Netlify | `/srv/projects/bewerbzen/site` |
+| VPS web server | Активен | nginx на `46.225.170.55:80` |
+| Analytics ingest | Активен | `/srv/projects/bewerbzen/analytics`, порт `3466` |
+| Analytics raw storage | Активен | Postgres table `bewerbzen_site_events` |
+| Google Sheet report | Активен как readable reporting layer | `BewerbZen Site Analytics` |
+| Search Console import | Ждет доступа | service account нужно добавить в GSC |
+| Netlify | Больше не основной target | аккаунт paused из-за `credit limit` |
+
+Главная причина переноса сайта: Netlify остановил все проекты команды с ошибкой `usage_exceeded / credit limit`. Чтобы не зависеть от Netlify для маленького статического сайта, BewerbZen переносится на VPS, где уже живет аналитика.
+
+Текущий DNS `bewerbzen.de` все еще указывает на Netlify:
+
+```text
+bewerbzen.de A 75.2.60.5
+www.bewerbzen.de A 75.2.60.5
+```
+
+Чтобы домен полностью переехал на VPS, нужно у DNS-провайдера заменить записи:
+
+```text
+bewerbzen.de      A      46.225.170.55
+www.bewerbzen.de  A      46.225.170.55
+```
+
+После распространения DNS нужно выпустить HTTPS сертификат:
+
+```bash
+ssh -i ~/.ssh/adr_vps_key -o IdentitiesOnly=yes root@46.225.170.55 \
+  'certbot --nginx -d bewerbzen.de -d www.bewerbzen.de'
+```
 
 ---
 
@@ -216,12 +252,259 @@ Headers: X-API-Key: jobboerse-jobsuche
 
 ---
 
+## Сайт и VPS hosting
+
+Сайт BewerbZen теперь хранится и отдается с VPS отдельно от ADR.
+
+### VPS layout
+
+Новая структура для всех проектов:
+
+```text
+/srv/projects/
+  bewerbzen/
+    site/
+    analytics/
+  future-project/
+    site/
+    analytics/
+```
+
+BewerbZen:
+
+```text
+/srv/projects/bewerbzen/site
+/srv/projects/bewerbzen/analytics
+```
+
+ADR остается в старых live-папках и не смешивается с Zen:
+
+```text
+/srv/adr-project
+/opt/adr-ingest
+```
+
+Правило: все новые проекты кладем только в `/srv/projects/<project>/`. Zen-файлы не должны попадать в ADR-папки.
+
+### nginx
+
+nginx установлен на VPS и отдает сайт из:
+
+```text
+/srv/projects/bewerbzen/site
+```
+
+Активный конфиг:
+
+```text
+/etc/nginx/sites-available/bewerbzen
+/etc/nginx/sites-enabled/bewerbzen
+```
+
+Проверки:
+
+```bash
+curl -I http://46.225.170.55/
+curl -I http://46.225.170.55/sitemap.xml
+curl -I http://46.225.170.55/bewerbung-schreiben-lassen-russisch-deutschland.html
+```
+
+На `2026-04-28` эти проверки возвращали `200 OK`.
+
+### Netlify
+
+Netlify был нужен для:
+
+- хостинга сайта `bewerbzen.de`;
+- автоматического deploy из GitHub;
+- HTTPS/SSL;
+- CDN;
+- redirects/proxy `/api/bz-analytics/*`.
+
+На `2026-04-28` Netlify team paused:
+
+```json
+{"error":"usage_exceeded","message":"Usage exceeded"}
+```
+
+Поэтому Netlify больше не должен быть критической частью production. Его можно оставить только как fallback/preview после восстановления billing, но canonical hosting для Zen теперь VPS.
+
+---
+
+## Сайт: SEO и индексируемые страницы
+
+Live sitemap расширен с одной главной страницы до набора SEO landing pages.
+
+Файлы:
+
+```text
+/sitemap.xml
+/bewerbung-schreiben-lassen-russisch-deutschland.html
+/anschreiben-erstellen-lassen.html
+/lebenslauf-deutschland-russisch.html
+/bewerbung-vorlage-russisch-deutsch.html
+/jobsuche-deutschland-bewerbung-hilfe.html
+```
+
+Каждая SEO-страница содержит:
+
+- `<title>`;
+- meta description;
+- canonical URL;
+- Open Graph tags;
+- favicon;
+- `Article` JSON-LD;
+- `h1`;
+- внутренние ссылки на связанные SEO-страницы и главную.
+
+Главная `index.html` дополнена footer-блоком `SEO-гайды` со ссылками на эти страницы. Это нужно, чтобы страницы были не только в sitemap, но и во внутренней структуре сайта.
+
+Проверки:
+
+```bash
+xmllint --noout sitemap.xml
+curl -sS http://46.225.170.55/sitemap.xml
+curl -sS http://46.225.170.55/anschreiben-erstellen-lassen.html
+```
+
+Индексация: Google уже видел `bewerbzen.de` до миграции. Точные impressions/clicks пока недоступны, потому что Search Console доступ для service account еще не выдан.
+
+---
+
+## Аналитика сайта
+
+Решение: canonical raw analytics хранится на VPS в Postgres. Google Sheets — только удобный readable reporting layer.
+
+### Сервис
+
+```text
+service: bewerbzen-analytics.service
+folder: /srv/projects/bewerbzen/analytics
+health: http://46.225.170.55:3466/healthz
+nginx proxy: /api/bz-analytics/*
+```
+
+Проверки:
+
+```bash
+ssh -i ~/.ssh/adr_vps_key -o IdentitiesOnly=yes root@46.225.170.55 \
+  'systemctl status bewerbzen-analytics.service --no-pager'
+
+curl -sS http://46.225.170.55/api/bz-analytics/healthz
+```
+
+### Таблицы
+
+```text
+bewerbzen_site_events
+bewerbzen_gsc_daily
+```
+
+`bewerbzen_site_events` хранит события сайта:
+
+- `page_view`;
+- `form_open`;
+- `form_submitted`;
+- `click_open_bot_success`;
+- `click_buy_pack`;
+- `click_buy_pro`;
+- `lang_switch`.
+
+Visitor/session identifiers хешируются SHA-256. В raw analytics нельзя хранить имена, email, Telegram handle, IP как бизнес-данные формы или полный текст формы.
+
+### Browser tracker
+
+Файл:
+
+```text
+/scripts/analytics/browser-tracker.js
+```
+
+Подключение в `index.html`:
+
+```html
+<script>
+  window.BZ_ANALYTICS_ENDPOINT = "/api/bz-analytics/v1/site/event";
+  window.BZ_ANALYTICS_PUBLIC_KEY = "public key from VPS env";
+</script>
+<script defer src="/scripts/analytics/browser-tracker.js"></script>
+```
+
+Такой endpoint работает и после переноса на VPS, потому что nginx проксирует `/api/bz-analytics/*` в локальный service на `127.0.0.1:3466`.
+
+### Smoke events
+
+На `2026-04-28` в Postgres были записаны:
+
+```text
+vps_smoke_test
+netlify_proxy_smoke_test
+vps_site_preview_smoke_test
+vps_nginx_smoke_test
+```
+
+Проверка последних событий:
+
+```bash
+ssh -i ~/.ssh/adr_vps_key -o IdentitiesOnly=yes root@46.225.170.55 \
+  'docker exec n8n-selfhost-postgres-1 psql -U n8n -d n8n -c "select event_name, source, occurred_at from bewerbzen_site_events order by occurred_at desc limit 10;"'
+```
+
+### Google Sheet
+
+Readable report:
+
+```text
+BewerbZen Site Analytics
+https://docs.google.com/spreadsheets/d/18LpO8h1Hvw6QKPOBy8I_M8eBzqs8zzVk-aTfaljADj8/edit
+```
+
+Tabs:
+
+- `Summary`;
+- `Daily`;
+- `Events`;
+- `GSC Queries`;
+- `Config`;
+- `Runbook`.
+
+Правило конфликтов:
+
+1. VPS Postgres raw tables win.
+2. VPS summary/API logic must match raw tables.
+3. Google Sheet refreshes from VPS.
+4. Umami is auxiliary only.
+
+### Search Console
+
+Чтобы подтянуть реальные clicks/impressions, нужно добавить service account в Google Search Console property для `bewerbzen.de`:
+
+```text
+adr-search-console@adr-trainer.iam.gserviceaccount.com
+```
+
+Рекомендуемая property:
+
+```text
+sc-domain:bewerbzen.de
+```
+
+Fallback:
+
+```text
+https://bewerbzen.de/
+```
+
+---
+
 ## Что НЕ реализовано (фаза 2)
 
 - Stripe оплата (после первых платящих пользователей)
 - Gotenberg PDF экспорт
 - Lebenslauf генерация (ждём валидации спроса)
 - Deep linking: сайт → бот (передача данных из формы)
+- Автоматический импорт Search Console в `bewerbzen_gsc_daily` (ждет GSC access)
+- HTTPS на VPS для `bewerbzen.de` (ждет смены DNS с Netlify на `46.225.170.55`)
 
 ---
 
@@ -233,6 +516,13 @@ Headers: X-API-Key: jobboerse-jobsuche
 | Claude API Key | Прямо в ноде "Claude API" workflow |
 | n8n API Key | У Михаила (не хранить в репо) |
 | Anthropic аккаунт | mikhail.tsarents@gmail.com |
+| VPS SSH | `~/.ssh/adr_vps_key` на Mac |
+| BewerbZen site VPS path | `/srv/projects/bewerbzen/site` |
+| BewerbZen analytics VPS path | `/srv/projects/bewerbzen/analytics` |
+| Analytics env | `/srv/projects/bewerbzen/analytics/.env` на VPS, не хранить в репо |
+| Analytics public key | В `.env` на VPS и в `index.html`; публичный ключ, не секрет |
+| Analytics admin API key | Только `.env` на VPS, не хранить в репо |
+| Google Sheet | `BewerbZen Site Analytics`, id `18LpO8h1Hvw6QKPOBy8I_M8eBzqs8zzVk-aTfaljADj8` |
 
 ---
 
@@ -261,8 +551,18 @@ Headers: X-API-Key: jobboerse-jobsuche
 | 2026-04-15 | Мультиязычность сайта: 6 языков, RTL для арабского, автоопределение OS, переключатель языка |
 | 2026-04-15 | Lemon Squeezy: отклонён. Переход на Gumroad (tsarentsonic) |
 | 2026-04-21 | Gumroad: 2 продукта (Pack svvxdp / Pro bewerbzen-pro), Ping webhook → n8n |
-| 2026-04-21 | Parse Message: сохраняет user.username для автоактивации после оплаты |
+| 2026-04-21 | Parse Message: сохраняет user.username и user.email для автоактивации после оплаты |
+| 2026-04-21 | /pay и Send Limit Exceeded: сначала спрашивают email → потом показывают кнопки оплаты |
+| 2026-04-21 | Handle Email Input нод: валидирует email, сохраняет в staticData, показывает кнопки Gumroad |
 | 2026-04-21 | Улучшен Claude промпт: конкретика, связь требований с опытом, правильная структура |
 | 2026-04-21 | Добавлен /invite: реферальная ссылка + ref_bonus +1 кредит реферреру |
 | 2026-04-21 | Добавлены кнопки 👍/👎 после Anschreiben + Handle Feedback нод |
 | 2026-04-15 | Добавлен /pay (код бота + is /pay? нод), Send Limit Exceeded обновлён с inline-кнопками LS |
+| 2026-04-28 | Создана VPS-структура `/srv/projects/bewerbzen/{site,analytics}` отдельно от ADR |
+| 2026-04-28 | Развернут `bewerbzen-analytics.service` на VPS, порт `3466`, Postgres tables `bewerbzen_site_events` и `bewerbzen_gsc_daily` |
+| 2026-04-28 | Создан Google Sheet `BewerbZen Site Analytics` как readable report поверх VPS raw analytics |
+| 2026-04-28 | Добавлен browser tracker `/scripts/analytics/browser-tracker.js` и endpoint `/api/bz-analytics/v1/site/event` |
+| 2026-04-28 | Добавлены SEO landing pages и расширен `sitemap.xml` |
+| 2026-04-28 | Netlify team paused из-за `credit limit`; принято решение переносить production hosting на VPS |
+| 2026-04-28 | Установлен nginx на VPS, сайт отдается из `/srv/projects/bewerbzen/site` по `http://46.225.170.55/` |
+| 2026-04-28 | nginx проксирует `/api/bz-analytics/*` в локальный analytics service; smoke event `vps_nginx_smoke_test` записан в Postgres |

@@ -139,6 +139,23 @@ curl -I https://bewerbzen.de/robots.txt
 curl -I https://bewerbzen.de/sitemap.xml
 ```
 
+На VPS также установлен авто-финализатор:
+
+```text
+bewerbzen-finalize-domain.timer
+bewerbzen-finalize-domain.service
+/srv/projects/bewerbzen/ops/finalize-domain-certbot.sh
+```
+
+Он раз в 5 минут проверяет DNS. Когда `bewerbzen.de` и `www.bewerbzen.de` начнут резолвиться в `46.225.170.55`, он сам запустит `certbot --nginx`, включит HTTPS/redirect и отключит timer после успешной установки сертификата.
+
+Проверка:
+
+```bash
+ssh -i ~/.ssh/adr_vps_key -o IdentitiesOnly=yes root@46.225.170.55 \
+  'systemctl status bewerbzen-finalize-domain.timer --no-pager && tail -n 40 /var/log/bewerbzen/finalize-domain-certbot.log'
+```
+
 ## Google Indexing Checklist
 
 После DNS + HTTPS:

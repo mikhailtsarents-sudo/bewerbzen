@@ -1,0 +1,61 @@
+name: Apply BewerbZen index patch
+
+on:
+  push:
+    paths:
+      - .github/workflows/bewerbzen-apply-index-patch.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Patch index.html
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'index.html';
+          let html = fs.readFileSync(path, 'utf8');
+
+          if (!html.includes('window.BZ_ANALYTICS_ENDPOINT')) {
+            html = html.replace(
+              '<script defer src="https://cloud.umami.is/script.js" data-website-id="eafea19f-454f-4093-9d3f-45f67357428b"></script>',
+              '<script defer src="https://cloud.umami.is/script.js" data-website-id="eafea19f-454f-4093-9d3f-45f67357428b"></script>\n  <script>\n    window.BZ_ANALYTICS_ENDPOINT = "/api/bz-analytics/v1/site/event";\n    window.BZ_ANALYTICS_PUBLIC_KEY = "8e2b8115bf70e9f6b8565f84e2adb8eae7c7a47887fa97f6";\n  </script>\n  <script defer src="/scripts/analytics/browser-tracker.js"></script>'
+            );
+          }
+
+          if (!html.includes('SEO-гайды')) {
+            html = html.replace(
+              '          <a href="#faq" class="footer-link">FAQ</a>\n        </div>\n        <div class="footer-col">\n          <div class="footer-col-title">Правовое</div>',
+              '          <a href="#faq" class="footer-link">FAQ</a>\n        </div>\n        <div class="footer-col">\n          <div class="footer-col-title">SEO-гайды</div>\n          <a href="/bewerbung-schreiben-lassen-russisch-deutschland.html" class="footer-link">Bewerbung на русском</a>\n          <a href="/anschreiben-erstellen-lassen.html" class="footer-link">Anschreiben</a>\n          <a href="/lebenslauf-deutschland-russisch.html" class="footer-link">Lebenslauf</a>\n          <a href="/bewerbung-vorlage-russisch-deutsch.html" class="footer-link">Bewerbung Vorlage</a>\n          <a href="/jobsuche-deutschland-bewerbung-hilfe.html" class="footer-link">Поиск работы</a>\n        </div>\n        <div class="footer-col">\n          <div class="footer-col-title">Правовое</div>'
+            );
+          }
+
+          if (!html.includes('window.bewerbzenTrack(event, data)')) {
+            html = html.replace(
+              "      if (typeof umami !== 'undefined') umami.track(event, data);",
+              "      if (typeof umami !== 'undefined') umami.track(event, data);\n      if (typeof window.bewerbzenTrack === 'function') window.bewerbzenTrack(event, data);"
+            );
+          }
+
+          fs.writeFileSync(path, html);
+          NODE
+      - name: Remove one-off workflow
+        run: git rm .github/workflows/bewerbzen-apply-index-patch.yml
+      - name: Commit and push patch
+        run: |
+          if git diff --cached --quiet && git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "feat: wire BewerbZen analytics and SEO links"
+          git push

@@ -1,0 +1,16 @@
+[Unit]
+Description=BewerbZen analytics ingest service
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/srv/projects/bewerbzen/analytics
+EnvironmentFile=/srv/projects/bewerbzen/analytics/.env
+ExecStart=/usr/bin/node /srv/projects/bewerbzen/analytics/server.mjs
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target

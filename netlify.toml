@@ -20,6 +20,12 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 
 [[redirects]]
+  from = "/api/bz-analytics/*"
+  to = "http://46.225.170.55:3466/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/bot"
   to   = "https://t.me/BewerbZen_bot"
   status = 302

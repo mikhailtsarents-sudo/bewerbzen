@@ -1,124 +1,211 @@
-# BewerbZen — Чеклист перед деплоем
+# BewerbZen — VPS Deploy, DNS и Google Indexing Runbook
 
-## Статус готовности файлов
+Обновлено: `2026-04-28`
 
-| Файл | Статус | Комментарий |
-| ---- | ------ | ----------- |
-| `index.html` | ✅ Готов | Основной файл лендинга (синхронизирован с preview.html) |
-| `preview.html` | ✅ Готов | Рабочая копия (всегда синхронизировать с index.html перед деплоем) |
-| `assets/images/story-carousel.png` | ✅ Готов | Карусель 4-панельная |
-| `assets/images/favicon.svg` | ✅ Готов | Иконка вкладки |
-| `assets/images/og-cover.png` | ✅ Готов | OG-обложка 1200×630 для соцсетей |
-| `netlify.toml` | ✅ Готов | Конфиг деплоя, редиректы /bot и /start → Telegram |
-| `robots.txt` | ✅ Готов | SEO |
-| `sitemap.xml` | ✅ Готов | Обновить дату при деплое |
-| `n8n/bewerbzen_telegram_bot.json` | ✅ **Развёрнут** | ID: `wSewHe5jlOvtPw1q` |
-| `n8n/bewerbzen_jobs_fetcher.json` | ✅ **Развёрнут** | ID: `qOoPc4Idc0a1Fjk8` |
-| `n8n/bewerbzen_tally_notifier.json` | ✅ **Развёрнут** | ID: `13dT1MNhz9TDx5hN` |
+## Статус
 
----
+Production hosting переносится с Netlify на VPS, потому что Netlify team paused из-за `credit limit / usage_exceeded`.
 
-## Шаг 1. Деплой на Netlify (5 минут)
-
-1. Зайди на [netlify.com](https://netlify.com) → Log in
-2. Sites → Add new site → Deploy manually
-3. Перетащи папку `bewerbzen/` в окно браузера
-4. Получи URL вида `random-name.netlify.app`
-5. После покупки домена: Netlify → Domain management → Add custom domain → `bewerbzen.de`
-
-> **Важно:** `index.html` уже синхронизирован. Ничего переименовывать не нужно.
-
----
-
-## Шаг 2. Telegram Bot (15 минут)
-
-1. @BotFather → `/newbot` → имя `BewerbZen` → username `BewerbZenBot`
-2. Скопируй токен бота
-3. Создай публичный канал → `@BewerbZen` → добавь бота как admin с правами на публикацию
-4. В n8n Cloud (tsarents.app.n8n.cloud):
-   - Credentials → Add → Telegram API → вставь токен → назови `BewerbZen Bot`
-   - Скопируй ID нового credential (вида `abc123...`)
-
----
-
-## Шаг 3. Настроить n8n workflows (20 минут)
-
-Все три workflow уже развёрнуты в n8n. Нужно только подставить реальные значения:
-
-### BewerbZen Telegram Bot MVP (ID: `wSewHe5jlOvtPw1q`)
-
-1. Открой workflow в n8n
-2. Найди все узлы типа Telegram → смени credential на `BewerbZen Bot` (новый)
-3. Найди узел `Claude API — Anschreiben` → в заголовке `x-api-key` замени `REPLACE_WITH_CLAUDE_API_KEY` на реальный ключ
-4. Активируй workflow
-
-#### Claude API ключ
-
-[console.anthropic.com](https://console.anthropic.com) → API Keys → Create Key
-
-### BewerbZen Tally Form → Telegram Notification (ID: `13dT1MNhz9TDx5hN`)
-
-1. Найди узел `Notify Mikhail` → замени `REPLACE_WITH_YOUR_TELEGRAM_CHAT_ID` на свой ID
-2. Как узнать свой Telegram chat_id: напиши @userinfobot → он пришлёт число (например: `120796715`)
-3. Активируй workflow
-
-### BewerbZen Jobs Fetcher (ID: `qOoPc4Idc0a1Fjk8`)
-
-1. Найди узел отправки в Telegram → смени credential на `BewerbZen Bot`
-2. Замени `CHANNEL_ID` на `@BewerbZen` (или числовой ID канала)
-3. Активируй workflow
-
----
-
-## Шаг 4. Подключить Webhook для регистрационной формы
-
-Форма на лендинге отправляет данные на:
+Текущий рабочий VPS endpoint:
 
 ```text
-https://tsarents.app.n8n.cloud/webhook/bewerbzen-tally
+http://46.225.170.55/
 ```
 
-Это уже захардкожено в `index.html`. После активации workflow Tally Notifier webhook будет принимать запросы.
-
----
-
-## Шаг 5. Зарегистрировать Telegram Webhook для бота
-
-После активации бота в n8n, зарегистрируй webhook:
+Текущий домен пока еще указывает на Netlify:
 
 ```text
-GET https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook?url=<N8N_WEBHOOK_URL>
+bewerbzen.de      A      75.2.60.5
+www.bewerbzen.de  A      75.2.60.5
 ```
 
-N8N Webhook URL — скопируй из узла `Telegram Trigger` в workflow бота.
+Nameserver-ы домена:
 
----
+```text
+ns1.your-server.de
+ns.second-ns.com
+ns3.second-ns.de
+```
 
-## Шаг 6. Финальная проверка
+Это Hetzner/your-server DNS, не Netlify DNS.
 
-- [ ] Открыть сайт — лендинг загружается
-- [ ] Нажать кнопку «Начать бесплатно» — открывается регистрационная форма
-- [ ] Заполнить и отправить форму — приходит уведомление в Telegram
-- [ ] Написать боту `/start` — приходит приветствие с inline-кнопками
-- [ ] Написать боту `/bewerben` — бот просит прислать вакансию
-- [ ] Прислать текст вакансии — бот генерирует Anschreiben за ~20 сек
-- [ ] После 3-го Bewerbung — бот отправляет сообщение об исчерпании лимита
-- [ ] Канал @BewerbZen — бот публикует вакансии (Jobs Fetcher активен)
+## Цель
 
----
+Сайт должен открываться по:
 
-## Что НЕ нужно делать прямо сейчас
+```text
+https://bewerbzen.de/
+https://www.bewerbzen.de/
+```
 
-- ❌ Stripe (после первых платящих пользователей)
-- ❌ Gotenberg PDF (после валидации спроса)
-- ❌ Полноценный Lebenslauf-генератор (фаза 2)
-- ❌ Регистрация Kleingewerbe (до первых €ew заработанных)
+И при этом:
 
-> Трекинг 3 бесплатных ✅ уже реализован через workflow static data в боте.
+- отдавать `200 OK` для главной;
+- отдавать `200 OK` для `robots.txt`;
+- отдавать `200 OK` для `sitemap.xml`;
+- не блокировать Googlebot;
+- сохранять canonical URL на `https://bewerbzen.de/`;
+- писать события сайта в VPS analytics через `/api/bz-analytics/*`.
 
----
+## VPS Layout
 
-## Домен
+```text
+/srv/projects/bewerbzen/site
+/srv/projects/bewerbzen/analytics
+```
 
-bewerbzen.de — регистрировать через INWX или Namecheap (~€10/год)
-После регистрации: Netlify → Domain management → Add custom domain → bewerbzen.de → следовать инструкции (DNS CNAME/A запись, займёт до 24ч)
+ADR-файлы не смешивать с Zen:
+
+```text
+/srv/adr-project
+/opt/adr-ingest
+```
+
+## Web Server
+
+nginx установлен и активен.
+
+Активный конфиг:
+
+```text
+/etc/nginx/sites-available/bewerbzen
+/etc/nginx/sites-enabled/bewerbzen
+```
+
+Repo-шаблон:
+
+```text
+runtime/vps/bewerbzen-site/bewerbzen.nginx
+```
+
+Проверки:
+
+```bash
+curl -I http://46.225.170.55/
+curl -I http://46.225.170.55/robots.txt
+curl -I http://46.225.170.55/sitemap.xml
+curl -I http://46.225.170.55/api/bz-analytics/healthz
+```
+
+## DNS Switch
+
+В Hetzner/your-server DNS нужно заменить записи:
+
+```text
+@    A    46.225.170.55
+www  A    46.225.170.55
+```
+
+Если в панели используются полные имена:
+
+```text
+bewerbzen.de      A      46.225.170.55
+www.bewerbzen.de  A      46.225.170.55
+```
+
+Удалить или заменить старые Netlify A-записи:
+
+```text
+75.2.60.5
+```
+
+Проверка DNS после изменения:
+
+```bash
+dig +short A bewerbzen.de
+dig +short A www.bewerbzen.de
+```
+
+Ожидаемо:
+
+```text
+46.225.170.55
+```
+
+## HTTPS После DNS
+
+Когда DNS уже смотрит на VPS:
+
+```bash
+ssh -i ~/.ssh/adr_vps_key -o IdentitiesOnly=yes root@46.225.170.55 \
+  'certbot --nginx -d bewerbzen.de -d www.bewerbzen.de'
+```
+
+После certbot проверить:
+
+```bash
+curl -I https://bewerbzen.de/
+curl -I https://bewerbzen.de/robots.txt
+curl -I https://bewerbzen.de/sitemap.xml
+```
+
+## Google Indexing Checklist
+
+После DNS + HTTPS:
+
+- `https://bewerbzen.de/` возвращает `200 OK`;
+- `https://bewerbzen.de/robots.txt` возвращает `200 OK`;
+- `robots.txt` содержит `Allow: /`;
+- `robots.txt` указывает на `https://bewerbzen.de/sitemap.xml`;
+- `https://bewerbzen.de/sitemap.xml` возвращает `200 OK`;
+- sitemap содержит все SEO landing pages;
+- canonical tags указывают на `https://bewerbzen.de/...`;
+- Search Console property `sc-domain:bewerbzen.de` имеет доступ для service account.
+
+Service account для Search Console:
+
+```text
+adr-search-console@adr-trainer.iam.gserviceaccount.com
+```
+
+## SEO Pages
+
+В sitemap входят:
+
+```text
+/
+/bewerbung-schreiben-lassen-russisch-deutschland.html
+/anschreiben-erstellen-lassen.html
+/lebenslauf-deutschland-russisch.html
+/bewerbung-vorlage-russisch-deutsch.html
+/jobsuche-deutschland-bewerbung-hilfe.html
+```
+
+## Analytics
+
+VPS analytics:
+
+```text
+service: bewerbzen-analytics.service
+path: /srv/projects/bewerbzen/analytics
+health: /api/bz-analytics/healthz
+event endpoint: /api/bz-analytics/v1/site/event
+```
+
+Google Sheet:
+
+```text
+BewerbZen Site Analytics
+https://docs.google.com/spreadsheets/d/18LpO8h1Hvw6QKPOBy8I_M8eBzqs8zzVk-aTfaljADj8/edit
+```
+
+## Smoke Test
+
+```bash
+curl -sS -i 'http://46.225.170.55/api/bz-analytics/v1/site/event' \
+  -H 'Origin: http://46.225.170.55' \
+  -H 'Content-Type: application/json' \
+  -H 'X-BewerbZen-Public-Key: PUBLIC_KEY_FROM_VPS_ENV' \
+  --data '{"event_name":"manual_smoke_test","page_path":"/","source":"manual"}'
+```
+
+Проверка Postgres:
+
+```bash
+ssh -i ~/.ssh/adr_vps_key -o IdentitiesOnly=yes root@46.225.170.55 \
+  'docker exec n8n-selfhost-postgres-1 psql -U n8n -d n8n -c "select event_name, source, occurred_at from bewerbzen_site_events order by occurred_at desc limit 10;"'
+```
+
+## What Not To Use As Production
+
+Netlify больше не production source для BewerbZen. Его можно оставить как fallback/preview только после восстановления billing, но canonical hosting — VPS.

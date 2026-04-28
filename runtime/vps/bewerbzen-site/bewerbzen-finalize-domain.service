@@ -1,0 +1,8 @@
+[Unit]
+Description=Finalize BewerbZen domain HTTPS after DNS switch
+After=network-online.target nginx.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/srv/projects/bewerbzen/ops/finalize-domain-certbot.sh
